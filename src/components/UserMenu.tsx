@@ -26,21 +26,20 @@ export default function UserMenu({ session }: { session: any }) {
 
     return (
         <div className="flex items-center gap-4">
-            <div className="flex flex-col items-end">
+            <div className="hidden sm:flex flex-col items-end">
                 <span className="text-sm font-bold text-slate-700 leading-tight">{session.name}</span>
                 <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{session.role}</span>
             </div>
 
             <div className="flex items-center gap-3">
-
                 <button
                     onClick={handleLogout}
-                    className="h-10 px-4 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 hover:shadow-sm text-sm font-medium transition-all flex items-center gap-2"
+                    className="h-10 w-10 sm:w-auto sm:px-4 flex items-center justify-center gap-2 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 hover:shadow-sm text-sm font-medium transition-all"
                 >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
-                    ออกจากระบบ
+                    <span className="hidden sm:inline">ออกจากระบบ</span>
                 </button>
             </div>
         </div>
