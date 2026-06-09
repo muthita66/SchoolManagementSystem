@@ -63,28 +63,3 @@ app/
 npm run build
 npm start
 ```
-
----
-
-## การ Deploy
-
-สามารถ Deploy โปรเจกต์ผ่าน Vercel ได้ง่าย
-
-ลิงก์สำหรับ Deploy:
-https://vercel.com/new
-
-ศึกษารายละเอียดเพิ่มเติมได้ที่:
-https://nextjs.org/docs/app/building-your-application/deploying
-
----
-
-## เรียนรู้เพิ่มเติม
-
-* Next.js Documentation
-  https://nextjs.org/docs
-
-* Learn Next.js
-  https://nextjs.org/learn
-
-* GitHub Repository ของ Next.js
-  https://github.com/vercel/next.js
