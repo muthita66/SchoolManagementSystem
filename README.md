@@ -53,7 +53,6 @@ app/
 * รองรับการแสดงผลแบบ Responsive
 * พัฒนาโดยใช้ Next.js เพื่อประสิทธิภาพที่ดี
 * รองรับการพัฒนาร่วมกับ TypeScript
-* สามารถ Deploy ได้ง่ายผ่าน Vercel
 
 ---
 
@@ -61,5 +60,6 @@ app/
 
 ```bash id="2j9pgi"
 npm run build
+npm run dev
 npm start
 ```
