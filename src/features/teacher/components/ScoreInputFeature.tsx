@@ -47,7 +47,7 @@ function formatSubjectLabel(section: SectionLike) {
 }
 
 function getRoomKey(section: SectionLike) {
-    return `${txt(section?.class_level)}|${txt(section?.classroom)}`;
+    return txt(section?.class_level);
 }
 
 function getAcademicYearValue(section: SectionLike) {
@@ -64,10 +64,7 @@ function formatYearLabel(section: SectionLike) {
 
 function formatRoomLabel(section: SectionLike) {
     const level = txt(section?.class_level);
-    const room = txt(section?.classroom);
-    if (level && room && room.includes(level)) return room;
-    if (level && room) return `${level}/${room}`;
-    return room || level || "-";
+    return level || "-";
 }
 
 function formatTermLabel(section: SectionLike) {
@@ -749,8 +746,8 @@ export function ScoreInputFeature({ session }: { session: any }) {
                                             </svg>
                                         </div>
                                         <div className="min-w-0">
-                                            <div className="text-[10px] uppercase font-bold tracking-wider text-teal-100">ห้องเรียน</div>
-                                            <div className="text-sm font-bold leading-tight">ชั้น{formatRoomLabel(sectionInfo)}</div>
+                                            <div className="text-[10px] uppercase font-bold tracking-wider text-teal-100">ระดับชั้น</div>
+                                            <div className="text-sm font-bold leading-tight">{formatRoomLabel(sectionInfo)}</div>
                                         </div>
                                     </div>
 
@@ -794,7 +791,7 @@ export function ScoreInputFeature({ session }: { session: any }) {
                             </div>
                             <div>
                                 <h2 className="text-xl font-black text-slate-800 tracking-tight">ข้อมูลการบันทึกคะแนน</h2>
-                                <p className="text-xs font-medium text-slate-400">เลือกวิชาและห้องเรียนที่ต้องการจัดการ</p>
+                                <p className="text-xs font-medium text-slate-400">เลือกวิชาและระดับชั้นที่ต้องการจัดการ</p>
                             </div>
                         </div>
                         {!hasSection && (
@@ -885,7 +882,7 @@ export function ScoreInputFeature({ session }: { session: any }) {
                         <div className="space-y-2">
                             <label className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">
                                 <svg className="h-4 w-4 text-teal-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                                ห้องเรียน
+                                ระดับชั้น
                             </label>
                             <div className="relative group">
                                 <select
@@ -894,7 +891,7 @@ export function ScoreInputFeature({ session }: { session: any }) {
                                     onChange={(e) => handleRoomSelect(e.target.value)}
                                     className="w-full h-12 rounded-2xl border border-slate-200 bg-slate-50/50 pl-4 pr-10 text-sm font-bold text-slate-700 outline-none transition-all group-hover:bg-white group-hover:border-teal-400 focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 disabled:opacity-40 cursor-pointer appearance-none"
                                 >
-                                    <option value="">เลือกห้อง...</option>
+                                    <option value="">เลือกระดับชั้น...</option>
                                     {roomOptions.map((o) => (
                                         <option key={o.value} value={o.value}>{o.label}</option>
                                     ))}
@@ -916,7 +913,7 @@ export function ScoreInputFeature({ session }: { session: any }) {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2-2z" />
                         </svg>
                     </div>
-                    <h2 className="text-xl font-bold text-slate-700">เลือกวิชา ห้อง และปีการศึกษา เพื่อเริ่มบันทึกคะแนน</h2>
+                    <h2 className="text-xl font-bold text-slate-700">เลือกวิชา ระดับชั้น และปีการศึกษา เพื่อเริ่มบันทึกคะแนน</h2>
                     <p className="mt-2 text-slate-500">ระบบจะเลือกเทอมล่าสุดให้อัตโนมัติภายใต้ปีการศึกษาที่เลือก</p>
                 </section>
             ) : loading ? (

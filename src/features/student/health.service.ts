@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
 /**
@@ -8,6 +9,21 @@ export const HealthService = {
     async getHealthData(student_id: number) {
         if (!student_id) return null;
 
+        const toDateKey = (date: Date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        const today = new Date();
+        const weekStart = new Date(today);
+        weekStart.setHours(0, 0, 0, 0);
+        weekStart.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        weekEnd.setHours(23, 59, 59, 999);
+
         // 1. Health Profile (Blood Type)
         const profile = await prisma.student_health_profiles.findUnique({
             where: { student_id }
@@ -15,13 +31,22 @@ export const HealthService = {
 
         // 2. Latest Checkup (Weight, Height, Vision)
         const checkups = await prisma.$queryRaw<any[]>`
-            SELECT id, weight, height, vision_left, vision_right, checkup_date
+            SELECT id, weight, height, vision_left, vision_right, teeth_brushing, milk_drinking, checkup_date
             FROM student_health_checkups
             WHERE student_id = ${student_id}
             ORDER BY checkup_date DESC
             LIMIT 1
         `;
         const checkup = checkups[0] || null;
+
+        const weeklyHabitRecords = await prisma.$queryRaw<any[]>`
+            SELECT TO_CHAR(checkup_date, 'YYYY-MM-DD') as date, teeth_brushing, milk_drinking
+            FROM student_health_checkups
+            WHERE student_id = ${student_id}
+            AND checkup_date >= ${weekStart}
+            AND checkup_date <= ${weekEnd}
+            ORDER BY checkup_date ASC
+        `;
 
         // 3. Allergies
         const allergiesList = await (prisma as any).student_allergies.findMany({
@@ -74,6 +99,17 @@ export const HealthService = {
             chronic_illness: chronicIllnessText || "",
             vision_left: checkup?.vision_left || null,
             vision_right: checkup?.vision_right || null,
+            teeth_brushing: checkup?.teeth_brushing || null,
+            milk_drinking: checkup?.milk_drinking || null,
+            weekly_habits: weeklyHabitRecords.map((record: any) => ({
+                date: record.date,
+                teeth_brushing: record.teeth_brushing || "",
+                milk_drinking: record.milk_drinking || "",
+            })),
+            week_range: {
+                start: toDateKey(weekStart),
+                end: toDateKey(weekEnd),
+            },
             vaccinations,
             fitness,
         };
@@ -91,8 +127,17 @@ export const HealthService = {
             });
         }
 
-        // 2. Add/Update checkup record (Weight, Height, Vision)
-        if (data.weight || data.height || data.vision_left || data.vision_right) {
+        // 2. Add/Update checkup record (Weight, Height, Vision, Daily Habits)
+        const checkupFields = [
+            { key: 'weight', column: 'weight', value: data.weight === null ? null : (data.weight !== undefined ? Number(data.weight) : undefined) },
+            { key: 'height', column: 'height', value: data.height === null ? null : (data.height !== undefined ? Number(data.height) : undefined) },
+            { key: 'vision_left', column: 'vision_left', value: data.vision_left ?? undefined },
+            { key: 'vision_right', column: 'vision_right', value: data.vision_right ?? undefined },
+            { key: 'teeth_brushing', column: 'teeth_brushing', value: data.teeth_brushing ?? undefined },
+            { key: 'milk_drinking', column: 'milk_drinking', value: data.milk_drinking ?? undefined },
+        ].filter((field) => field.value !== undefined);
+
+        if (checkupFields.length > 0) {
             const today = new Date();
             const startOfDay = new Date(today);
             startOfDay.setHours(0, 0, 0, 0);
@@ -108,29 +153,36 @@ export const HealthService = {
             `;
             const existing = existingRecords[0] || null;
 
-            const updateFields = {
-                weight: data.weight ? Number(data.weight) : undefined,
-                height: data.height ? Number(data.height) : undefined,
-                vision_left: data.vision_left || undefined,
-                vision_right: data.vision_right || undefined
-            };
-
             if (existing) {
-                await prisma.$executeRaw`
+                const setClauses = checkupFields.map((field) =>
+                    Prisma.sql`${Prisma.raw(field.column)} = ${field.value}`
+                );
+
+                await prisma.$executeRaw(Prisma.sql`
                     UPDATE student_health_checkups
-                    SET weight = ${updateFields.weight},
-                        height = ${updateFields.height},
-                        vision_left = ${updateFields.vision_left},
-                        vision_right = ${updateFields.vision_right}
+                    SET ${Prisma.join(setClauses)}
                     WHERE id = ${existing.id}
-                `;
+                `);
             } else {
-                await prisma.$executeRaw`
+                const insertColumns = [
+                    Prisma.raw('student_id'),
+                    Prisma.raw('checkup_date'),
+                    ...checkupFields.map((field) => Prisma.raw(field.column)),
+                    Prisma.raw('recorded_by'),
+                ];
+                const insertValues = [
+                    Prisma.sql`${student_id}`,
+                    Prisma.sql`${new Date()}`,
+                    ...checkupFields.map((field) => Prisma.sql`${field.value}`),
+                    Prisma.sql`${student_id}`,
+                ];
+
+                await prisma.$executeRaw(Prisma.sql`
                     INSERT INTO student_health_checkups 
-                        (student_id, checkup_date, weight, height, vision_left, vision_right, recorded_by)
+                        (${Prisma.join(insertColumns)})
                     VALUES 
-                        (${student_id}, ${new Date()}, ${data.weight ? Number(data.weight) : null}, ${data.height ? Number(data.height) : null}, ${data.vision_left || null}, ${data.vision_right || null}, ${student_id})
-                `;
+                        (${Prisma.join(insertValues)})
+                `);
             }
         }
 

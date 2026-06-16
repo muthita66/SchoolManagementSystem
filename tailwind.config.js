@@ -7,7 +7,12 @@ module.exports = {
         "./src/features/**/*.{js,ts,jsx,tsx,mdx}",
     ],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                sans: ['Sarabun', 'TH Sarabun New', 'sans-serif'],
+                sarabun: ['Sarabun', 'TH Sarabun New', 'sans-serif'],
+            },
+        },
     },
     plugins: [],
 };

@@ -387,7 +387,7 @@ export function ScoresFeature({ session }: { session: any }) {
 
             {/* Filters */}
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3 items-end">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
                     <div className="md:col-span-2 lg:col-span-1">
                         <label className="block text-xs font-medium text-slate-500 mb-1">ค้นหา</label>
                         <div className="relative">
@@ -430,13 +430,7 @@ export function ScoresFeature({ session }: { session: any }) {
                             {levels.map((l) => (<option key={l} value={l}>{l}</option>))}
                         </select>
                     </div>
-                    <div>
-                        <label className="block text-xs font-medium text-slate-500 mb-1">ห้อง</label>
-                        <select value={classroomFilter} onChange={(e) => setClassroomFilter(e.target.value)} className="w-full rounded-xl border border-slate-200 px-2 py-2 outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50/50 text-sm">
-                            <option value="all">ทั้งหมด</option>
-                            {classrooms.map((c) => (<option key={c} value={c}>{c}</option>))}
-                        </select>
-                    </div>
+
                 </div>
             </section>
 
@@ -451,9 +445,9 @@ export function ScoresFeature({ session }: { session: any }) {
                         <h2 className="font-bold text-slate-800">รายการรายวิชา / Section</h2>
                         <p className="text-sm text-slate-500">จำนวน {filteredSubjects.length} รายการ</p>
                     </div>
-                    {(search || yearFilter !== "all" || semesterFilter !== "all" || levelFilter !== "all" || classroomFilter !== "all" || subjectFilter !== "all") && (
+                    {(search || yearFilter !== "all" || semesterFilter !== "all" || levelFilter !== "all" || subjectFilter !== "all") && (
                         <button
-                            onClick={() => { setSearch(""); setYearFilter("all"); setSemesterFilter("all"); setLevelFilter("all"); setClassroomFilter("all"); setSubjectFilter("all"); }}
+                            onClick={() => { setSearch(""); setYearFilter("all"); setSemesterFilter("all"); setLevelFilter("all"); setSubjectFilter("all"); }}
                             className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
                         >
                             ล้างตัวกรอง

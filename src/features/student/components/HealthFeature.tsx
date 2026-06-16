@@ -72,6 +72,8 @@ export function HealthFeature({ session }: HealthFeatureProps) {
         blood_type: "",
         allergies: "",
         chronic_illness: "",
+        teeth_brushing: "",
+        milk_drinking: "",
         vaccinations: [] as { name: string, date: string, status: string }[]
     });
 
@@ -83,6 +85,8 @@ export function HealthFeature({ session }: HealthFeatureProps) {
                 blood_type: healthQuery.data.blood_type || "",
                 allergies: healthQuery.data.allergies || "",
                 chronic_illness: healthQuery.data.chronic_illness || "",
+                teeth_brushing: healthQuery.data.teeth_brushing || "",
+                milk_drinking: healthQuery.data.milk_drinking || "",
                 vaccinations: Array.isArray(healthQuery.data.vaccinations) ? healthQuery.data.vaccinations : []
             });
         }
@@ -92,7 +96,7 @@ export function HealthFeature({ session }: HealthFeatureProps) {
     const isLoading = healthQuery.isLoading;
     const fetchError = healthQuery.error ? (healthQuery.error as any).message : null;
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
@@ -168,6 +172,38 @@ export function HealthFeature({ session }: HealthFeatureProps) {
 
     const fitnessList = healthData?.fitness || [];
     const vaccinesList = healthData?.vaccinations || [];
+    const weeklyHabitRows = useMemo(() => {
+        const toDateKey = (date: Date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        };
+        const records: { date: string; teeth_brushing?: string; milk_drinking?: string }[] = Array.isArray(healthData?.weekly_habits) ? healthData.weekly_habits : [];
+        const recordByDate = new Map<string, { date: string; teeth_brushing?: string; milk_drinking?: string }>(
+            records.map((record) => [record.date, record])
+        );
+        const today = new Date();
+        const weekStart = new Date(today);
+        weekStart.setHours(0, 0, 0, 0);
+        weekStart.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+        const dayLabels = ["จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์", "อาทิตย์"];
+
+        return dayLabels.map((dayLabel, index) => {
+            const date = new Date(weekStart);
+            date.setDate(weekStart.getDate() + index);
+            const dateKey = toDateKey(date);
+            const record = recordByDate.get(dateKey);
+
+            return {
+                dayLabel,
+                date: dateKey,
+                displayDate: date.toLocaleDateString("th-TH", { day: "numeric", month: "short" }),
+                teeth_brushing: record?.teeth_brushing || "-",
+                milk_drinking: record?.milk_drinking || "-",
+            };
+        });
+    }, [healthData?.weekly_habits]);
 
     if (isLoading) {
         return (
@@ -293,6 +329,35 @@ export function HealthFeature({ session }: HealthFeatureProps) {
                                     rows={3}
                                     className="w-full border border-slate-300 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 resize-none"
                                 />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">การแปรงฟันวันนี้</label>
+                                <select
+                                    name="teeth_brushing"
+                                    value={formData.teeth_brushing}
+                                    onChange={handleInputChange}
+                                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white"
+                                >
+                                    <option value="">เลือกสถานะ</option>
+                                    <option value="แปรงแล้ว">แปรงแล้ว</option>
+                                    <option value="ไม่ได้แปรง">ไม่ได้แปรง</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">การดื่มนมวันนี้</label>
+                                <select
+                                    name="milk_drinking"
+                                    value={formData.milk_drinking}
+                                    onChange={handleInputChange}
+                                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white"
+                                >
+                                    <option value="">เลือกสถานะ</option>
+                                    <option value="ดื่มแล้ว">ดื่มแล้ว</option>
+                                    <option value="ไม่ได้ดื่ม">ไม่ได้ดื่ม</option>
+                                </select>
                             </div>
                         </div>
 
@@ -423,6 +488,57 @@ export function HealthFeature({ session }: HealthFeatureProps) {
                                 <div className="text-slate-500 text-xs font-medium mb-1">ส่วนสูง (ซม.)</div>
                                 <div className="text-2xl font-bold tracking-tight text-slate-800">{healthData?.height || "-"}</div>
                             </div>
+                        </div>
+                    </section>
+
+                    <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 print:shadow-none print:border-none print:p-0">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 print:mb-2">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-cyan-50 text-cyan-600 rounded-lg print:hidden">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3M5 11h14M7 21h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-slate-800 print:text-sm">ประวัติแปรงฟันและดื่มนมประจำสัปดาห์</h3>
+                                    <p className="text-sm text-slate-500 print:hidden">แสดงข้อมูลวันจันทร์ถึงวันอาทิตย์ของสัปดาห์นี้</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 px-3 py-1.5 rounded-lg transition-colors border border-teal-200 print:hidden"
+                            >
+                                บันทึกข้อมูลสุขภาพ
+                            </button>
+                        </div>
+
+                        <div className="overflow-x-auto rounded-xl border border-slate-200 print:border-slate-800">
+                            <table className="w-full text-sm text-left">
+                                <thead className="text-xs text-slate-500 bg-slate-50 border-b border-slate-200 print:border-slate-800 print:text-slate-800">
+                                    <tr>
+                                        <th className="px-4 py-3 font-medium">วัน</th>
+                                        <th className="px-4 py-3 font-medium text-center">วันที่</th>
+                                        <th className="px-4 py-3 font-medium text-center">การแปรงฟัน</th>
+                                        <th className="px-4 py-3 font-medium text-center">การดื่มนม</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 print:divide-slate-800">
+                                    {weeklyHabitRows.map((row) => (
+                                        <tr key={row.date} className="hover:bg-slate-50 transition-colors">
+                                            <td className="px-4 py-3 font-medium text-slate-800 print:py-1.5">{row.dayLabel}</td>
+                                            <td className="px-4 py-3 text-center print:py-1.5">{row.displayDate}</td>
+                                            <td className="px-4 py-3 text-center print:py-1.5">
+                                                <span className={row.teeth_brushing === "-" ? "text-slate-400" : "font-semibold text-slate-800"}>
+                                                    {row.teeth_brushing}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 text-center print:py-1.5">
+                                                <span className={row.milk_drinking === "-" ? "text-slate-400" : "font-semibold text-slate-800"}>
+                                                    {row.milk_drinking}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </section>
 

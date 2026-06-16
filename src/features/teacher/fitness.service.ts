@@ -85,11 +85,10 @@ export const TeacherFitnessService = {
         try {
             const studentIds = students.map((s: any) => s.id);
             if (studentIds.length > 0) {
-                // Use join to string for IN clause or iterate
                 const idsString = studentIds.join(',');
-                healthRecords = await prisma.$queryRawUnsafe<any[]>(
-                    `SELECT id, student_id, weight, height, checkup_date, created_at FROM student_health_checkups WHERE student_id IN (${idsString})`
-                );
+                healthRecords = await prisma.$queryRawUnsafe<any[]>(`
+                    SELECT id, student_id, weight, height, teeth_brushing, milk_drinking, checkup_date, created_at FROM student_health_checkups WHERE student_id IN (${idsString})
+                `);
             } else {
                 healthRecords = [];
             }
@@ -143,7 +142,7 @@ export const TeacherFitnessService = {
             };
         });
 
-        let recordsMap: Record<number, { weight?: number, height?: number, fitness: Record<string, any> }> = {};
+        let recordsMap: Record<number, { weight?: number, height?: number, teeth_brushing?: string | null, milk_drinking?: string | null, fitness: Record<string, any> }> = {};
         
         let semesterId: number | null = null;
         if (year && semester) {
@@ -166,7 +165,7 @@ export const TeacherFitnessService = {
                  try {
                      const idsStr = studentIds.join(',');
                      healthRecords = await prisma.$queryRawUnsafe<any[]>(`
-                         SELECT student_id, weight, height 
+                         SELECT student_id, weight, height, teeth_brushing, milk_drinking 
                          FROM student_health_checkups 
                          WHERE semester_id = $1 AND student_id IN (${idsStr})
                      `, semesterId);
@@ -190,6 +189,8 @@ export const TeacherFitnessService = {
                      if (!recordsMap[h.student_id]) recordsMap[h.student_id] = { fitness: {} };
                      recordsMap[h.student_id].weight = h.weight != null ? Number(h.weight) : undefined;
                      recordsMap[h.student_id].height = h.height != null ? Number(h.height) : undefined;
+                     recordsMap[h.student_id].teeth_brushing = h.teeth_brushing;
+                     recordsMap[h.student_id].milk_drinking = h.milk_drinking;
                  });
                  
                  fitnessRecords.forEach(f => {
@@ -206,7 +207,12 @@ export const TeacherFitnessService = {
 
         const finalMapped = mapped.map((s: any) => ({
             ...s,
-            existing_health: recordsMap[s.id] ? { weight: recordsMap[s.id].weight, height: recordsMap[s.id].height } : null,
+            existing_health: recordsMap[s.id] ? { 
+                weight: recordsMap[s.id].weight, 
+                height: recordsMap[s.id].height,
+                teeth_brushing: (recordsMap[s.id] as any).teeth_brushing,
+                milk_drinking: (recordsMap[s.id] as any).milk_drinking
+            } : null,
             existing_fitness: recordsMap[s.id]?.fitness || {},
         }));
 
@@ -383,7 +389,7 @@ export const TeacherFitnessService = {
         `, parseInt(id as any));
     },
     async saveFitnessTest(data: any) {
-        const { record_type, student_id, teacher_id, test_name, result_value, standard_value, status, year, semester, criteria_id, weight, height } = data;
+        const { record_type, student_id, teacher_id, test_name, result_value, standard_value, status, year, semester, criteria_id, weight, height, teeth_brushing, milk_drinking } = data;
 
         const sId = Number(student_id);
         const tId = teacher_id ? Number(teacher_id) : null;
@@ -407,12 +413,14 @@ export const TeacherFitnessService = {
         // 2. Health Checkups
         if (record_type === 'health' || test_name === "น้ำหนัก (Weight)" || test_name === "ส่วนสูง (Height)") {
             const existingHealth = await prisma.$queryRawUnsafe<any[]>(`
-                SELECT id, weight, height FROM student_health_checkups
+                SELECT id, weight, height, teeth_brushing, milk_drinking FROM student_health_checkups
                 WHERE student_id = $1 AND semester_id = $2
             `, sId, semesterId);
 
             let w = weight !== undefined && weight !== null ? Number(weight) : null;
             let h = height !== undefined && height !== null ? Number(height) : null;
+            let tb = teeth_brushing !== undefined ? teeth_brushing : null;
+            let md = milk_drinking !== undefined ? milk_drinking : null;
 
             // Legacy fallback
             if (test_name === "น้ำหนัก (Weight)") w = parseFloat(result_value) || 0;
@@ -422,17 +430,19 @@ export const TeacherFitnessService = {
                 // Retain old value if new value is not provided
                 if (w === null) w = existingHealth[0].weight ? Number(existingHealth[0].weight) : null;
                 if (h === null) h = existingHealth[0].height ? Number(existingHealth[0].height) : null;
+                if (tb === null) tb = existingHealth[0].teeth_brushing;
+                if (md === null) md = existingHealth[0].milk_drinking;
 
                 await prisma.$executeRawUnsafe(`
                     UPDATE student_health_checkups
-                    SET weight = $1, height = $2, checkup_date = CURRENT_TIMESTAMP, recorded_by = $3
-                    WHERE id = $4
-                `, w, h, tId, existingHealth[0].id);
+                    SET weight = $1, height = $2, teeth_brushing = $3, milk_drinking = $4, checkup_date = CURRENT_TIMESTAMP, recorded_by = $5
+                    WHERE id = $6
+                `, w, h, tb, md, tId, existingHealth[0].id);
             } else {
                 await prisma.$executeRawUnsafe(`
-                    INSERT INTO student_health_checkups (student_id, semester_id, checkup_date, weight, height, recorded_by)
-                    VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5)
-                `, sId, semesterId, w, h, tId);
+                    INSERT INTO student_health_checkups (student_id, semester_id, checkup_date, weight, height, teeth_brushing, milk_drinking, recorded_by)
+                    VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7)
+                `, sId, semesterId, w, h, tb, md, tId);
             }
             return { success: true };
         }

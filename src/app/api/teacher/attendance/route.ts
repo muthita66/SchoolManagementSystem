@@ -4,14 +4,22 @@ import { successResponse, errorResponse } from '@/lib/api-response';
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
-        const teacher_id = Number(searchParams.get('teacher_id'));
-        const section_id = Number(searchParams.get('section_id'));
+                const teacher_id = Number(searchParams.get('teacher_id'));
+        const action = searchParams.get('action');
+
+        if (action === 'advisor-classrooms') {
+            if (!teacher_id || Number.isNaN(teacher_id)) return errorResponse('teacher_id required', 400);
+            const classrooms = await TeacherAttendanceService.getAdvisorClassrooms(teacher_id);
+            return successResponse(classrooms);
+        }
+
+        const classroom_id = Number(searchParams.get('classroom_id') || searchParams.get('section_id'));
         const date = searchParams.get('date') || new Date().toISOString().slice(0, 10);
 
         if (!teacher_id || Number.isNaN(teacher_id)) return errorResponse('teacher_id required', 400);
-        if (!section_id || Number.isNaN(section_id)) return errorResponse('section_id required', 400);
+        if (!classroom_id || Number.isNaN(classroom_id)) return errorResponse('classroom_id or section_id required', 400);
 
-        const data = await TeacherAttendanceService.getAttendanceList(teacher_id, section_id, date);
+        const data = await TeacherAttendanceService.getAttendanceList(teacher_id, classroom_id, date);
         return successResponse(data);
     } catch (error: any) {
         return errorResponse('Failed', 500, error.message);

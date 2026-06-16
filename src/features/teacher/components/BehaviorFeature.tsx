@@ -339,30 +339,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                             </select>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-400 uppercase ml-2 block">ห้อง</label>
-                            <select
-                                value={selectedRoom}
-                                onChange={(e) => setSelectedRoom(e.target.value)}
-                                disabled={!selectedLevel}
-                                className="w-44 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-medium text-slate-700 disabled:opacity-50"
-                            >
-                                <option value="">ทั้งหมด</option>
-                                {filteredClassrooms.map(c => {
-                                    const levelName = levels.find(l => l.id === Number(selectedLevel))?.name || "";
-                                    let displayName = c.room_name;
-                                    if (levelName && displayName.startsWith(levelName + "/")) {
-                                        displayName = displayName.substring(levelName.length + 1);
-                                    } else if (displayName.includes("/")) {
-                                        displayName = displayName.split("/").pop();
-                                    }
 
-                                    return (
-                                        <option key={c.id} value={c.id}>{displayName}</option>
-                                    );
-                                })}
-                            </select>
-                        </div>
 
                         <div className="flex-1" />
 

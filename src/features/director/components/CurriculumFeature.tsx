@@ -364,13 +364,8 @@ export function CurriculumFeature() {
                         {filterClassLevelOptions.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                 </div>
-                <div>
-                    <label className="text-xs text-slate-500 block mb-1">ห้อง</label>
-                    <select className="px-3 py-2 border border-slate-200 rounded-xl bg-white" value={filterRoom} onChange={(e) => setFilterRoom(e.target.value)}>
-                        <option value="">ทั้งหมด</option>
-                        {filterRoomOptions.map(o => <option key={o} value={o}>{roomOnlyLabel(o, filterClassLevel) || o}</option>)}
-                    </select>
-                </div>
+
+
                 <button onClick={load} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors">
                     ดึงข้อมูล
                 </button>

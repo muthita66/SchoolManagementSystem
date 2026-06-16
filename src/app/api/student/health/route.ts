@@ -10,6 +10,8 @@ const updateHealthSchema = z.object({
     blood_type: z.string().nullable().optional(),
     allergies: z.string().nullable().optional(),
     chronic_illness: z.string().nullable().optional(),
+    teeth_brushing: z.string().nullable().optional(),
+    milk_drinking: z.string().nullable().optional(),
     vaccinations: z.array(z.object({
         name: z.string(),
         date: z.string().nullable().optional(),

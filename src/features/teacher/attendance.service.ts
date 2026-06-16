@@ -1,25 +1,48 @@
 import { prisma } from '@/lib/prisma';
 
-type AttendanceRecordInput = { enrollment_id: number; status: string; remark?: string };
-type UiAttendanceRecordInput = { student_id: number; section_id: number; date: string; status: string; remark?: string };
+type AttendanceRecordInput = { enrollment_id?: number; student_id?: number; status: string; remark?: string };
+type UiAttendanceRecordInput = { student_id: number; classroom_id?: number; section_id?: number; date: string; status: string; remark?: string };
 
 export const TeacherAttendanceService = {
-    async getAttendanceList(teacher_id: number, teaching_assignment_id: number, date: string) {
-        // Get students enrolled in this teaching assignment
-        const enrollments = await prisma.enrollments.findMany({
-            where: { teaching_assignment_id },
+    async getAdvisorClassrooms(teacher_id: number) {
+        const advisors = await prisma.classroom_advisors.findMany({
+            where: { teacher_id },
+            include: {
+                classrooms: {
+                    include: {
+                        levels: true
+                    }
+                }
+            }
+        });
+
+        return advisors.map(a => {
+            const room = a.classrooms;
+            if (!room) return null;
+            return {
+                classroom_id: room.id,
+                class_level: room.levels?.name || '',
+                room: room.room_name,
+                label: room.levels ? `${room.levels.name}/${room.room_name}` : room.room_name,
+            };
+        }).filter(Boolean);
+    },
+
+    async getAttendanceList(teacher_id: number, classroom_id: number, date: string) {
+        // Get students in this classroom
+        const classroomStudents = await prisma.classroom_students.findMany({
+            where: { classroom_id },
             include: {
                 students: {
                     include: { name_prefixes: true }
                 }
-            },
-            distinct: ['student_id']
+            }
         });
 
         // Find or create attendance session for this date
         let session = await prisma.attendance_sessions.findFirst({
             where: {
-                teaching_assignment_id,
+                classroom_id,
                 session_date: new Date(date),
             }
         });
@@ -32,12 +55,11 @@ export const TeacherAttendanceService = {
             });
         }
 
-        return enrollments.map(e => {
-            const student = e.students;
+        return classroomStudents.map(cs => {
+            const student = cs.students;
             if (!student) return null;
-            const record = existingRecords.find(r => r.enrollment_id === e.id);
+            const record = existingRecords.find(r => r.student_id === student.id);
             return {
-                enrollment_id: e.id,
                 student_id: student.id,
                 student_code: student.student_code,
                 prefix: student.name_prefixes?.prefix_name || '',
@@ -51,61 +73,49 @@ export const TeacherAttendanceService = {
     },
 
     async saveAttendance(
-        teaching_assignment_id: number | UiAttendanceRecordInput[],
+        classroom_id: number | UiAttendanceRecordInput[],
         date?: string,
         records?: AttendanceRecordInput[]
     ): Promise<{ success: boolean; count?: number }> {
-        if (Array.isArray(teaching_assignment_id)) {
-            const uiRecords = teaching_assignment_id;
+        if (Array.isArray(classroom_id)) {
+            const uiRecords = classroom_id;
             if (uiRecords.length === 0) return { success: true, count: 0 };
 
             const first = uiRecords[0];
-            const sectionId = Number(first.section_id);
+            const targetId = Number(first.classroom_id || first.section_id);
             const sessionDate = String(first.date || '').trim();
-            if (!sectionId || Number.isNaN(sectionId)) throw new Error('section_id required');
+            if (!targetId || Number.isNaN(targetId)) throw new Error('classroom_id or section_id required');
             if (!sessionDate) throw new Error('date required');
-
-            const enrollments = await prisma.enrollments.findMany({
-                where: {
-                    teaching_assignment_id: sectionId,
-                    student_id: { in: uiRecords.map((r) => Number(r.student_id)).filter((n) => Number.isFinite(n)) },
-                },
-                select: { id: true, student_id: true },
-            });
-            const enrollmentMap = new Map<number, number>();
-            enrollments.forEach((e) => enrollmentMap.set(e.student_id, e.id));
 
             const normalizedRecords: AttendanceRecordInput[] = [];
             uiRecords.forEach((r) => {
-                    const enrollment_id = enrollmentMap.get(Number(r.student_id));
-                    if (!enrollment_id) return;
-                    normalizedRecords.push({
-                        enrollment_id,
-                        status: String(r.status || 'present'),
-                        remark: r.remark,
-                    });
+                normalizedRecords.push({
+                    student_id: Number(r.student_id),
+                    status: String(r.status || 'present'),
+                    remark: r.remark,
                 });
+            });
 
-            return this.saveAttendance(sectionId, sessionDate, normalizedRecords);
+            return this.saveAttendanceByStudent(targetId, sessionDate, normalizedRecords);
         }
 
-        const taId = Number(teaching_assignment_id);
-        if (!taId || Number.isNaN(taId)) throw new Error('teaching_assignment_id required');
+        const taId = Number(classroom_id);
+        if (!taId || Number.isNaN(taId)) throw new Error('classroom_id required');
         if (!date) throw new Error('date required');
         const normalized = Array.isArray(records) ? records : [];
 
-        return this.saveAttendanceByEnrollment(taId, date, normalized);
+        return this.saveAttendanceByStudent(taId, date, normalized);
     },
 
-    async saveAttendanceByEnrollment(
-        teaching_assignment_id: number,
+    async saveAttendanceByStudent(
+        classroom_id: number,
         date: string,
         records: AttendanceRecordInput[]
     ) {
         // Find or create session
         let session = await prisma.attendance_sessions.findFirst({
             where: {
-                teaching_assignment_id,
+                classroom_id,
                 session_date: new Date(date),
             }
         });
@@ -113,7 +123,7 @@ export const TeacherAttendanceService = {
         if (!session) {
             session = await prisma.attendance_sessions.create({
                 data: {
-                    teaching_assignment_id,
+                    classroom_id,
                     session_date: new Date(date),
                 }
             });
@@ -121,10 +131,11 @@ export const TeacherAttendanceService = {
 
         // Upsert records
         for (const rec of records) {
+            if (!rec.student_id) continue;
             const existing = await prisma.attendance_records.findFirst({
                 where: {
                     attendance_session_id: session.id,
-                    enrollment_id: rec.enrollment_id,
+                    student_id: rec.student_id,
                 }
             });
 
@@ -137,7 +148,7 @@ export const TeacherAttendanceService = {
                 await prisma.attendance_records.create({
                     data: {
                         attendance_session_id: session.id,
-                        enrollment_id: rec.enrollment_id,
+                        student_id: rec.student_id,
                         status: rec.status,
                         remark: rec.remark || null,
                     }

@@ -306,8 +306,11 @@ export const TeacherApiService = {
     },
 
     // --- Attendance ---
-    async getAttendanceStudents(teacher_id: number, section_id: number, date: string) {
-        return fetchApi<any[]>(`/api/teacher/attendance?action=list&teacher_id=${teacher_id}&section_id=${section_id}&date=${date}`);
+    async getAdvisorClassrooms(teacher_id: number) {
+        return fetchApi<any[]>(`/api/teacher/attendance?action=advisor-classrooms&teacher_id=${teacher_id}`);
+    },
+    async getAttendanceStudents(teacher_id: number, classroom_id: number, date: string) {
+        return fetchApi<any[]>(`/api/teacher/attendance?teacher_id=${teacher_id}&classroom_id=${classroom_id}&date=${date}`);
     },
     async saveAttendance(data: any[]) {
         return fetchApi<any>('/api/teacher/attendance', {

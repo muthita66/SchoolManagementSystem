@@ -19,7 +19,7 @@ export function FitnessFeature({ session }: { session: any }) {
     const [hasSearched, setHasSearched] = useState(false);
     const [classLevel, setClassLevel] = useState("มัธยมศึกษาปีที่ 1");
     const [room, setRoom] = useState("1");
-    const [recordType, setRecordType] = useState<"weight_height" | "fitness" | "all">("weight_height");
+    const [recordType, setRecordType] = useState<"weight_height" | "fitness" | "all" | "teeth_brushing" | "milk_drinking">("weight_height");
     const [testName, setTestName] = useState("วิ่ง 50 เมตร");
     const [year, setYear] = useState(getCurrentAcademicYearBE());
     const [academicYears, setAcademicYears] = useState<any[]>([]);
@@ -136,6 +136,8 @@ export function FitnessFeature({ session }: { session: any }) {
                 if (s.existing_health) {
                     initialResults[s.id].weight = s.existing_health.weight;
                     initialResults[s.id].height = s.existing_health.height;
+                    initialResults[s.id].teeth_brushing = s.existing_health.teeth_brushing;
+                    initialResults[s.id].milk_drinking = s.existing_health.milk_drinking;
                 }
                 if (s.existing_fitness && testName && s.existing_fitness[testName]) {
                     initialResults[s.id].result = s.existing_fitness[testName].result;
@@ -174,17 +176,21 @@ export function FitnessFeature({ session }: { session: any }) {
             const res = results[s.id];
             if (!res) return;
 
-            // Save weight/height if present in weight_height OR all mode
-            if ((recordType === "weight_height" || recordType === "all") && (res.weight || res.height)) {
-                payloads.push({
-                    record_type: 'health',
-                    student_id: s.id,
-                    teacher_id: session.id,
-                    weight: res.weight ? parseFloat(res.weight) : null,
-                    height: res.height ? parseFloat(res.height) : null,
-                    year,
-                    semester: typeof semester === "number" ? semester : 1,
-                });
+            // Save health if present in weight_height, teeth_brushing, milk_drinking, OR all mode
+            if (["weight_height", "all", "teeth_brushing", "milk_drinking"].includes(recordType)) {
+                if (res.weight || res.height || res.teeth_brushing || res.milk_drinking) {
+                    payloads.push({
+                        record_type: 'health',
+                        student_id: s.id,
+                        teacher_id: session.id,
+                        weight: res.weight ? parseFloat(res.weight) : null,
+                        height: res.height ? parseFloat(res.height) : null,
+                        teeth_brushing: res.teeth_brushing || null,
+                        milk_drinking: res.milk_drinking || null,
+                        year,
+                        semester: typeof semester === "number" ? semester : 1,
+                    });
+                }
             }
 
             // Save fitness if present in fitness OR all mode
@@ -259,14 +265,8 @@ export function FitnessFeature({ session }: { session: any }) {
                         ))}
                     </select>
                 </div>
-                <div>
-                    <label className="text-xs text-slate-500 font-medium block mb-1">ห้อง</label>
-                    <select className="px-4 py-2 border border-slate-200 rounded-xl outline-none min-w-[100px]" value={room} onChange={(e) => setRoom(e.target.value)}>
-                        {advisorClasses.filter(c => c.class_level === classLevel).map(c => c.room).map(r => (
-                            <option key={r} value={r}>{r}</option>
-                        ))}
-                    </select>
-                </div>
+
+
 
                 <div>
                     <label className="text-xs text-slate-500 font-medium block mb-1">ปีการศึกษา</label>
@@ -306,6 +306,8 @@ export function FitnessFeature({ session }: { session: any }) {
                         <option value="all">ทั้งหมด</option>
                         <option value="weight_height">บันทึกน้ำหนักส่วนสูง</option>
                         <option value="fitness">บันทึกสมรรถภาพ</option>
+                        <option value="teeth_brushing">บันทึกการแปรงฟัน</option>
+                        <option value="milk_drinking">บันทึกการดื่มนม</option>
                     </select>
                 </div>
                 {recordType === "fitness" && (
@@ -397,6 +399,14 @@ export function FitnessFeature({ session }: { session: any }) {
                                         <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600">ผลทดสอบ</th>
                                         <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600">เกณฑ์มาตรฐาน</th>
                                         <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600">สถานะ</th>
+                                    </>
+                                ) : recordType === "teeth_brushing" ? (
+                                    <>
+                                        <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600">สถานะการแปรงฟัน</th>
+                                    </>
+                                ) : recordType === "milk_drinking" ? (
+                                    <>
+                                        <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600">สถานะการดื่มนม</th>
                                     </>
                                 ) : (
                                     <>
@@ -532,6 +542,34 @@ export function FitnessFeature({ session }: { session: any }) {
                                                         }`}>
                                                         {res.status || "-"}
                                                     </span>
+                                                </td>
+                                            </>
+                                        ) : recordType === "teeth_brushing" ? (
+                                            <>
+                                                <td className="px-4 py-3 text-center">
+                                                    <select
+                                                        className="w-full max-w-[120px] px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm"
+                                                        value={res.teeth_brushing || ""}
+                                                        onChange={(e) => setResults({ ...results, [s.id]: { ...res, teeth_brushing: e.target.value } })}
+                                                    >
+                                                        <option value="">- เลือก -</option>
+                                                        <option value="แปรงแล้ว">แปรงแล้ว</option>
+                                                        <option value="ยังไม่แปรง">ยังไม่แปรง</option>
+                                                    </select>
+                                                </td>
+                                            </>
+                                        ) : recordType === "milk_drinking" ? (
+                                            <>
+                                                <td className="px-4 py-3 text-center">
+                                                    <select
+                                                        className="w-full max-w-[120px] px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm"
+                                                        value={res.milk_drinking || ""}
+                                                        onChange={(e) => setResults({ ...results, [s.id]: { ...res, milk_drinking: e.target.value } })}
+                                                    >
+                                                        <option value="">- เลือก -</option>
+                                                        <option value="ดื่มแล้ว">ดื่มแล้ว</option>
+                                                        <option value="ยังไม่ดื่ม">ยังไม่ดื่ม</option>
+                                                    </select>
                                                 </td>
                                             </>
                                         ) : (
