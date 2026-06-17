@@ -227,7 +227,6 @@ export const DirectorDashboardService = {
 
         const topRooms = topRoomsRaw.map((r: any) => ({
             class_level: r.class_level,
-            room: r.room,
             count: Number(r.count),
             avg_score: Number(r.avg_score || 0),
         }));
@@ -630,7 +629,7 @@ async function getAttendanceSummary(studentWhere: any) {
     return summary;
 }
 
-// --- Helper: Top Rooms by GPA ---
+// --- Helper: Top Levels by GPA ---
 async function getTopRooms(studentWhere: any) {
     const studentsWithGrades = await (prisma.students as any).findMany({
         where: studentWhere,
@@ -649,17 +648,17 @@ async function getTopRooms(studentWhere: any) {
         }
     });
 
-    const roomStats = new Map<string, { count: number; totalGpa: number; studentCount: Set<number> }>();
+    const levelStats = new Map<string, { count: number; totalGpa: number; studentCount: Set<number> }>();
 
     studentsWithGrades.forEach((s: any) => {
         const room = s.classroom_students?.[0]?.classrooms;
         if (!room) return;
         
-        const key = `${room.levels?.name || ''}|${room.room_name}`;
-        if (!roomStats.has(key)) {
-            roomStats.set(key, { count: 0, totalGpa: 0, studentCount: new Set() });
+        const key = room.levels?.name || '';
+        if (!levelStats.has(key)) {
+            levelStats.set(key, { count: 0, totalGpa: 0, studentCount: new Set() });
         }
-        const stat = roomStats.get(key)!;
+        const stat = levelStats.get(key)!;
         stat.studentCount.add(s.id);
         
         let stuTotal = 0;
@@ -677,16 +676,12 @@ async function getTopRooms(studentWhere: any) {
         }
     });
 
-    return Array.from(roomStats.entries())
-        .map(([key, stat]) => {
-            const [level, room] = key.split('|');
-            return {
-                class_level: level,
-                room: room,
-                count: stat.studentCount.size,
-                avg_score: stat.count > 0 ? stat.totalGpa / stat.count : 0
-            };
-        })
+    return Array.from(levelStats.entries())
+        .map(([class_level, stat]) => ({
+            class_level,
+            count: stat.studentCount.size,
+            avg_score: stat.count > 0 ? stat.totalGpa / stat.count : 0
+        }))
         .sort((a, b) => b.avg_score - a.avg_score)
         .slice(0, 5);
 }
@@ -1029,12 +1024,15 @@ async function getStudentsByRoom(studentWhere: any) {
         (studentCountsRaw as any[]).map(c => [c.classroom_id, Number(c._count?.student_id || c._count || 0)])
     );
 
-    return classrooms
-        .map(c => ({
-            level: c.levels?.name || '',
-            room: c.room_name,
-            count: countMap.get(c.id) || 0
-        }))
+    const levelCounts = new Map<string, number>();
+    classrooms.forEach(c => {
+        const level = c.levels?.name || '';
+        const count = countMap.get(c.id) || 0;
+        if (count > 0) levelCounts.set(level, (levelCounts.get(level) || 0) + count);
+    });
+
+    return Array.from(levelCounts.entries())
+        .map(([level, count]) => ({ level, count }))
         .filter(r => r.count > 0);
 }
 
@@ -1527,8 +1525,8 @@ async function getRoomRankingsBySubject(studentWhere: any, learningGroupId?: num
             }
         });
 
-        // Group by room
-        const roomMap = new Map<number, { roomName: string, levelName: string, points: number[] }>();
+        // Group by level
+        const levelMap = new Map<string, { levelName: string, points: number[] }>();
 
         for (const fg of gradesData) {
             if (fg.grade_point === null || fg.grade_point === undefined) continue;
@@ -1537,26 +1535,23 @@ async function getRoomRankingsBySubject(studentWhere: any, learningGroupId?: num
             const cs = fg.enrollments?.students?.classroom_students?.[0];
             if (!cs?.classrooms) continue;
             
-            const cId = cs.classrooms.id;
-            const current = roomMap.get(cId) || {
-                roomName: cs.classrooms.room_name,
+            const levelName = cs.classrooms.levels?.name || '';
+            const current = levelMap.get(levelName) || {
                 levelName: cs.classrooms.levels?.name || '',
                 points: []
             };
             current.points.push(gp);
-            roomMap.set(cId, current);
+            levelMap.set(levelName, current);
         }
 
-        const rankedRooms = Array.from(roomMap.entries()).map(([id, data]) => {
+        const rankedRooms = Array.from(levelMap.entries()).map(([levelName, data]) => {
             const avg_gpa = data.points.length > 0
                 ? Number((data.points.reduce((a, b) => a + b, 0) / data.points.length).toFixed(2))
                 : 0;
                 
             return {
-                classroom_id: id,
-                level_name: data.levelName,
-                room_name: data.roomName?.includes('/') ? data.roomName : `${data.levelName}/${data.roomName}`,
-                display_name: data.roomName?.includes('/') ? data.roomName : `${data.levelName}/${data.roomName}`,
+                level_name: levelName || data.levelName,
+                display_name: levelName || data.levelName,
                 avg_gpa,
                 student_count: data.points.length
             };

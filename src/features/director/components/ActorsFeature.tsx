@@ -34,16 +34,16 @@ type ActorDetail = {
 };
 
 const GROUP_COLORS: Record<string, { bg: string; border: string; icon: any; gradient: string }> = {
-    core: { bg: "bg-blue-50", border: "border-blue-200", icon: UserIcon, gradient: "from-blue-600 to-indigo-700" },
-    academic: { bg: "bg-violet-50", border: "border-violet-200", icon: AcademicCapIcon, gradient: "from-violet-600 to-purple-700" },
-    scores: { bg: "bg-amber-50", border: "border-amber-200", icon: ChartBarIcon, gradient: "from-amber-500 to-orange-600" },
-    attendance: { bg: "bg-cyan-50", border: "border-cyan-200", icon: CheckCircleIcon, gradient: "from-cyan-500 to-teal-600" },
-    behavior: { bg: "bg-rose-50", border: "border-rose-200", icon: DocumentTextIcon, gradient: "from-rose-500 to-pink-600" },
-    schedule: { bg: "bg-emerald-50", border: "border-emerald-200", icon: CalendarDaysIcon, gradient: "from-emerald-500 to-green-600" },
-    events: { bg: "bg-purple-50", border: "border-purple-200", icon: TrophyIcon, gradient: "from-purple-500 to-fuchsia-600" },
-    evaluation: { bg: "bg-teal-50", border: "border-teal-200", icon: DocumentTextIcon, gradient: "from-teal-500 to-cyan-600" },
+    core: { bg: "bg-pink-50", border: "border-pink-200", icon: UserIcon, gradient: "from-pink-600 to-red-700" },
+    academic: { bg: "bg-red-50", border: "border-red-200", icon: AcademicCapIcon, gradient: "from-pink-600 to-red-700" },
+    scores: { bg: "bg-red-50", border: "border-red-200", icon: ChartBarIcon, gradient: "from-pink-500 to-red-600" },
+    attendance: { bg: "bg-pink-50", border: "border-pink-200", icon: CheckCircleIcon, gradient: "from-pink-500 to-red-600" },
+    behavior: { bg: "bg-rose-50", border: "border-rose-200", icon: DocumentTextIcon, gradient: "from-pink-500 to-red-600" },
+    schedule: { bg: "bg-pink-50", border: "border-pink-200", icon: CalendarDaysIcon, gradient: "from-pink-500 to-red-600" },
+    events: { bg: "bg-pink-50", border: "border-pink-200", icon: TrophyIcon, gradient: "from-pink-500 to-red-600" },
+    evaluation: { bg: "bg-red-50", border: "border-red-200", icon: DocumentTextIcon, gradient: "from-pink-500 to-red-600" },
     master: { bg: "bg-slate-50", border: "border-slate-200", icon: CogIcon, gradient: "from-slate-500 to-gray-600" },
-    system: { bg: "bg-red-50", border: "border-red-200", icon: AdjustmentsHorizontalIcon, gradient: "from-red-500 to-rose-600" },
+    system: { bg: "bg-red-50", border: "border-red-200", icon: AdjustmentsHorizontalIcon, gradient: "from-pink-500 to-red-600" },
 };
 
 function formatCellValue(value: any): string {
@@ -89,7 +89,7 @@ function DataModal({
                         <p className="text-sm text-slate-500 mt-0.5">
                             Table: <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">{actor.name}</code>
                             <span className="mx-2">•</span>
-                            {actor.data.length} แถว {actor.data.length >= 100 && <span className="text-amber-600">(แสดง 100 แถวแรก)</span>}
+                            {actor.data.length} แถว {actor.data.length >= 100 && <span className="text-red-600">(แสดง 100 แถวแรก)</span>}
                         </p>
                     </div>
                     <button
@@ -125,7 +125,7 @@ function DataModal({
                             </thead>
                             <tbody>
                                 {actor.data.map((row, i) => (
-                                    <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50 transition-colors">
+                                    <tr key={i} className="border-b border-slate-100 hover:bg-pink-50/50 transition-colors">
                                         <td className="px-3 py-2 text-slate-400 font-mono text-xs">{i + 1}</td>
                                         {columns.map((col) => (
                                             <td key={col} className="px-3 py-2 text-slate-700 max-w-[300px] truncate" title={formatCellValue(row[col])}>
@@ -216,7 +216,7 @@ export default function ActorsFeature() {
         return (
             <div className="flex items-center justify-center py-20">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+                    <div className="w-12 h-12 border-4 border-red-200 border-t-red-600 rounded-full animate-spin" />
                     <p className="text-slate-500 font-medium">กำลังโหลดข้อมูล actors...</p>
                 </div>
             </div>
@@ -226,7 +226,7 @@ export default function ActorsFeature() {
     return (
         <div className="space-y-6">
             {/* Hero */}
-            <section className="bg-gradient-to-br from-indigo-700 via-violet-700 to-purple-800 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-700 via-red-700 to-red-800 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-72 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20" />
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -translate-x-12 translate-y-12" />
                 <div className="relative z-10">
@@ -244,7 +244,7 @@ export default function ActorsFeature() {
             {/* Search */}
             <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
                 <input
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none"
                     placeholder="ค้นหาตาราง... (ชื่อ table / ชื่อไทย)"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -299,7 +299,7 @@ export default function ActorsFeature() {
                     <div className="fixed inset-0 z-[9999] flex items-center justify-center">
                     <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
                     <div className="relative bg-white rounded-2xl p-8 shadow-2xl flex flex-col items-center gap-4">
-                        <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+                        <div className="w-12 h-12 border-4 border-red-200 border-t-red-600 rounded-full animate-spin" />
                         <p className="text-slate-600 font-medium">กำลังโหลดข้อมูล...</p>
                     </div>
                 </div>

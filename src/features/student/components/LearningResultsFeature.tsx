@@ -13,9 +13,9 @@ interface LearningResultsFeatureProps {
 }
 
 function getScoreTextColor(avg: number): string {
-    if (avg >= 4) return "text-emerald-600";
-    if (avg >= 3) return "text-teal-600";
-    if (avg >= 2) return "text-amber-600";
+    if (avg >= 4) return "text-pink-600";
+    if (avg >= 3) return "text-red-600";
+    if (avg >= 2) return "text-red-600";
     return "text-rose-600";
 }
 
@@ -147,9 +147,9 @@ export function LearningResultsFeature({
         const displayScore = Number.isFinite(score) ? (Number.isInteger(score) ? score : score.toFixed(2)) : "-";
         const percent = Number.isFinite(score) ? (score / 5) * 100 : 0;
 
-        let color = "bg-teal-600";
+        let color = "bg-red-600";
         if (score <= 2) color = "bg-red-500";
-        else if (score == 3) color = "bg-amber-500";
+        else if (score == 3) color = "bg-red-500";
 
         return (
             <div>
@@ -216,7 +216,7 @@ export function LearningResultsFeature({
     if (isLoadingInit || enrollmentHistoryQuery.isLoading) {
         return (
             <div className="space-y-6">
-                <section className="bg-gradient-to-br from-teal-600 to-emerald-800 rounded-3xl p-6 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+                <section className="bg-gradient-to-br from-pink-600 to-red-800 rounded-3xl p-6 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="w-full md:w-1/2">
                         <Skeleton variant="rounded" className="h-4 w-20 mb-3 bg-white/20" />
                         <Skeleton variant="rounded" className="h-7 w-64 mb-1 bg-white/20" />
@@ -242,22 +242,22 @@ export function LearningResultsFeature({
     return (
         <div className="space-y-6">
             {/* Hero Section */}
-            <section className="bg-gradient-to-br from-teal-600 to-emerald-800 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-600 to-red-800 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
                 <div className="relative z-10 flex flex-col md:flex-row md:justify-between md:items-start gap-6">
                     <div>
                         <div className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-xs font-medium mb-3 backdrop-blur-sm border border-white/20">
                             Learning Result
                         </div>
                         <h1 className="text-2xl font-bold mb-1">ผลประเมินสมรรถนะผู้เรียน</h1>
-                        <p className="text-teal-100 text-sm">
+                        <p className="text-red-100 text-sm">
                             สรุประดับสมรรถนะรายด้านและข้อเสนอแนะ
                         </p>
                     </div>
 
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 min-w-[200px]">
-                        <div className="text-teal-100 text-xs font-medium mb-1.5">สถานะ</div>
+                        <div className="text-red-100 text-xs font-medium mb-1.5">สถานะ</div>
                         <div className="text-lg font-bold text-white flex items-center gap-2">
-                            <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                            <svg className="w-5 h-5 text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                             พร้อมดูผล
                         </div>
                     </div>
@@ -265,7 +265,7 @@ export function LearningResultsFeature({
 
                 {/* Decoration */}
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
-                <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-emerald-500 rounded-full blur-2xl opacity-50"></div>
+                <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-pink-500 rounded-full blur-2xl opacity-50"></div>
                 <svg className="absolute top-1/2 right-1/4 transform -translate-y-1/2 w-48 h-48 text-white/5" fill="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
@@ -276,54 +276,54 @@ export function LearningResultsFeature({
                     <button
                         onClick={() => setActiveResultTab("subject")}
                         className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-semibold transition-all duration-300 border-2 ${activeResultTab === "subject"
-                            ? "bg-teal-600 text-white border-teal-600 shadow-md"
-                            : "bg-white text-slate-600 border-slate-200 hover:border-teal-300 hover:bg-teal-50"
+                            ? "bg-red-600 text-white border-red-600 shadow-md"
+                            : "bg-white text-slate-600 border-slate-200 hover:border-red-300 hover:bg-red-50"
                             }`}
                     >
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${activeResultTab === "subject" ? "bg-white/20" : "bg-teal-50 text-teal-600"}`}>
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${activeResultTab === "subject" ? "bg-white/20" : "bg-red-50 text-red-600"}`}>
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
                         <div>
                             <div className="text-sm font-bold">ผลประเมินรายวิชา</div>
-                            <div className={`text-[11px] mt-0.5 ${activeResultTab === "subject" ? "text-teal-100" : "text-slate-400"}`}>จากครูผู้สอนรายวิชา</div>
+                            <div className={`text-[11px] mt-0.5 ${activeResultTab === "subject" ? "text-red-100" : "text-slate-400"}`}>จากครูผู้สอนรายวิชา</div>
                         </div>
                     </button>
 
                     <button
                         onClick={() => setActiveResultTab("advisor")}
                         className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-semibold transition-all duration-300 border-2 ${activeResultTab === "advisor"
-                            ? "bg-emerald-600 text-white border-emerald-600 shadow-md"
-                            : "bg-white text-slate-600 border-slate-200 hover:border-emerald-300 hover:bg-emerald-50"
+                            ? "bg-pink-600 text-white border-pink-600 shadow-md"
+                            : "bg-white text-slate-600 border-slate-200 hover:border-pink-300 hover:bg-pink-50"
                             }`}
                     >
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${activeResultTab === "advisor" ? "bg-white/20" : "bg-emerald-50 text-emerald-600"}`}>
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${activeResultTab === "advisor" ? "bg-white/20" : "bg-pink-50 text-pink-600"}`}>
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                         </div>
                         <div>
                             <div className="text-sm font-bold">ผลประเมินครูที่ปรึกษา</div>
-                            <div className={`text-[11px] mt-0.5 ${activeResultTab === "advisor" ? "text-emerald-100" : "text-slate-400"}`}>ประเมินโดยรวมจากที่ปรึกษา</div>
+                            <div className={`text-[11px] mt-0.5 ${activeResultTab === "advisor" ? "text-pink-100" : "text-slate-400"}`}>ประเมินโดยรวมจากที่ปรึกษา</div>
                         </div>
                     </button>
 
                     <button
                         onClick={() => setActiveResultTab("sdq")}
                         className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-semibold transition-all duration-300 border-2 ${activeResultTab === "sdq"
-                            ? "bg-amber-600 text-white border-amber-600 shadow-md"
-                            : "bg-white text-slate-600 border-slate-200 hover:border-amber-300 hover:bg-amber-50"
+                            ? "bg-red-600 text-white border-red-600 shadow-md"
+                            : "bg-white text-slate-600 border-slate-200 hover:border-red-300 hover:bg-red-50"
                             }`}
                     >
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${activeResultTab === "sdq" ? "bg-white/20" : "bg-amber-50 text-amber-600"}`}>
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${activeResultTab === "sdq" ? "bg-white/20" : "bg-red-50 text-red-600"}`}>
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
                         <div>
                             <div className="text-sm font-bold">ผลประเมิน SDQ</div>
-                            <div className={`text-[11px] mt-0.5 ${activeResultTab === "sdq" ? "text-amber-100" : "text-slate-400"}`}>ประเมินตนเองทางด้านพฤติกรรม</div>
+                            <div className={`text-[11px] mt-0.5 ${activeResultTab === "sdq" ? "text-red-100" : "text-slate-400"}`}>ประเมินตนเองทางด้านพฤติกรรม</div>
                         </div>
                     </button>
                 </div>
@@ -332,7 +332,7 @@ export function LearningResultsFeature({
             {/* Selection Section */}
             <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2 bg-teal-50 text-teal-600 rounded-lg">
+                    <div className="p-2 bg-red-50 text-red-600 rounded-lg">
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                     </div>
                     <div>
@@ -350,7 +350,7 @@ export function LearningResultsFeature({
                                 setYear(parseInt(e.target.value));
                                 setHasManualTermSelection(true);
                             }}
-                            className="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-slate-50 appearance-none"
+                            className="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-slate-50 appearance-none"
                             style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: `right 0.5rem center`, backgroundRepeat: `no-repeat`, backgroundSize: `1.5em 1.5em` }}
                         >
                             {dynamicYearOptions.map((y: any) => (
@@ -366,7 +366,7 @@ export function LearningResultsFeature({
                                 setSemester(parseInt(e.target.value));
                                 setHasManualTermSelection(true);
                             }}
-                            className="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-slate-50 appearance-none"
+                            className="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-slate-50 appearance-none"
                             style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: `right 0.5rem center`, backgroundRepeat: `no-repeat`, backgroundSize: `1.5em 1.5em` }}
                         >
                             {dynamicSemesterOptions.map((s: any) => (
@@ -380,7 +380,7 @@ export function LearningResultsFeature({
                             <select
                                 value={selectedSectionId}
                                 onChange={handleSubjectChange}
-                                className="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-slate-50 appearance-none"
+                                className="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-slate-50 appearance-none"
                                 style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: `right 0.5rem center`, backgroundRepeat: `no-repeat`, backgroundSize: `1.5em 1.5em` }}
                             >
                                 {isLoadingInit ? (
@@ -410,7 +410,7 @@ export function LearningResultsFeature({
             {activeResultTab === "subject" && (
                 <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                        <div className="p-2 bg-pink-50 text-pink-600 rounded-lg">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                         </div>
                         <div>
@@ -444,7 +444,7 @@ export function LearningResultsFeature({
                                     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
                                         <div className="lg:col-span-3 space-y-4">
                                             <h3 className="text-base font-black text-slate-800 flex items-center gap-2">
-                                                <div className="w-1 h-5 bg-emerald-500 rounded-full" />
+                                                <div className="w-1 h-5 bg-pink-500 rounded-full" />
                                                 คะแนนประเมินรายหัวข้อ
                                             </h3>
                                             <div className="space-y-6">
@@ -457,8 +457,8 @@ export function LearningResultsFeature({
 
                                                     return grouped.map((section, sIdx) => (
                                                         <div key={sIdx} className="space-y-3">
-                                                            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border-l-4 border-emerald-400">
-                                                                <span className="text-sm md:text-base font-black text-emerald-600 uppercase tracking-wider">{section.name}</span>
+                                                            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border-l-4 border-pink-400">
+                                                                <span className="text-sm md:text-base font-black text-pink-600 uppercase tracking-wider">{section.name}</span>
                                                             </div>
                                                             <div className="space-y-1">
                                                                 {section.items.map((topic: any, tIdx: number) => {
@@ -483,8 +483,8 @@ export function LearningResultsFeature({
                                         </div>
 
                                         <div className="lg:col-span-2">
-                                            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl p-8 border border-emerald-100 flex flex-col items-center justify-center text-center gap-4 shadow-sm h-fit">
-                                                <div className="text-[14px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-2">คะแนนรวมเฉลี่ย</div>
+                                            <div className="bg-gradient-to-br from-pink-50 to-red-50 rounded-3xl p-8 border border-pink-100 flex flex-col items-center justify-center text-center gap-4 shadow-sm h-fit">
+                                                <div className="text-[14px] font-black text-pink-500 uppercase tracking-[0.2em] mb-2">คะแนนรวมเฉลี่ย</div>
                                                 <div className={`text-6xl font-black tracking-normal ${evalData.average_score > 0 ? getScoreTextColor(evalData.average_score) : "text-slate-300"}`} style={{ letterSpacing: '0.05em' }}>
                                                     {evalData.average_score > 0 ? evalData.average_score.toFixed(2) : "—"}
                                                 </div>
@@ -495,7 +495,7 @@ export function LearningResultsFeature({
                                                         return (
                                                             <svg
                                                                 key={star}
-                                                                className={`w-5 h-5 ${filled || half ? "text-amber-400" : "text-slate-200"} fill-current`}
+                                                                className={`w-5 h-5 ${filled || half ? "text-red-400" : "text-slate-200"} fill-current`}
                                                                 viewBox="0 0 24 24"
                                                             >
                                                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -511,11 +511,11 @@ export function LearningResultsFeature({
                                     {evalData.feedback && (
                                         <div>
                                             <h3 className="text-base font-black text-slate-800 flex items-center gap-2 mb-4">
-                                                <div className="w-1 h-5 bg-teal-500 rounded-full" />
+                                                <div className="w-1 h-5 bg-red-500 rounded-full" />
                                                 ข้อเสนอแนะจากผู้สอน
                                             </h3>
                                             <div className="bg-slate-50 border border-slate-100 p-5 rounded-2xl relative overflow-hidden">
-                                                <svg className="w-8 h-8 text-teal-100 absolute top-4 right-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <svg className="w-8 h-8 text-red-100 absolute top-4 right-4" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                                 </svg>
                                                 <p className="text-slate-700 leading-relaxed text-sm relative z-10">{evalData.feedback}</p>
@@ -533,7 +533,7 @@ export function LearningResultsFeature({
             {activeResultTab === "advisor" && (
                 <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                        <div className="p-2 bg-pink-50 text-pink-600 rounded-lg">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                         </div>
                         <div>
@@ -551,7 +551,7 @@ export function LearningResultsFeature({
                                     key={adv.user_id}
                                     onClick={() => setSelectedAdvisorUserId(adv.user_id)}
                                     className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${selectedAdvisorUserId === adv.user_id
-                                            ? "bg-white text-emerald-600 shadow-sm border border-emerald-100"
+                                            ? "bg-white text-pink-600 shadow-sm border border-pink-100"
                                             : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
                                         }`}
                                 >
@@ -566,8 +566,8 @@ export function LearningResultsFeature({
                         <button
                             onClick={() => setSelectedFormName('แบบประเมินคุณลักษณะอันพึงประสงค์')}
                             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-black transition-all ${selectedFormName === 'แบบประเมินคุณลักษณะอันพึงประสงค์'
-                                    ? "bg-white text-emerald-600 shadow-sm"
-                                    : "text-slate-500 hover:text-emerald-500"
+                                    ? "bg-white text-pink-600 shadow-sm"
+                                    : "text-slate-500 hover:text-pink-500"
                                 }`}
                         >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -578,8 +578,8 @@ export function LearningResultsFeature({
                         <button
                             onClick={() => setSelectedFormName('คุณลักษณะของนักเรียนขณะอยู่ที่โรงเรียน')}
                             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-black transition-all ${selectedFormName === 'คุณลักษณะของนักเรียนขณะอยู่ที่โรงเรียน'
-                                    ? "bg-white text-teal-600 shadow-sm"
-                                    : "text-slate-500 hover:text-teal-500"
+                                    ? "bg-white text-red-600 shadow-sm"
+                                    : "text-slate-500 hover:text-red-500"
                                 }`}
                         >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -608,7 +608,7 @@ export function LearningResultsFeature({
                             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
                                 <div className="lg:col-span-3 space-y-4">
                                     <h3 className="text-base font-black text-slate-800 flex items-center gap-2">
-                                        <div className="w-1 h-5 bg-emerald-500 rounded-full" />
+                                        <div className="w-1 h-5 bg-pink-500 rounded-full" />
                                         คะแนนประเมินรายหัวข้อ
                                     </h3>
                                     <div className="space-y-6">
@@ -621,8 +621,8 @@ export function LearningResultsFeature({
 
                                             return grouped.map((section, sIdx) => (
                                                 <div key={sIdx} className="space-y-3">
-                                                    <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border-l-4 border-emerald-400">
-                                                        <span className="text-sm md:text-base font-black text-emerald-600 uppercase tracking-wider">{section.name}</span>
+                                                    <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border-l-4 border-pink-400">
+                                                        <span className="text-sm md:text-base font-black text-pink-600 uppercase tracking-wider">{section.name}</span>
                                                     </div>
                                                     <div className="space-y-1">
                                                         {section.items.map((ev: any, idx: number) => {
@@ -645,8 +645,8 @@ export function LearningResultsFeature({
                                 </div>
 
                                 <div className="lg:col-span-2">
-                                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl p-8 border border-emerald-100 flex flex-col items-center justify-center text-center gap-4 shadow-sm h-fit">
-                                        <div className="text-[14px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-2">คะแนนรวมเฉลี่ย</div>
+                                    <div className="bg-gradient-to-br from-pink-50 to-red-50 rounded-3xl p-8 border border-pink-100 flex flex-col items-center justify-center text-center gap-4 shadow-sm h-fit">
+                                        <div className="text-[14px] font-black text-pink-500 uppercase tracking-[0.2em] mb-2">คะแนนรวมเฉลี่ย</div>
                                         <div className={`text-6xl font-black tracking-tight ${currentAdvisorEval.average_score > 0 ? getScoreTextColor(currentAdvisorEval.average_score) : "text-slate-300"}`}>
                                             {currentAdvisorEval.average_score > 0 ? currentAdvisorEval.average_score.toFixed(2) : "—"}
                                         </div>
@@ -657,7 +657,7 @@ export function LearningResultsFeature({
                                                 return (
                                                     <svg
                                                         key={star}
-                                                        className={`w-5 h-5 ${filled || half ? "text-amber-400" : "text-slate-200"} fill-current`}
+                                                        className={`w-5 h-5 ${filled || half ? "text-red-400" : "text-slate-200"} fill-current`}
                                                         viewBox="0 0 24 24"
                                                     >
                                                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -673,11 +673,11 @@ export function LearningResultsFeature({
                             {currentAdvisorEval.feedback && (
                                 <div className="mt-8 pt-8 border-t border-slate-100">
                                     <h3 className="text-base font-black text-slate-800 flex items-center gap-2 mb-4">
-                                        <div className="w-1 h-5 bg-teal-500 rounded-full" />
+                                        <div className="w-1 h-5 bg-red-500 rounded-full" />
                                         ข้อเสนอแนะจากครูที่ปรึกษา
                                     </h3>
                                     <div className="bg-slate-50 border border-slate-100 p-5 rounded-2xl relative overflow-hidden">
-                                        <svg className="w-8 h-8 text-teal-100 absolute top-4 right-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-8 h-8 text-red-100 absolute top-4 right-4" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                         </svg>
                                         <p className="text-slate-700 leading-relaxed text-sm relative z-10">{currentAdvisorEval.feedback}</p>
@@ -693,7 +693,7 @@ export function LearningResultsFeature({
             {activeResultTab === "sdq" && (
                 <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                        <div className="p-2 bg-red-50 text-red-600 rounded-lg">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                         </div>
                         <div>
@@ -719,18 +719,18 @@ export function LearningResultsFeature({
                         <div className="space-y-6">
                             <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200">
                                 <h4 className="font-black text-slate-700 mb-4 flex items-center gap-2">
-                                    <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     เกณฑ์การประเมิน
                                 </h4>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                                        <div className="w-3 h-3 rounded-full bg-pink-500" />
                                         <span className="text-sm font-bold text-slate-600">ปกติ : 0–5</span>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-amber-500" />
+                                        <div className="w-3 h-3 rounded-full bg-red-500" />
                                         <span className="text-sm font-bold text-slate-600">เสี่ยง : 6</span>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -746,19 +746,19 @@ export function LearningResultsFeature({
                                         <div>
                                             <div className="text-sm font-medium text-slate-600 mb-3">{res.section_name}</div>
                                             <div className="flex items-end gap-3 mb-6">
-                                                <div className={`text-5xl font-black ${res.color === 'emerald' ? 'text-emerald-600' :
-                                                        res.color === 'amber' ? 'text-amber-500' : 'text-rose-600'
+                                                <div className={`text-5xl font-black ${res.color === 'pink' ? 'text-pink-600' :
+                                                        res.color === 'red' ? 'text-red-500' : 'text-rose-600'
                                                     }`}>{res.total_score}</div>
                                                 <div className="text-slate-400 font-bold mb-1.5 text-lg">/ 10</div>
                                             </div>
                                         </div>
 
-                                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold w-fit ${res.color === 'emerald' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-                                                res.color === 'amber' ? 'bg-amber-50 text-amber-600 border border-amber-100' :
+                                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold w-fit ${res.color === 'pink' ? 'bg-pink-50 text-pink-600 border border-pink-100' :
+                                                res.color === 'red' ? 'bg-red-50 text-red-600 border border-red-100' :
                                                     'bg-rose-50 text-rose-600 border border-rose-100'
                                             }`}>
-                                            <div className={`w-2 h-2 rounded-full ${res.color === 'emerald' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' :
-                                                    res.color === 'amber' ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]' :
+                                            <div className={`w-2 h-2 rounded-full ${res.color === 'pink' ? 'bg-pink-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' :
+                                                    res.color === 'red' ? 'bg-red-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]' :
                                                         'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]'
                                                 }`} />
                                             {res.status}

@@ -2,18 +2,18 @@ import './globals.css';
 import Providers from '@/components/Providers';
 
 export const metadata = {
-    title: 'WinAI School',
-    description: 'ระบบจัดการโรงเรียน WinAI - ตรวจสอบเกรด ตารางเรียน สุขภาพ และอื่นๆ',
+    title: 'Ban Khlong Nong Lek School',
+    description: 'ระบบจัดการโรงเรียน Ban Khlong Nong Lek School - ตรวจสอบเกรด ตารางเรียน สุขภาพ และอื่นๆ',
     manifest: '/manifest.json',
     appleWebApp: {
         capable: true,
         statusBarStyle: 'default',
-        title: 'WinAI School',
+        title: 'Ban Khlong Nong Lek School',
     },
 };
 
 export const viewport = {
-    themeColor: '#059669',
+    themeColor: '#DB2777',
 };
 
 export default function RootLayout({

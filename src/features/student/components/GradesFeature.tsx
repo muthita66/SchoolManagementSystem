@@ -59,6 +59,14 @@ interface GradesFeatureProps {
     session: any;
 }
 
+function getNumericGrade(row: any): string {
+    const label = normalizeGradeLabel(row?.grade);
+
+    if (!label) return "-";
+
+    return String(GRADE_POINT_MAP[label]);
+}
+
 export function GradesFeature({ session }: GradesFeatureProps) {
     const student = session;
 
@@ -248,14 +256,7 @@ export function GradesFeature({ session }: GradesFeatureProps) {
 
     const getLevelRoomDisplay = (p: any) => {
         const classLevel = String(p?.class_level || "").trim();
-        const room = String(p?.room || "").trim();
-
-        let display = "-";
-        if (!classLevel && !room) display = "-";
-        else if (!room) display = classLevel || "-";
-        else if (!classLevel) display = room;
-        else if (room === classLevel || room.startsWith(`${classLevel}/`)) display = room;
-        else display = `${classLevel}/${room}`;
+        const display = classLevel || "-";
 
         if (display === "-") return "-";
         return display.startsWith("ชั้น") ? display : `ชั้น${display}`;
@@ -264,14 +265,14 @@ export function GradesFeature({ session }: GradesFeatureProps) {
     return (
         <div className="space-y-6 print:space-y-4">
             {/* Hero Section */}
-            <section className="bg-gradient-to-r from-teal-700 to-emerald-800 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden print:bg-none print:text-black print:p-0 print:shadow-none print:border-b print:border-black print:rounded-none">
+            <section className="bg-gradient-to-r from-pink-700 to-red-800 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden print:bg-none print:text-black print:p-0 print:shadow-none print:border-b print:border-black print:rounded-none">
                 <div className="relative z-10 flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
                     <div>
                         <div className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-xs font-medium mb-3 backdrop-blur-sm border border-white/20 print:hidden">
                             Transcript
                         </div>
                         <h1 className="text-2xl font-bold mb-1 print:text-2xl">ผลการเรียนสะสม</h1>
-                        <p className="text-teal-100 text-sm max-w-xl print:hidden">
+                        <p className="text-red-100 text-sm max-w-xl print:hidden">
                             สรุปผลการเรียนรายวิชาและเกรดเฉลี่ยในแต่ละภาคเรียน
                         </p>
                     </div>
@@ -285,11 +286,11 @@ export function GradesFeature({ session }: GradesFeatureProps) {
 
                 <div className="grid grid-cols-2 gap-3 mt-5 relative z-10 max-w-xl print:grid-cols-2 print:mt-4 print:gap-2">
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 print:border-none print:p-0 print:bg-transparent">
-                        <div className="text-teal-200 text-xs mb-1 print:text-gray-500">ชื่อ - นามสกุล</div>
+                        <div className="text-red-200 text-xs mb-1 print:text-gray-500">ชื่อ - นามสกุล</div>
                         <div className="text-base font-bold truncate print:text-black">{student.name || "-"}</div>
                     </div>
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 print:border-none print:p-0 print:bg-transparent">
-                        <div className="text-teal-200 text-xs mb-1 print:text-gray-500">เลขประจำตัว</div>
+                        <div className="text-red-200 text-xs mb-1 print:text-gray-500">เลขประจำตัว</div>
                         <div className="text-base font-bold print:text-black tracking-tight">{student.code || "-"}</div>
                     </div>
 
@@ -302,7 +303,7 @@ export function GradesFeature({ session }: GradesFeatureProps) {
 
                 {/* Decoration */}
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform skew-x-12 translate-x-20 print:hidden"></div>
-                <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-teal-500 rounded-full blur-2xl opacity-50 print:hidden"></div>
+                <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-red-500 rounded-full blur-2xl opacity-50 print:hidden"></div>
             </section>
 
             {/* Filter Bar */}
@@ -311,7 +312,7 @@ export function GradesFeature({ session }: GradesFeatureProps) {
                     <span className="text-slate-500 font-medium text-sm">ปีการศึกษา</span>
                     <div className="relative flex-1 md:w-36">
                         <select
-                            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 w-full appearance-none cursor-pointer pr-8"
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 w-full appearance-none cursor-pointer pr-8"
                             value={year} onChange={e => {
                                 setHasManualTermSelection(true);
                                 setYear(e.target.value);
@@ -331,7 +332,7 @@ export function GradesFeature({ session }: GradesFeatureProps) {
                     <span className="text-slate-500 font-medium text-sm">ภาคเรียน</span>
                     <div className="relative flex-1 md:w-28">
                         <select
-                            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 w-full appearance-none cursor-pointer pr-8"
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 w-full appearance-none cursor-pointer pr-8"
                             value={semester} onChange={e => {
                                 setHasManualTermSelection(true);
                                 setSemester(e.target.value);
@@ -352,7 +353,7 @@ export function GradesFeature({ session }: GradesFeatureProps) {
             <section className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 print:shadow-none print:border-none print:p-0 print:mt-6">
                 <div className="flex justify-between items-center mb-6 print:hidden">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-teal-50 text-teal-600 rounded-lg">
+                        <div className="p-2 bg-red-50 text-red-600 rounded-lg">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
                         </div>
                         <h3 className="text-lg font-bold text-slate-800">ตารางผลการเรียน</h3>
@@ -372,7 +373,7 @@ export function GradesFeature({ session }: GradesFeatureProps) {
                                 <span>{student.code || "-"}</span>
                             </div>
                             <div className="flex gap-2">
-                                <span className="font-bold shrink-0">ระดับชั้น/ห้อง:</span>
+                                <span className="font-bold shrink-0">ระดับชั้น:</span>
                                 <span>{getLevelRoomDisplay(student)}</span>
                             </div>
                             <div className="flex gap-2">
@@ -421,10 +422,10 @@ export function GradesFeature({ session }: GradesFeatureProps) {
                                             ? "รอผล"
                                             : (isFailed ? "ไม่ผ่าน" : "ผ่าน");
                                         const statusClass = !hasGrade
-                                            ? "bg-amber-100 text-amber-700 print:bg-transparent print:text-black"
+                                            ? "bg-red-100 text-red-700 print:bg-transparent print:text-black"
                                             : (isFailed
                                                 ? "bg-red-100 text-red-700 print:bg-transparent print:text-black"
-                                                : "bg-green-100 text-green-700 print:bg-transparent print:text-black");
+                                                : "bg-pink-100 text-pink-700 print:bg-transparent print:text-black");
 
                                         return (
                                             <tr key={idx} className="hover:bg-slate-50 transition-colors print:hover:bg-transparent">
@@ -432,7 +433,7 @@ export function GradesFeature({ session }: GradesFeatureProps) {
                                                 <td className="px-6 py-3 print:px-4 print:py-2">{r.subject || "-"}</td>
                                                 <td className="px-6 py-3 print:px-4 print:py-2 text-center">{r.credit || "-"}</td>
                                                 <td className="px-6 py-3 print:px-4 print:py-2 text-center">{r.total ?? "-"}</td>
-                                                <td className="px-6 py-3 print:px-4 print:py-2 text-center font-bold text-slate-800">{displayGrade ?? "-"}</td>
+                                                <td className="px-6 py-3 print:px-4 print:py-2 text-center font-bold text-slate-800">{getNumericGrade(r)}</td>
                                                 <td className="px-6 py-3 print:px-4 print:py-2 text-center">
                                                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusClass}`}>
                                                         {statusLabel}
@@ -480,19 +481,19 @@ export function GradesFeature({ session }: GradesFeatureProps) {
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border-t-4 border-teal-500 print:shadow-none print:border print:border-gray-300">
+                    <div className="bg-white rounded-2xl p-4 shadow-sm border-t-4 border-red-500 print:shadow-none print:border print:border-gray-300">
                         <div className="text-slate-500 text-xs font-medium mb-1">หน่วยกิตเทอมนี้</div>
                         <div className="text-2xl font-bold tracking-tight text-slate-800">{termCredit.toFixed(1)}</div>
                     </div>
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border-t-4 border-teal-500 print:shadow-none print:border print:border-gray-300">
+                    <div className="bg-white rounded-2xl p-4 shadow-sm border-t-4 border-red-500 print:shadow-none print:border print:border-gray-300">
                         <div className="text-slate-500 text-xs font-medium mb-1">หน่วยกิตสะสม</div>
                         <div className="text-2xl font-bold tracking-tight text-slate-800">{totalCreditsAll.toFixed(1)}</div>
                     </div>
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border-t-4 border-emerald-500 print:shadow-none print:border print:border-gray-300">
+                    <div className="bg-white rounded-2xl p-4 shadow-sm border-t-4 border-pink-500 print:shadow-none print:border print:border-gray-300">
                         <div className="text-slate-500 text-xs font-medium mb-1">เกรดเฉลี่ย (GPA)</div>
                         <div className="text-2xl font-bold tracking-tight text-slate-800">{gpa.toFixed(2)}</div>
                     </div>
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border-t-4 border-amber-500 print:shadow-none print:border print:border-gray-300">
+                    <div className="bg-white rounded-2xl p-4 shadow-sm border-t-4 border-red-500 print:shadow-none print:border print:border-gray-300">
                         <div className="text-slate-500 text-xs font-medium mb-1">สะสม (GPAX)</div>
                         <div className="text-2xl font-bold tracking-tight text-slate-800">{totalGpa.toFixed(2)}</div>
                     </div>

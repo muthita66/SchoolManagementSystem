@@ -330,9 +330,16 @@ export const TeacherFitnessService = {
             pIdx++;
         }
         if (grade_level) {
-            sql += ` AND grade_level ILIKE $${pIdx}`;
-            params.push(`%${grade_level}%`);
-            pIdx++;
+            const levelNum = extractLevelNumber(grade_level);
+            if (levelNum) {
+                sql += ` AND (grade_level ILIKE $${pIdx} OR grade_level ILIKE $${pIdx + 1})`;
+                params.push(`%${levelNum}%`, `%${grade_level}%`);
+                pIdx += 2;
+            } else {
+                sql += ` AND grade_level ILIKE $${pIdx}`;
+                params.push(`%${grade_level}%`);
+                pIdx++;
+            }
         }
         if (academic_year) {
             sql += ` AND academic_year = $${pIdx}`;
@@ -384,9 +391,19 @@ export const TeacherFitnessService = {
     },
 
     async deleteCriteria(id: number) {
-        return prisma.$executeRawUnsafe(`
-            DELETE FROM fitness_test_criteria WHERE id = $1
-        `, parseInt(id as any));
+        const criteriaId = parseInt(id as any);
+        if (!criteriaId || Number.isNaN(criteriaId)) throw new Error('id is required');
+
+        return prisma.$transaction(async (tx) => {
+            await tx.$executeRawUnsafe(`
+                DELETE FROM student_fitness_records
+                WHERE fitness_test_id = $1
+            `, criteriaId);
+
+            return tx.$executeRawUnsafe(`
+                DELETE FROM fitness_test_criteria WHERE id = $1
+            `, criteriaId);
+        });
     },
     async saveFitnessTest(data: any) {
         const { record_type, student_id, teacher_id, test_name, result_value, standard_value, status, year, semester, criteria_id, weight, height, teeth_brushing, milk_drinking } = data;

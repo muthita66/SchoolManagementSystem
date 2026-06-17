@@ -3,6 +3,19 @@ import { prisma } from '@/lib/prisma';
 type AttendanceRecordInput = { enrollment_id?: number; student_id?: number; status: string; remark?: string };
 type UiAttendanceRecordInput = { student_id: number; classroom_id?: number; section_id?: number; date: string; status: string; remark?: string };
 
+function formatLocalDate(date: Date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function assertEditableAttendanceDate(date: string) {
+    if (date > formatLocalDate(new Date())) {
+        throw new Error('attendance cannot be edited for a future date');
+    }
+}
+
 export const TeacherAttendanceService = {
     async getAdvisorClassrooms(teacher_id: number) {
         const advisors = await prisma.classroom_advisors.findMany({
@@ -23,7 +36,7 @@ export const TeacherAttendanceService = {
                 classroom_id: room.id,
                 class_level: room.levels?.name || '',
                 room: room.room_name,
-                label: room.levels ? `${room.levels.name}/${room.room_name}` : room.room_name,
+                label: room.levels?.name || '',
             };
         }).filter(Boolean);
     },
@@ -81,27 +94,37 @@ export const TeacherAttendanceService = {
             const uiRecords = classroom_id;
             if (uiRecords.length === 0) return { success: true, count: 0 };
 
-            const first = uiRecords[0];
-            const targetId = Number(first.classroom_id || first.section_id);
-            const sessionDate = String(first.date || '').trim();
-            if (!targetId || Number.isNaN(targetId)) throw new Error('classroom_id or section_id required');
-            if (!sessionDate) throw new Error('date required');
-
-            const normalizedRecords: AttendanceRecordInput[] = [];
+            const grouped = new Map<string, { classroom_id: number; date: string; records: AttendanceRecordInput[] }>();
             uiRecords.forEach((r) => {
-                normalizedRecords.push({
+                const targetId = Number(r.classroom_id || r.section_id);
+                const sessionDate = String(r.date || '').trim();
+                if (!targetId || Number.isNaN(targetId)) throw new Error('classroom_id or section_id required');
+                if (!sessionDate) throw new Error('date required');
+                assertEditableAttendanceDate(sessionDate);
+
+                const key = `${targetId}:${sessionDate}`;
+                if (!grouped.has(key)) {
+                    grouped.set(key, { classroom_id: targetId, date: sessionDate, records: [] });
+                }
+
+                grouped.get(key)?.records.push({
                     student_id: Number(r.student_id),
                     status: String(r.status || 'present'),
                     remark: r.remark,
                 });
             });
 
-            return this.saveAttendanceByStudent(targetId, sessionDate, normalizedRecords);
+            for (const group of grouped.values()) {
+                await this.saveAttendanceByStudent(group.classroom_id, group.date, group.records);
+            }
+
+            return { success: true, count: uiRecords.length };
         }
 
         const taId = Number(classroom_id);
         if (!taId || Number.isNaN(taId)) throw new Error('classroom_id required');
         if (!date) throw new Error('date required');
+        assertEditableAttendanceDate(date);
         const normalized = Array.isArray(records) ? records : [];
 
         return this.saveAttendanceByStudent(taId, date, normalized);

@@ -72,29 +72,29 @@ function formatTermLabel(section: SectionLike) {
 const GRADE_ORDER = ["4", "3.5", "3", "2.5", "2", "1.5", "1", "0"] as const;
 const GRADE_LABELS: Record<string, string> = { "4": "4", "3.5": "3.5", "3": "3", "2.5": "2.5", "2": "2", "1.5": "1.5", "1": "1", "0": "0", "ผ": "ผ", "มผ": "มผ" };
 const GRADE_COLORS: Record<string, string> = {
-    "4": "bg-emerald-100 text-emerald-800 border-emerald-300",
-    "3.5": "bg-green-100 text-green-800 border-green-300",
-    "3": "bg-teal-100 text-teal-800 border-teal-300",
-    "2.5": "bg-teal-100 text-teal-800 border-teal-300",
-    "2": "bg-emerald-100 text-emerald-800 border-emerald-300",
-    "1.5": "bg-teal-50 text-teal-700 border-teal-200",
-    "1": "bg-emerald-50 text-emerald-700 border-emerald-200",
+    "4": "bg-pink-100 text-pink-800 border-pink-300",
+    "3.5": "bg-pink-100 text-pink-800 border-pink-300",
+    "3": "bg-red-100 text-red-800 border-red-300",
+    "2.5": "bg-red-100 text-red-800 border-red-300",
+    "2": "bg-pink-100 text-pink-800 border-pink-300",
+    "1.5": "bg-red-50 text-red-700 border-red-200",
+    "1": "bg-pink-50 text-pink-700 border-pink-200",
     "0": "bg-rose-100 text-rose-800 border-rose-300",
-    "ผ": "bg-emerald-100 text-emerald-800 border-emerald-300",
+    "ผ": "bg-pink-100 text-pink-800 border-pink-300",
     "มผ": "bg-rose-100 text-rose-800 border-rose-300",
 };
 
 const GRADE_BAR_COLORS: Record<string, string> = {
-    "4": "from-emerald-400 to-emerald-500",
-    "3.5": "from-green-400 to-green-500",
-    "3": "from-teal-400 to-teal-500",
-    "2.5": "from-teal-400 to-teal-500",
-    "2": "from-emerald-400 to-emerald-500",
-    "1.5": "from-teal-300 to-teal-400",
-    "1": "from-emerald-300 to-emerald-400",
-    "0": "from-rose-400 to-rose-500",
-    "ผ": "from-emerald-400 to-emerald-500",
-    "มผ": "from-rose-400 to-rose-500",
+    "4": "from-pink-400 to-red-500",
+    "3.5": "from-pink-400 to-red-500",
+    "3": "from-pink-400 to-red-500",
+    "2.5": "from-pink-400 to-red-500",
+    "2": "from-pink-400 to-red-500",
+    "1.5": "from-pink-300 to-red-400",
+    "1": "from-pink-300 to-red-400",
+    "0": "from-pink-400 to-red-500",
+    "ผ": "from-pink-400 to-red-500",
+    "มผ": "from-pink-400 to-red-500",
 };
 
 const GRADE_ALIAS_TO_NUMERIC: Record<string, string> = {
@@ -380,11 +380,11 @@ export function GradeCutFeature({ session }: { session: any }) {
     return (
         <div className="space-y-4">
             {/* ── Top Bar ── */}
-            <section className="rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 p-5 text-white shadow-lg relative overflow-hidden">
+            <section className="rounded-2xl bg-gradient-to-r from-pink-600 to-red-600 p-5 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute inset-y-0 right-[-3rem] w-60 bg-white/10 skew-x-[-18deg]" />
                 <div className="relative z-10 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                        <Link href="/teacher/scores" className="inline-flex items-center gap-1.5 text-emerald-100 hover:text-white mb-2 transition-colors text-sm font-medium">
+                        <Link href="/teacher/scores" className="inline-flex items-center gap-1.5 text-pink-100 hover:text-white mb-2 transition-colors text-sm font-medium">
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
@@ -401,37 +401,37 @@ export function GradeCutFeature({ session }: { session: any }) {
                         {sectionInfo && (
                             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                 <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-3 flex items-center gap-3 transition-all hover:bg-white/15">
-                                    <div className="w-10 h-10 rounded-lg bg-emerald-500/30 flex items-center justify-center shrink-0 shadow-inner">
-                                        <svg className="w-5 h-5 text-emerald-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <div className="w-10 h-10 rounded-lg bg-pink-500/30 flex items-center justify-center shrink-0 shadow-inner">
+                                        <svg className="w-5 h-5 text-pink-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.168.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                         </svg>
                                     </div>
                                     <div className="min-w-0">
-                                        <div className="text-[10px] uppercase font-bold tracking-wider text-emerald-200">วิชาที่สอน</div>
+                                        <div className="text-[10px] uppercase font-bold tracking-wider text-pink-200">วิชาที่สอน</div>
                                         <div className="text-sm font-bold leading-tight truncate">{sectionInfo.subjects?.subject_code} {sectionInfo.subjects?.name}</div>
                                     </div>
                                 </div>
 
                                 <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-3 flex items-center gap-3 transition-all hover:bg-white/15">
-                                    <div className="w-10 h-10 rounded-lg bg-teal-500/30 flex items-center justify-center shrink-0 shadow-inner">
-                                        <svg className="w-5 h-5 text-teal-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <div className="w-10 h-10 rounded-lg bg-red-500/30 flex items-center justify-center shrink-0 shadow-inner">
+                                        <svg className="w-5 h-5 text-red-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                         </svg>
                                     </div>
                                     <div className="min-w-0">
-                                        <div className="text-[10px] uppercase font-bold tracking-wider text-teal-200">ระดับชั้น</div>
+                                        <div className="text-[10px] uppercase font-bold tracking-wider text-red-200">ระดับชั้น</div>
                                         <div className="text-sm font-bold leading-tight">{formatRoomLabel(sectionInfo)}</div>
                                     </div>
                                 </div>
 
                                 <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-3 flex items-center gap-3 transition-all hover:bg-white/15">
-                                    <div className="w-10 h-10 rounded-lg bg-emerald-500/30 flex items-center justify-center shrink-0 shadow-inner">
-                                        <svg className="w-5 h-5 text-emerald-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <div className="w-10 h-10 rounded-lg bg-pink-500/30 flex items-center justify-center shrink-0 shadow-inner">
+                                        <svg className="w-5 h-5 text-pink-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </div>
                                     <div className="min-w-0">
-                                        <div className="text-[10px] uppercase font-bold tracking-wider text-emerald-200">ปีการศึกษา/ภาคเรียน</div>
+                                        <div className="text-[10px] uppercase font-bold tracking-wider text-pink-200">ปีการศึกษา/ภาคเรียน</div>
                                         <div className="text-sm font-bold leading-tight">{formatTermLabel(sectionInfo)}</div>
                                     </div>
                                 </div>
@@ -449,11 +449,11 @@ export function GradeCutFeature({ session }: { session: any }) {
 
             {/* ── Selection Box (Premium Design) ── */}
             <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/50 transition-all mb-6">
-                <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-emerald-400 to-teal-600" />
+                <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-pink-400 to-red-600" />
                 <div className="p-6">
                     <div className="mb-5 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 shadow-sm border border-emerald-100">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-50 text-pink-600 shadow-sm border border-pink-100">
                                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                                 </svg>
@@ -464,9 +464,9 @@ export function GradeCutFeature({ session }: { session: any }) {
                             </div>
                         </div>
                         {!hasSection && (
-                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 animate-pulse">
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">กรุณาเลือกข้อมูลให้ครบ</span>
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-pink-50 border border-pink-100 animate-pulse">
+                                <div className="w-1.5 h-1.5 rounded-full bg-pink-500" />
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-pink-600">กรุณาเลือกข้อมูลให้ครบ</span>
                             </div>
                         )}
                     </div>
@@ -475,21 +475,21 @@ export function GradeCutFeature({ session }: { session: any }) {
                         {/* Subject */}
                         <div className="space-y-2">
                             <label className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                                <svg className="h-4 w-4 text-emerald-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                <svg className="h-4 w-4 text-pink-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                                 วิชาที่สอน
                             </label>
                             <div className="relative group">
                                 <select
                                     value={selectedSubjectKey}
                                     onChange={(e) => handleSubjectSelect(e.target.value)}
-                                    className="w-full h-12 rounded-2xl border border-slate-200 bg-slate-50/50 pl-4 pr-10 text-sm font-bold text-slate-700 outline-none transition-all group-hover:bg-white group-hover:border-emerald-400 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 cursor-pointer appearance-none"
+                                    className="w-full h-12 rounded-2xl border border-slate-200 bg-slate-50/50 pl-4 pr-10 text-sm font-bold text-slate-700 outline-none transition-all group-hover:bg-white group-hover:border-pink-400 focus:bg-white focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 cursor-pointer appearance-none"
                                 >
                                     <option value="">เลือกวิชา...</option>
                                     {subjectOptions.map((o) => (
                                         <option key={o.value} value={o.value}>{o.label}</option>
                                     ))}
                                 </select>
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover:text-emerald-500 transition-colors">
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover:text-pink-500 transition-colors">
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                                 </div>
                             </div>
@@ -498,7 +498,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                         {/* Room */}
                         <div className="space-y-2">
                             <label className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                                <svg className="h-4 w-4 text-emerald-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                                <svg className="h-4 w-4 text-pink-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                                 ระดับชั้น
                             </label>
                             <div className="relative group">
@@ -506,14 +506,14 @@ export function GradeCutFeature({ session }: { session: any }) {
                                     disabled={!selectedSubjectKey}
                                     value={selectedRoomKey}
                                     onChange={(e) => handleRoomSelect(e.target.value)}
-                                    className="w-full h-12 rounded-2xl border border-slate-200 bg-slate-50/50 pl-4 pr-10 text-sm font-bold text-slate-700 outline-none transition-all group-hover:bg-white group-hover:border-emerald-400 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:opacity-40 cursor-pointer appearance-none"
+                                    className="w-full h-12 rounded-2xl border border-slate-200 bg-slate-50/50 pl-4 pr-10 text-sm font-bold text-slate-700 outline-none transition-all group-hover:bg-white group-hover:border-pink-400 focus:bg-white focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 disabled:opacity-40 cursor-pointer appearance-none"
                                 >
                                     <option value="">เลือกระดับชั้น...</option>
                                     {roomOptions.map((o) => (
                                         <option key={o.value} value={o.value}>{o.label}</option>
                                     ))}
                                 </select>
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover:text-emerald-500 transition-colors">
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover:text-pink-500 transition-colors">
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                                 </div>
                             </div>
@@ -522,7 +522,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                         {/* Academic Year */}
                         <div className="space-y-2">
                             <label className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                                <svg className="h-4 w-4 text-emerald-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                <svg className="h-4 w-4 text-pink-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                 ปีการศึกษา
                             </label>
                             <div className="relative group">
@@ -530,7 +530,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                                     disabled={!selectedRoomKey}
                                     value={selectedYearKey}
                                     onChange={(e) => handleYearSelect(e.target.value)}
-                                    className="w-full h-12 rounded-2xl border border-slate-200 bg-slate-50/50 pl-4 pr-10 text-sm font-bold text-slate-700 outline-none transition-all group-hover:bg-white group-hover:border-emerald-400 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:opacity-40 cursor-pointer appearance-none"
+                                    className="w-full h-12 rounded-2xl border border-slate-200 bg-slate-50/50 pl-4 pr-10 text-sm font-bold text-slate-700 outline-none transition-all group-hover:bg-white group-hover:border-pink-400 focus:bg-white focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 disabled:opacity-40 cursor-pointer appearance-none"
                                 >
                                     <option value="">เลือกปีการศึกษา...</option>
                                     {yearOptions.map((option) => (
@@ -539,7 +539,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                                         </option>
                                     ))}
                                 </select>
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover:text-emerald-500 transition-colors">
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover:text-pink-500 transition-colors">
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                                 </div>
                             </div>
@@ -548,7 +548,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                         {/* Semester */}
                         <div className="space-y-2">
                             <label className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                                <svg className="h-4 w-4 text-emerald-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                                <svg className="h-4 w-4 text-pink-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                                 ภาคเรียน
                             </label>
                             <div className="relative group">
@@ -556,7 +556,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                                     value={selectedTermKey}
                                     onChange={(e) => handleSemesterSelect(e.target.value)}
                                     disabled={!selectedYearKey}
-                                    className="w-full h-12 rounded-2xl border border-slate-200 bg-slate-50/50 pl-4 pr-10 text-sm font-bold text-slate-700 outline-none transition-all group-hover:bg-white group-hover:border-emerald-400 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:opacity-40 cursor-pointer appearance-none"
+                                    className="w-full h-12 rounded-2xl border border-slate-200 bg-slate-50/50 pl-4 pr-10 text-sm font-bold text-slate-700 outline-none transition-all group-hover:bg-white group-hover:border-pink-400 focus:bg-white focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 disabled:opacity-40 cursor-pointer appearance-none"
                                 >
                                     <option value="">{selectedYearKey ? "เลือกภาคเรียน..." : "เลือกปีก่อน"}</option>
                                     {semesterOptions.map((option) => (
@@ -565,7 +565,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                                         </option>
                                     ))}
                                 </select>
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover:text-emerald-500 transition-colors">
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover:text-pink-500 transition-colors">
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                                 </div>
                             </div>
@@ -586,7 +586,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                 </section>
             ) : loading ? (
                 <div className="flex items-center justify-center py-16">
-                    <div className="w-10 h-10 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
+                    <div className="w-10 h-10 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin" />
                 </div>
             ) : (
                 <>
@@ -602,7 +602,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                         </div>
                         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                             <div className="text-xs text-slate-500">{stats.isPF ? "ผ่าน (ผ)" : "ผ่านเกณฑ์ (D ขึ้นไป)"}</div>
-                            <div className="mt-1 text-2xl font-bold text-emerald-700">{stats.passCount}<span className="text-sm text-slate-400 font-normal">/{stats.count}</span></div>
+                            <div className="mt-1 text-2xl font-bold text-pink-700">{stats.passCount}<span className="text-sm text-slate-400 font-normal">/{stats.count}</span></div>
                         </div>
                         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                             <div className="text-xs text-slate-500">{stats.isPF ? "ชิ้นงานรวม" : "เต็มรวม / หัวข้อ"}</div>
@@ -618,7 +618,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                                 <section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                                     <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between bg-slate-50/50 gap-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="p-2 rounded-xl bg-emerald-100 text-emerald-600">
+                                            <div className="p-2 rounded-xl bg-pink-100 text-pink-600">
                                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6m4 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                                             </div>
                                             <div>
@@ -657,7 +657,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                                                                 step="0.01"
                                                                 value={num(thresholds[key])}
                                                                 onChange={(e) => handleThresholdChange(key, e.target.value)}
-                                                                className="w-16 h-8 rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm font-bold text-slate-700 text-center focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                                                                className="w-16 h-8 rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm font-bold text-slate-700 text-center focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
                                                             />
                                                             <span className="text-[10px] font-bold text-slate-400">คะแนน (%)</span>
                                                         </div>
@@ -669,13 +669,13 @@ export function GradeCutFeature({ session }: { session: any }) {
                                         <button
                                             onClick={handleSaveAndCalculate}
                                             disabled={savingThresholds || calculating || headerCount === 0}
-                                            className="mt-5 w-full rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200 transition-all hover:bg-emerald-700 active:scale-95 disabled:opacity-50"
+                                            className="mt-5 w-full rounded-xl bg-pink-600 py-3 text-sm font-bold text-white shadow-lg shadow-pink-200 transition-all hover:bg-pink-700 active:scale-95 disabled:opacity-50"
                                         >
                                             {calculating ? "กำลังคำนวณ..." : "คำนวณและบันทึกเกรดลงฐานข้อมูล"}
                                         </button>
 
                                         {headerCount === 0 && (
-                                            <p className="mt-2 text-xs text-emerald-600 flex items-center justify-center gap-1 font-bold">
+                                            <p className="mt-2 text-xs text-pink-600 flex items-center justify-center gap-1 font-bold">
                                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                                 ยังไม่มีหัวข้อคะแนน กรุณาบันทึกคะแนนก่อน
                                             </p>
@@ -702,7 +702,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                                                         </span>
                                                         <div className="flex-1 h-6 rounded-full bg-slate-100 overflow-hidden relative">
                                                             <div
-                                                                className={`h-full rounded-full bg-gradient-to-r ${GRADE_BAR_COLORS[grade] || "from-emerald-500 to-teal-500"} transition-all duration-500`}
+                                                                className={`h-full rounded-full bg-gradient-to-r ${GRADE_BAR_COLORS[grade] || "from-pink-500 to-red-500"} transition-all duration-500`}
                                                                 style={{ width: `${pct}%` }}
                                                             />
                                                             {count > 0 && (
@@ -723,7 +723,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                                 {/* Info & Button display for PF */}
                                 <section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col h-full">
                                     <div className="p-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50/50">
-                                        <div className="p-2 rounded-xl bg-emerald-100 text-emerald-600">
+                                        <div className="p-2 rounded-xl bg-pink-100 text-pink-600">
                                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
@@ -741,13 +741,13 @@ export function GradeCutFeature({ session }: { session: any }) {
                                         <button
                                             onClick={handleSaveAndCalculate}
                                             disabled={savingThresholds || calculating || headerCount === 0}
-                                            className="w-full rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200 transition-all hover:bg-emerald-700 active:scale-95 disabled:opacity-50"
+                                            className="w-full rounded-xl bg-pink-600 py-3 text-sm font-bold text-white shadow-lg shadow-pink-200 transition-all hover:bg-pink-700 active:scale-95 disabled:opacity-50"
                                         >
                                             {calculating ? "กำลังประมวลผล..." : "ประมวลผลและบันทึก ผ/มผ ลงฐานข้อมูล"}
                                         </button>
                                         
                                         {headerCount === 0 && (
-                                            <p className="mt-2 text-xs text-emerald-600 flex items-center justify-center gap-1 font-bold">
+                                            <p className="mt-2 text-xs text-pink-600 flex items-center justify-center gap-1 font-bold">
                                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                                 ยังไม่มีภาระงาน กรุณาเพิ่มชิ้นงานก่อน
                                             </p>
@@ -774,7 +774,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                                                         </span>
                                                         <div className="flex-1 h-8 rounded-full bg-slate-100 overflow-hidden relative shadow-inner">
                                                             <div
-                                                                className={`h-full rounded-full transition-all duration-700 ease-out ${grade === "มผ" ? "bg-gradient-to-r from-rose-400 to-red-500" : "bg-gradient-to-r from-emerald-400 to-teal-500"}`}
+                                                                className={`h-full rounded-full transition-all duration-700 ease-out ${grade === "มผ" ? "bg-gradient-to-r from-pink-400 to-red-500" : "bg-gradient-to-r from-pink-400 to-red-500"}`}
                                                                 style={{ width: `${pct}%` }}
                                                             />
                                                             {count > 0 && (
@@ -803,7 +803,7 @@ export function GradeCutFeature({ session }: { session: any }) {
                                     value={studentSearch}
                                     onChange={(e) => setStudentSearch(e.target.value)}
                                     placeholder="ค้นหานักเรียน..."
-                                    className="w-48 rounded-lg border border-slate-200 pl-9 pr-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-emerald-400"
+                                    className="w-48 rounded-lg border border-slate-200 pl-9 pr-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-pink-400"
                                 />
                             </div>
                         </div>

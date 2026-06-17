@@ -65,6 +65,35 @@ const EMPTY_FORM = (currentYear: number) => ({
     academic_year: currentYear.toString()
 });
 
+function getLevelNumber(value?: string | null) {
+    return String(value || '').match(/(\d+)/)?.[1] || '';
+}
+
+function getLevelStage(value?: string | null) {
+    const text = String(value || '').toLowerCase().replace(/\s+/g, '');
+    if (text.includes('ประถม') || text.includes('ป.')) return 'primary';
+    if (text.includes('มัธยม') || text.includes('ม.')) return 'secondary';
+    return '';
+}
+
+function isSameGradeLevel(criteriaGrade?: string | null, selectedGrade?: string | null) {
+    const criteriaText = String(criteriaGrade || '').trim().toLowerCase();
+    const selectedText = String(selectedGrade || '').trim().toLowerCase();
+    if (!criteriaText || !selectedText) return false;
+    if (criteriaText === selectedText) return true;
+
+    const criteriaNumber = getLevelNumber(criteriaText);
+    const selectedNumber = getLevelNumber(selectedText);
+    const criteriaStage = getLevelStage(criteriaText);
+    const selectedStage = getLevelStage(selectedText);
+
+    if (criteriaNumber && selectedNumber && criteriaNumber === selectedNumber) {
+        return !criteriaStage || !selectedStage || criteriaStage === selectedStage;
+    }
+
+    return criteriaText.includes(selectedText) || selectedText.includes(criteriaText);
+}
+
 export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, currentYear, onRefresh }) => {
     const [criteria, setCriteria] = useState<FitnessCriteria[]>([]);
     const [loading, setLoading] = useState(false);
@@ -189,7 +218,7 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
     const filteredCriteria = criteria.filter(c => {
         const matchesSearch = c.test_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             (c.grade_level || '').toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesGrade = filterGrade === 'ทั้งหมด' || c.grade_level === filterGrade;
+        const matchesGrade = filterGrade === 'ทั้งหมด' || isSameGradeLevel(c.grade_level, filterGrade);
         const matchesGender = filterGender === 'ทั้งหมด' || c.gender === filterGender;
         return matchesSearch && matchesGrade && matchesGender;
     });
@@ -221,7 +250,7 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                     {/* Header */}
                     <div className="px-7 py-5 bg-white border-b border-slate-100 flex items-center justify-between shrink-0 shadow-sm">
                         <div className="flex items-center gap-4">
-                            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-200">
+                            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-pink-400 to-red-500 flex items-center justify-center shadow-lg shadow-pink-200">
                                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
@@ -234,7 +263,7 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => { resetForm(); setShowForm(true); }}
-                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-black shadow-lg shadow-emerald-200 hover:from-emerald-600 hover:to-teal-600 transition-all hover:scale-105 active:scale-95"
+                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-red-500 text-white text-sm font-black shadow-lg shadow-pink-200 hover:from-pink-600 hover:to-red-600 transition-all hover:scale-105 active:scale-95"
                             >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
                                 เพิ่มรายการ
@@ -249,19 +278,19 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                     <div className="px-7 py-3 bg-white border-b border-slate-100 shrink-0">
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="relative group flex-1 min-w-[180px]">
-                                <svg className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                <svg className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-pink-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                 <input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="ค้นหาชื่อการทดสอบ..."
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium text-slate-700 outline-none focus:border-emerald-300 focus:bg-white transition-all" />
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium text-slate-700 outline-none focus:border-pink-300 focus:bg-white transition-all" />
                             </div>
                             <div className="flex gap-1 p-1 bg-slate-100 rounded-xl overflow-x-auto no-scrollbar">
                                 <button onClick={() => setFilterGrade('ทั้งหมด')} className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${filterGrade === 'ทั้งหมด' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>ทั้งหมด</button>
                                 {dropdownLevels.map(l => (
-                                    <button key={l.id} onClick={() => setFilterGrade(l.name)} className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${filterGrade === l.name ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>{l.name}</button>
+                                    <button key={l.id} onClick={() => setFilterGrade(l.name)} className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${filterGrade === l.name ? 'bg-white text-pink-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>{l.name}</button>
                                 ))}
                             </div>
                             <div className="flex gap-1 p-1 bg-slate-100 rounded-xl">
                                 {['ทั้งหมด', 'ชาย', 'หญิง'].map(g => (
-                                    <button key={g} onClick={() => setFilterGender(g)} className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${filterGender === g ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>{g}</button>
+                                    <button key={g} onClick={() => setFilterGender(g)} className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${filterGender === g ? 'bg-white text-pink-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>{g}</button>
                                 ))}
                             </div>
                         </div>
@@ -271,7 +300,7 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                     <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
                         {loading ? (
                             <div className="h-full flex flex-col items-center justify-center py-20">
-                                <div className="w-12 h-12 border-4 border-emerald-100 border-t-emerald-500 rounded-full animate-spin mb-4" />
+                                <div className="w-12 h-12 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin mb-4" />
                                 <p className="text-sm font-bold text-slate-400 animate-pulse">กำลังโหลดข้อมูล...</p>
                             </div>
                         ) : groupedList.length === 0 ? (
@@ -281,7 +310,7 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                                 </div>
                                 <h4 className="text-lg font-black text-slate-700 mb-1">ไม่พบเกณฑ์มาตรฐาน</h4>
                                 <p className="text-sm text-slate-400 mb-5">กดปุ่ม "เพิ่มรายการ" เพื่อสร้างเกณฑ์ใหม่</p>
-                                <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-all">
+                                <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-pink-500 text-white text-sm font-bold hover:bg-pink-600 transition-all">
                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
                                     เพิ่มรายการ
                                 </button>
@@ -289,11 +318,11 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                         ) : (
                             <div className="grid grid-cols-1 gap-3">
                                 {groupedList.map((group) => (
-                                    <div key={group.groupKey} className="group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all duration-200 p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                                    <div key={group.groupKey} className="group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-pink-200 transition-all duration-200 p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                         {/* Grade Badge */}
-                                        <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex flex-col items-center justify-center shrink-0">
-                                            <span className="text-[9px] font-bold text-emerald-400 uppercase leading-none">ชั้น</span>
-                                            <span className="text-xl font-black text-emerald-600">{group.grade_level?.match(/\d+/)?.[0] || '—'}</span>
+                                        <div className="w-12 h-12 rounded-xl bg-pink-50 border border-pink-100 flex flex-col items-center justify-center shrink-0">
+                                            <span className="text-[9px] font-bold text-pink-400 uppercase leading-none">ชั้น</span>
+                                            <span className="text-xl font-black text-pink-600">{group.grade_level?.match(/\d+/)?.[0] || '—'}</span>
                                         </div>
 
                                         {/* Info */}
@@ -317,13 +346,13 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                                                 </div>
                                             ) : (
                                                 <div className="flex gap-2">
-                                                    <div className="px-4 py-2 bg-white rounded-xl border-l-4 border-teal-400 border border-slate-100 text-center min-w-[90px]">
-                                                        <div className="text-[9px] font-bold text-teal-500 uppercase mb-0.5">ชาย</div>
-                                                        <div className="text-lg font-black text-teal-600">{group.male?.passing_threshold ?? '—'} <span className="text-xs font-bold text-slate-400">{group.unit}</span></div>
+                                                    <div className="px-4 py-2 bg-white rounded-xl border-l-4 border-red-400 border border-slate-100 text-center min-w-[90px]">
+                                                        <div className="text-[9px] font-bold text-red-500 uppercase mb-0.5">ชาย</div>
+                                                        <div className="text-lg font-black text-red-600">{group.male?.passing_threshold ?? '—'} <span className="text-xs font-bold text-slate-400">{group.unit}</span></div>
                                                     </div>
-                                                    <div className="px-4 py-2 bg-white rounded-xl border-l-4 border-emerald-400 border border-slate-100 text-center min-w-[90px]">
-                                                        <div className="text-[9px] font-bold text-emerald-500 uppercase mb-0.5">หญิง</div>
-                                                        <div className="text-lg font-black text-emerald-600">{group.female?.passing_threshold ?? '—'} <span className="text-xs font-bold text-slate-400">{group.unit}</span></div>
+                                                    <div className="px-4 py-2 bg-white rounded-xl border-l-4 border-pink-400 border border-slate-100 text-center min-w-[90px]">
+                                                        <div className="text-[9px] font-bold text-pink-500 uppercase mb-0.5">หญิง</div>
+                                                        <div className="text-lg font-black text-pink-600">{group.female?.passing_threshold ?? '—'} <span className="text-xs font-bold text-slate-400">{group.unit}</span></div>
                                                     </div>
                                                 </div>
                                             )}
@@ -331,7 +360,7 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
 
                                         {/* Actions */}
                                         <div className="flex gap-2 shrink-0">
-                                            <button onClick={() => handleEditGroup(group)} className="h-9 px-3 flex items-center gap-1.5 rounded-lg text-slate-400 bg-white border border-slate-200 hover:text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 transition-all text-xs font-bold">
+                                            <button onClick={() => handleEditGroup(group)} className="h-9 px-3 flex items-center gap-1.5 rounded-lg text-slate-400 bg-white border border-slate-200 hover:text-pink-600 hover:bg-pink-50 hover:border-pink-200 transition-all text-xs font-bold">
                                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                 แก้ไข
                                             </button>
@@ -357,8 +386,8 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                             {/* Modal Header */}
                             <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between shrink-0">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-                                        <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <div className="w-9 h-9 rounded-xl bg-pink-50 border border-pink-100 flex items-center justify-center">
+                                        <svg className="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             {isEditing
                                                 ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                 : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -386,7 +415,7 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                                                 const selected = TEST_TYPES.find(t => t.test_name === e.target.value);
                                                 setFormData({ ...formData, test_name: e.target.value, unit: selected?.unit || formData.unit });
                                             }}
-                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-slate-800 text-sm font-medium outline-none focus:border-emerald-400 focus:bg-white transition-all appearance-none cursor-pointer">
+                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-slate-800 text-sm font-medium outline-none focus:border-pink-400 focus:bg-white transition-all appearance-none cursor-pointer">
                                             <option value="">เลือกรายการทดสอบ...</option>
                                             {TEST_TYPES.map((t, i) => (
                                                 <option key={i} value={t.test_name}>{t.test_name}</option>
@@ -399,7 +428,7 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                                         <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">ระดับชั้น</label>
                                         <select required value={formData.grade_level}
                                             onChange={e => setFormData({ ...formData, grade_level: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-sm font-medium outline-none focus:border-emerald-400 focus:bg-white transition-all appearance-none cursor-pointer">
+                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-sm font-medium outline-none focus:border-pink-400 focus:bg-white transition-all appearance-none cursor-pointer">
                                             <option value="">เลือกชั้น...</option>
                                             {ddLoading ? <option disabled>กำลังโหลด...</option> : dropdownLevels.map(l => (
                                                 <option key={l.id} value={l.name}>{l.name}</option>
@@ -423,21 +452,21 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                                     {formData.use_separate_gender ? (
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="space-y-1.5">
-                                                <label className="text-[11px] font-bold text-teal-500 uppercase tracking-wide flex items-center gap-1.5">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-teal-500" />เกณฑ์ผ่าน (ชาย)
+                                                <label className="text-[11px] font-bold text-red-500 uppercase tracking-wide flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-red-500" />เกณฑ์ผ่าน (ชาย)
                                                 </label>
                                                 <input type="number" step="0.01" required value={formData.male_threshold}
                                                     onChange={e => setFormData({ ...formData, male_threshold: e.target.value })}
-                                                    className="w-full px-4 py-3 rounded-xl border-2 border-teal-100 bg-teal-50/30 text-sm font-medium outline-none focus:border-teal-400 transition-all"
+                                                    className="w-full px-4 py-3 rounded-xl border-2 border-red-100 bg-red-50/30 text-sm font-medium outline-none focus:border-red-400 transition-all"
                                                     placeholder="0.00" />
                                             </div>
                                             <div className="space-y-1.5">
-                                                <label className="text-[11px] font-bold text-emerald-500 uppercase tracking-wide flex items-center gap-1.5">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />เกณฑ์ผ่าน (หญิง)
+                                                <label className="text-[11px] font-bold text-pink-500 uppercase tracking-wide flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-pink-500" />เกณฑ์ผ่าน (หญิง)
                                                 </label>
                                                 <input type="number" step="0.01" required value={formData.female_threshold}
                                                     onChange={e => setFormData({ ...formData, female_threshold: e.target.value })}
-                                                    className="w-full px-4 py-3 rounded-xl border-2 border-emerald-100 bg-emerald-50/30 text-sm font-medium outline-none focus:border-emerald-400 transition-all"
+                                                    className="w-full px-4 py-3 rounded-xl border-2 border-pink-100 bg-pink-50/30 text-sm font-medium outline-none focus:border-pink-400 transition-all"
                                                     placeholder="0.00" />
                                             </div>
                                         </div>
@@ -446,7 +475,7 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                                             <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">เกณฑ์ผ่าน (ชาย/หญิง)</label>
                                             <input type="number" step="0.01" required value={formData.both_threshold}
                                                 onChange={e => setFormData({ ...formData, both_threshold: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-sm font-medium outline-none focus:border-emerald-400 transition-all"
+                                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-sm font-medium outline-none focus:border-pink-400 transition-all"
                                                 placeholder="0.00" />
                                         </div>
                                     )}
@@ -456,7 +485,7 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                                         <div className="space-y-1.5">
                                             <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">หน่วยข้อมูล</label>
                                             <select value={formData.unit} onChange={e => setFormData({ ...formData, unit: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-sm font-medium outline-none focus:border-emerald-400 transition-all appearance-none cursor-pointer">
+                                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-sm font-medium outline-none focus:border-pink-400 transition-all appearance-none cursor-pointer">
                                                 <option value="">เลือกหน่วย...</option>
                                                 {[...new Map(dropdownTestNames.filter(t => t.unit).map(t => [t.unit, t])).values()].map((t, i) => (
                                                     <option key={i} value={t.unit}>{t.unit}</option>
@@ -466,7 +495,7 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                                         <div className="space-y-1.5">
                                             <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">เปรียบเทียบ</label>
                                             <select value={formData.comparison_type} onChange={e => setFormData({ ...formData, comparison_type: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-sm font-medium outline-none focus:border-emerald-400 transition-all appearance-none cursor-pointer">
+                                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-sm font-medium outline-none focus:border-pink-400 transition-all appearance-none cursor-pointer">
                                                 {COMPARISON_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                                             </select>
                                         </div>
@@ -481,7 +510,7 @@ export const FitnessCriteriaManagement: React.FC<Props> = ({ isOpen, onClose, cu
                                     ยกเลิก
                                 </button>
                                 <button type="submit" form="criteria-form"
-                                    className="flex-[2] py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-black shadow-lg shadow-emerald-200 hover:from-emerald-600 hover:to-teal-600 transition-all hover:scale-[1.02] active:scale-95">
+                                    className="flex-[2] py-3 rounded-xl bg-gradient-to-r from-pink-500 to-red-500 text-white text-sm font-black shadow-lg shadow-pink-200 hover:from-pink-600 hover:to-red-600 transition-all hover:scale-[1.02] active:scale-95">
                                     บันทึกข้อมูล
                                 </button>
                             </div>

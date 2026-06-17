@@ -29,17 +29,17 @@ export function ExamCalendarFeature({ session }: { session: any }) {
 
     return (
         <div className="space-y-6">
-            <section className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
                 <div className="relative z-10">
                     <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-sm font-medium mb-4">Exam Schedule</div>
                     <h1 className="text-3xl font-bold">ตารางสอบ</h1>
-                    <p className="text-emerald-100 mt-2">ตารางสอบของวิชาที่สอน</p>
+                    <p className="text-pink-100 mt-2">ตารางสอบของวิชาที่สอน</p>
                 </div>
             </section>
 
             {isFallbackAll && (
-                <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl px-4 py-3 text-sm">
+                <div className="bg-pink-50 border border-pink-200 text-pink-800 rounded-2xl px-4 py-3 text-sm">
                     ไม่พบตารางสอบที่ผูกกับวิชาที่คุณสอน จึงแสดงตารางสอบทั้งหมดของโรงเรียนให้แทน
                 </div>
             )}
@@ -56,12 +56,12 @@ export function ExamCalendarFeature({ session }: { session: any }) {
                         <thead>
                             <tr className="bg-slate-50 border-b border-slate-200">
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">วิชา / Section</th>
-                                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">ชั้น/ห้อง</th>
+                                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">ระดับชั้น</th>
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">ผู้สอน</th>
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">ประเภท</th>
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">วันที่สอบ</th>
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">เวลา</th>
-                                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">ห้องสอบ</th>
+                                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">สถานที่สอบ</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,10 +71,10 @@ export function ExamCalendarFeature({ session }: { session: any }) {
                                         <div className="font-medium">{ex.subject_name || "-"}</div>
                                         <div className="text-xs text-slate-500">{ex.subject_code || "-"} • Section #{ex.section_id ?? "-"}</div>
                                     </td>
-                                    <td className="px-6 py-4 text-sm text-slate-600">{(ex.class_level || "-")}/{(ex.classroom || "-")}</td>
+                                    <td className="px-6 py-4 text-sm text-slate-600">{ex.class_level || "-"}</td>
                                     <td className="px-6 py-4 text-sm text-slate-600">{ex.teacher_name || "-"}</td>
                                     <td className="px-6 py-4 text-sm">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${ex.exam_type === "midterm" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : ex.exam_type === "final" ? "bg-teal-50 text-teal-700 border border-teal-200" : "bg-slate-50 text-slate-700 border border-slate-200"}`}>
+                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${ex.exam_type === "midterm" ? "bg-pink-50 text-pink-700 border border-pink-200" : ex.exam_type === "final" ? "bg-red-50 text-red-700 border border-red-200" : "bg-slate-50 text-slate-700 border border-slate-200"}`}>
                                             {ex.exam_type === "midterm" ? "กลางภาค" : ex.exam_type === "final" ? "ปลายภาค" : (ex.exam_type || "-")}
                                         </span>
                                     </td>

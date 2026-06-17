@@ -128,7 +128,7 @@ function ExamModal({
                 <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
                 <div className="relative w-full max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-emerald-600 to-teal-700 px-6 py-5 text-white">
+                    <div className="bg-gradient-to-r from-pink-600 to-red-700 px-6 py-5 text-white">
                         <button onClick={onClose} className="absolute top-4 right-5 text-white/70 hover:text-white transition-colors">
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -138,10 +138,10 @@ function ExamModal({
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <span className="text-sm font-medium text-emerald-100">กำหนดวันสอบ</span>
+                            <span className="text-sm font-medium text-pink-100">กำหนดวันสอบ</span>
                         </div>
                         <h2 className="text-xl font-bold leading-tight">{section?.subjects?.name || "-"}</h2>
-                        <p className="text-emerald-100 text-sm mt-0.5 opacity-90">{section?.subjects?.subject_code} · {section?.class_level}/{section?.classroom?.split("/").pop() || section?.classroom}</p>
+                        <p className="text-pink-100 text-sm mt-0.5 opacity-90">{section?.subjects?.subject_code} · {section?.class_level || "-"}</p>
                     </div>
 
                     {/* Body */}
@@ -150,7 +150,7 @@ function ExamModal({
                         {existingList.length > 0 && !showConfirm && (
                             <div className="px-6 pt-4 flex flex-wrap gap-2">
                                 {existingList.map((item: any) => (
-                                    <div key={item.id} className="rounded-xl bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-[11px] text-emerald-800 font-medium">
+                                    <div key={item.id} className="rounded-xl bg-pink-50 border border-pink-200 px-3 py-1.5 text-[11px] text-pink-800 font-medium">
                                         <span className="font-bold">{EXAM_TYPE_LABELS[item.exam_type] || item.exam_type}</span>
                                         {" · "}
                                         {formatThaiDate(item.exam_date)}
@@ -163,19 +163,19 @@ function ExamModal({
 
                         {loading ? (
                             <div className="p-12 text-center text-slate-500 flex flex-col items-center gap-3">
-                                <div className="w-8 h-8 border-3 border-emerald-100 border-t-emerald-600 rounded-full animate-spin" />
+                                <div className="w-8 h-8 border-3 border-pink-100 border-t-pink-600 rounded-full animate-spin" />
                                 <span className="font-medium">กำลังโหลด...</span>
                             </div>
                         ) : showConfirm ? (
                             <div className="px-6 py-8">
-                                <div className="rounded-2xl bg-amber-50 border border-amber-200 p-5 text-center mb-6">
-                                    <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <div className="rounded-2xl bg-red-50 border border-red-200 p-5 text-center mb-6">
+                                    <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-3">
                                         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                         </svg>
                                     </div>
-                                    <h3 className="text-lg font-bold text-amber-900 mb-1">ยืนยันการบันทึกข้อมูล?</h3>
-                                    <p className="text-amber-700 text-sm">กรุณาตรวจสอบข้อมูลวันและเวลาสอบให้ถูกต้อง</p>
+                                    <h3 className="text-lg font-bold text-red-900 mb-1">ยืนยันการบันทึกข้อมูล?</h3>
+                                    <p className="text-red-700 text-sm">กรุณาตรวจสอบข้อมูลวันและเวลาสอบให้ถูกต้อง</p>
                                 </div>
 
                                 <div className="space-y-4 bg-slate-50 rounded-2xl p-5 border border-slate-200">
@@ -204,7 +204,7 @@ function ExamModal({
                                     <button
                                         onClick={handleSave}
                                         disabled={saving}
-                                        className="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-700 shadow-md shadow-emerald-200 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+                                        className="rounded-xl bg-pink-600 px-4 py-3 text-sm font-bold text-white hover:bg-pink-700 shadow-md shadow-pink-200 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
                                     >
                                         {saving ? (
                                             <>
@@ -227,8 +227,8 @@ function ExamModal({
                                                 key={t}
                                                 onClick={() => setExamType(t)}
                                                 className={`flex-1 rounded-xl border px-3 py-3 text-sm font-bold transition-all ${examType === t
-                                                    ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm"
-                                                    : "border-slate-200 text-slate-500 hover:border-emerald-200 hover:bg-emerald-50/50"
+                                                    ? "border-pink-500 bg-pink-50 text-pink-700 shadow-sm"
+                                                    : "border-slate-200 text-slate-500 hover:border-pink-200 hover:bg-pink-50/50"
                                                     }`}
                                             >
                                                 {EXAM_TYPE_LABELS[t]}
@@ -244,7 +244,7 @@ function ExamModal({
                                             type="date"
                                             value={examDate}
                                             onChange={(e) => setExamDate(e.target.value)}
-                                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-slate-50/50 transition-all"
+                                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 bg-slate-50/50 transition-all"
                                         />
                                     </div>
                                 </div>
@@ -256,7 +256,7 @@ function ExamModal({
                                             type="time"
                                             value={startTime}
                                             onChange={(e) => setStartTime(e.target.value)}
-                                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-slate-50/50 transition-all"
+                                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 bg-slate-50/50 transition-all"
                                         />
                                     </div>
                                     <div>
@@ -265,7 +265,7 @@ function ExamModal({
                                             type="time"
                                             value={endTime}
                                             onChange={(e) => setEndTime(e.target.value)}
-                                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-slate-50/50 transition-all"
+                                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 bg-slate-50/50 transition-all"
                                         />
                                     </div>
                                 </div>
@@ -273,7 +273,7 @@ function ExamModal({
                                 <button
                                     onClick={handleSave}
                                     disabled={saving}
-                                    className="w-full mt-4 rounded-xl bg-emerald-600 px-4 py-4 text-sm font-bold text-white hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all disabled:opacity-60 flex items-center justify-center gap-2 group"
+                                    className="w-full mt-4 rounded-xl bg-pink-600 px-4 py-4 text-sm font-bold text-white hover:bg-pink-700 shadow-lg shadow-pink-100 transition-all disabled:opacity-60 flex items-center justify-center gap-2 group"
                                 >
                                     <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
@@ -299,7 +299,6 @@ export function ScoresFeature({ session }: { session: any }) {
     const [yearFilter, setYearFilter] = useState<string>("all");
     const [semesterFilter, setSemesterFilter] = useState<string>("all");
     const [levelFilter, setLevelFilter] = useState<string>("all");
-    const [classroomFilter, setClassroomFilter] = useState<string>("all");
     const [subjectFilter, setSubjectFilter] = useState<string>("all");
     const [examModalSection, setExamModalSection] = useState<any | null>(null);
     const [academicData, setAcademicData] = useState<any[]>([]);
@@ -343,7 +342,6 @@ export function ScoresFeature({ session }: { session: any }) {
     const years = dbYears.length > 0 ? dbYears : Array.from(new Set(subjects.map((s) => String(s.year ?? "")).filter(Boolean))).sort((a, b) => Number(b) - Number(a));
     const semesters = dbSemesters.length > 0 ? dbSemesters : Array.from(new Set(subjects.map((s) => String(s.semester ?? "")).filter(Boolean))).sort((a, b) => Number(a) - Number(b));
     const levels = Array.from(new Set(subjects.map((s) => String(s.class_level ?? "")).filter(Boolean))).sort((a, b) => a.localeCompare(b));
-    const classrooms = Array.from(new Set(subjects.map((s) => String(s.classroom ?? "")).filter(Boolean))).sort((a, b) => a.localeCompare(b));
     const subjectOptions = Array.from(new Set(subjects.map((s) => `${s?.subjects?.subject_code}|${s?.subjects?.name}`))).sort().map(val => {
         const [code, name] = val.split("|");
         return { code, name };
@@ -354,7 +352,6 @@ export function ScoresFeature({ session }: { session: any }) {
             if (yearFilter !== "all" && String(s.year) !== yearFilter) return false;
             if (semesterFilter !== "all" && String(s.semester) !== semesterFilter) return false;
             if (levelFilter !== "all" && String(s.class_level) !== levelFilter) return false;
-            if (classroomFilter !== "all" && String(s.classroom) !== classroomFilter) return false;
             if (subjectFilter !== "all" && s?.subjects?.subject_code !== subjectFilter) return false;
             if (!search.trim()) return true;
             const q = normalizeText(search);
@@ -372,14 +369,14 @@ export function ScoresFeature({ session }: { session: any }) {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <section className="rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 p-8 text-white shadow-lg relative overflow-hidden">
+            <section className="rounded-3xl bg-gradient-to-br from-pink-600 via-red-600 to-red-700 p-8 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute inset-y-0 right-[-4rem] w-72 bg-white/10 skew-x-[-18deg]" />
                 <div className="relative z-10">
                     <div className="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-sm font-medium mb-4">
                         Score Workspace
                     </div>
                     <h1 className="text-3xl font-bold">ข้อมูลรายวิชา</h1>
-                    <p className="mt-2 text-emerald-50">
+                    <p className="mt-2 text-pink-50">
                         เลือกรายวิชา/Section เพื่อไปยังหน้าบันทึกคะแนน หรือหน้าตัดเกรด
                     </p>
                 </div>
@@ -395,7 +392,7 @@ export function ScoresFeature({ session }: { session: any }) {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="พิมพ์..."
-                                className="w-full rounded-xl border border-slate-200 pl-9 pr-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500 transition-all text-sm"
+                                className="w-full rounded-xl border border-slate-200 pl-9 pr-3 py-2 outline-none focus:ring-2 focus:ring-pink-500 transition-all text-sm"
                             />
                             <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -404,28 +401,28 @@ export function ScoresFeature({ session }: { session: any }) {
                     </div>
                     <div>
                         <label className="block text-xs font-medium text-slate-500 mb-1">รายวิชา</label>
-                        <select value={subjectFilter} onChange={(e) => setSubjectFilter(e.target.value)} className="w-full rounded-xl border border-slate-200 px-2 py-2 outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50/50 text-sm">
+                        <select value={subjectFilter} onChange={(e) => setSubjectFilter(e.target.value)} className="w-full rounded-xl border border-slate-200 px-2 py-2 outline-none focus:ring-2 focus:ring-pink-500 bg-slate-50/50 text-sm">
                             <option value="all">ทั้งหมด</option>
                             {subjectOptions.map((opt) => (<option key={opt.code} value={opt.code}>{opt.code} - {opt.name}</option>))}
                         </select>
                     </div>
                     <div>
                         <label className="block text-xs font-medium text-slate-500 mb-1">ปีการศึกษา</label>
-                        <select value={yearFilter} onChange={(e) => setYearFilter(e.target.value)} className="w-full rounded-xl border border-slate-200 px-2 py-2 outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50/50 text-sm">
+                        <select value={yearFilter} onChange={(e) => setYearFilter(e.target.value)} className="w-full rounded-xl border border-slate-200 px-2 py-2 outline-none focus:ring-2 focus:ring-pink-500 bg-slate-50/50 text-sm">
                             <option value="all">ทั้งหมด</option>
                             {years.map((y) => (<option key={y} value={y}>{y}</option>))}
                         </select>
                     </div>
                     <div>
                         <label className="block text-xs font-medium text-slate-500 mb-1">ภาคเรียน</label>
-                        <select value={semesterFilter} onChange={(e) => setSemesterFilter(e.target.value)} className="w-full rounded-xl border border-slate-200 px-2 py-2 outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50/50 text-sm">
+                        <select value={semesterFilter} onChange={(e) => setSemesterFilter(e.target.value)} className="w-full rounded-xl border border-slate-200 px-2 py-2 outline-none focus:ring-2 focus:ring-pink-500 bg-slate-50/50 text-sm">
                             <option value="all">ทั้งหมด</option>
                             {semesters.map((s) => (<option key={s} value={s}>{s}</option>))}
                         </select>
                     </div>
                     <div>
                         <label className="block text-xs font-medium text-slate-500 mb-1">ระดับชั้น</label>
-                        <select value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} className="w-full rounded-xl border border-slate-200 px-2 py-2 outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50/50 text-sm">
+                        <select value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} className="w-full rounded-xl border border-slate-200 px-2 py-2 outline-none focus:ring-2 focus:ring-pink-500 bg-slate-50/50 text-sm">
                             <option value="all">ทั้งหมด</option>
                             {levels.map((l) => (<option key={l} value={l}>{l}</option>))}
                         </select>
@@ -467,7 +464,7 @@ export function ScoresFeature({ session }: { session: any }) {
                             return (
                                 <div
                                     key={s.id}
-                                    className="rounded-2xl border border-slate-200 p-5 bg-gradient-to-b from-white to-slate-50/60 hover:shadow-md hover:border-emerald-200 transition-all"
+                                    className="rounded-2xl border border-slate-200 p-5 bg-gradient-to-b from-white to-slate-50/60 hover:shadow-md hover:border-pink-200 transition-all"
                                 >
                                     {/* Subject heading */}
                                     <div className="flex flex-wrap items-start justify-between gap-3">
@@ -482,15 +479,15 @@ export function ScoresFeature({ session }: { session: any }) {
                                     </div>
 
                                     {/* Info chips */}
-                                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
                                         <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
                                             <div className="text-xs text-slate-500">Section ID</div>
                                             <div className="text-sm font-semibold text-slate-700">{s.id}</div>
                                         </div>
                                         <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
-                                            <div className="text-xs text-slate-500">ชั้น / ห้อง</div>
+                                            <div className="text-xs text-slate-500">ระดับชั้น</div>
                                             <div className="text-sm font-semibold text-slate-700">
-                                                {s.class_level || "-"} / {s.classroom?.split('/').pop() || s.classroom || "-"}
+                                                {s.class_level || "-"}
                                             </div>
                                         </div>
                                         <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
@@ -507,19 +504,19 @@ export function ScoresFeature({ session }: { session: any }) {
                                     <div className="mt-4 flex flex-col sm:flex-row gap-2">
                                         <Link
                                             href={`/teacher/score_input?section_id=${s.id}`}
-                                            className="flex-1 rounded-xl bg-emerald-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-emerald-700 transition-colors"
+                                            className="flex-1 rounded-xl bg-pink-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-pink-700 transition-colors"
                                         >
                                             บันทึกคะแนน
                                         </Link>
                                         <Link
                                             href={`/teacher/grade_cut?section_id=${s.id}`}
-                                            className="flex-1 rounded-xl bg-teal-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-teal-700 transition-colors"
+                                            className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-red-700 transition-colors"
                                         >
                                             ตัดเกรด
                                         </Link>
                                         <button
                                             onClick={() => setExamModalSection(s)}
-                                            className="flex-1 rounded-xl bg-emerald-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5"
+                                            className="flex-1 rounded-xl bg-pink-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-pink-700 transition-colors flex items-center justify-center gap-1.5"
                                         >
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />

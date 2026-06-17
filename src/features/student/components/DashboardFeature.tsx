@@ -121,19 +121,17 @@ export function DashboardFeature({ session }: { session: StudentDashboardSession
     const currentTerm = data?.currentTerm;
 
     const displayClassLevel = profile.class_level || session.class_level || '-';
-    const rawRoom = profile.room || session.room || '-';
-    const displayRoom = rawRoom.includes('/') ? rawRoom.split('/').pop() : rawRoom;
 
     const cards = [
-        { label: 'วิชาที่ลงทะเบียน', value: stats.registeredSubjects ?? 0, href: '/student/registration', color: 'from-emerald-500 to-teal-600', icon: BookOpen },
-        { label: 'กิจกรรมที่กำลังจะมา', value: stats.upcomingActivities ?? 0, href: '/student/activities', color: 'from-emerald-500 to-teal-600', icon: Calendar },
-        { label: 'การเข้าเรียน (%)', value: stats.attendanceRate ?? 0, href: '/student/schedule', color: 'from-amber-500 to-orange-600', icon: Clock },
-        { label: 'คะแนนความประพฤติ', value: stats.conductScore ?? 0, href: '/student/conduct', color: 'from-fuchsia-500 to-pink-600', icon: Award },
+        { label: 'วิชาที่ลงทะเบียน', value: stats.registeredSubjects ?? 0, href: '/student/registration', color: 'from-pink-500 to-red-600', icon: BookOpen },
+        { label: 'กิจกรรมที่กำลังจะมา', value: stats.upcomingActivities ?? 0, href: '/student/activities', color: 'from-pink-500 to-red-600', icon: Calendar },
+        { label: 'การเข้าเรียน (%)', value: stats.attendanceRate ?? 0, href: '/student/schedule', color: 'from-pink-500 to-red-600', icon: Clock },
+        { label: 'คะแนนความประพฤติ', value: stats.conductScore ?? 0, href: '/student/conduct', color: 'from-pink-500 to-red-600', icon: Award },
     ];
 
     return (
         <div className="space-y-6">
-            <section className="bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-3xl p-6 shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-600 to-red-700 text-white rounded-3xl p-6 shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
                 <div className="relative z-10 flex flex-col lg:flex-row justify-between gap-6 items-start">
                     <div className="flex flex-col md:flex-row gap-5 items-start md:items-center">
@@ -164,29 +162,29 @@ export function DashboardFeature({ session }: { session: StudentDashboardSession
                                 สวัสดี, {profile.name || session.name || 'นักเรียน'}
                             </h1>
                             <div className="flex flex-col gap-1 mt-1.5">
-                                <p className="text-emerald-100 flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
+                                <p className="text-pink-100 flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-pink-300"></span>
                                     <span className="text-sm">รหัสนักเรียน:</span>
                                     <span className="font-medium tracking-tight text-white">{profile.student_code || session.code || '-'}</span>
                                 </p>
-                                <p className="text-emerald-100 text-sm flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
-                                    ชั้น{displayClassLevel} ห้อง {displayRoom}
+                                <p className="text-pink-100 text-sm flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-pink-300"></span>
+                                    ชั้น{displayClassLevel}
                                 </p>
                             </div>
                         </div>
                     </div>
                     <div className="bg-white/10 border border-white/15 rounded-2xl p-4 min-w-[240px]">
-                        <div className="text-sm text-emerald-100 mb-2">ภาคเรียนปัจจุบัน</div>
+                        <div className="text-sm text-pink-100 mb-2">ภาคเรียนปัจจุบัน</div>
                         {currentTerm ? (
                             <>
                                 <div className="text-xl font-bold">ภาคเรียนที่ {currentTerm.semester}</div>
-                                <div className="text-emerald-100">ปีการศึกษา {currentTerm.year}</div>
+                                <div className="text-pink-100">ปีการศึกษา {currentTerm.year}</div>
                             </>
                         ) : (
-                            <div className="text-emerald-100">ยังไม่พบภาคเรียนที่ active</div>
+                            <div className="text-pink-100">ยังไม่พบภาคเรียนที่ active</div>
                         )}
-                        <div className="mt-4 text-xs text-emerald-100">
+                        <div className="mt-4 text-xs text-pink-100">
                             GPA (ข้อมูลที่มี): {Number(stats.gpa ?? 0).toFixed(2)}
                         </div>
                     </div>
@@ -218,22 +216,22 @@ export function DashboardFeature({ session }: { session: StudentDashboardSession
                 <section className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-bold text-slate-800">สรุปการเข้าเรียน</h2>
-                        <Link href="/student/schedule" className="text-sm text-emerald-700 hover:text-emerald-800">
+                        <Link href="/student/schedule" className="text-sm text-pink-700 hover:text-pink-800">
                             ดูตารางเรียน
                         </Link>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                        <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-3">
-                            <div className="text-xs text-emerald-700">มาเรียน</div>
-                            <div className="text-2xl font-bold tracking-tight text-emerald-800">{attendance.present ?? 0}</div>
+                        <div className="rounded-xl bg-pink-50 border border-pink-100 p-3">
+                            <div className="text-xs text-pink-700">มาเรียน</div>
+                            <div className="text-2xl font-bold tracking-tight text-pink-800">{attendance.present ?? 0}</div>
                         </div>
                         <div className="rounded-xl bg-red-50 border border-red-100 p-3">
                             <div className="text-xs text-red-700">ขาดเรียน</div>
                             <div className="text-2xl font-bold tracking-tight text-red-800">{attendance.absent ?? 0}</div>
                         </div>
-                        <div className="rounded-xl bg-amber-50 border border-amber-100 p-3">
-                            <div className="text-xs text-amber-700">มาสาย</div>
-                            <div className="text-2xl font-bold tracking-tight text-amber-800">{attendance.late ?? 0}</div>
+                        <div className="rounded-xl bg-red-50 border border-red-100 p-3">
+                            <div className="text-xs text-red-700">มาสาย</div>
+                            <div className="text-2xl font-bold tracking-tight text-red-800">{attendance.late ?? 0}</div>
                         </div>
                         <div className="rounded-xl bg-slate-50 border border-slate-200 p-3">
                             <div className="text-xs text-slate-600">รวมทั้งหมด</div>
@@ -245,7 +243,7 @@ export function DashboardFeature({ session }: { session: StudentDashboardSession
                 <section className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-bold text-slate-800">กิจกรรมที่กำลังจะมา</h2>
-                        <Link href="/student/activities" className="text-sm text-emerald-700 hover:text-emerald-800">
+                        <Link href="/student/activities" className="text-sm text-pink-700 hover:text-pink-800">
                             ดูทั้งหมด
                         </Link>
                     </div>

@@ -30,7 +30,6 @@ export default async function Sidebar() {
             { name: 'บันทึกสุขภาพ', href: '/teacher/fitness' },
             { name: 'ข้อมูลรายวิชา', href: '/teacher/scores' },
             { name: 'การประเมินนักเรียน', href: '/teacher/teaching_evaluation' },
-            { name: 'ผลการประเมิน', href: '/teacher/advisor_evaluation' },
             { name: 'บันทึกคะแนนพฤติกรรม', href: '/teacher/behavior' },
             { name: 'ปฏิทินกิจกรรม', href: '/teacher/activity_calendar' },
         ],

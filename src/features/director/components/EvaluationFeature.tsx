@@ -15,7 +15,7 @@ const TYPE_COL_LABEL: Record<EvalType, string> = {
     student_teaching: "ครูผู้สอน / รายวิชา",
     student_advisor: "ครูที่ปรึกษา",
     teacher_subject: "นักเรียน / รายวิชา",
-    teacher_advisor: "นักเรียน / ชั้น-ห้อง",
+    teacher_advisor: "นักเรียน / ระดับชั้น",
 };
 
 export function EvaluationFeature() {
@@ -25,7 +25,6 @@ export function EvaluationFeature() {
     const [subjects, setSubjects] = useState<any[]>([]);
     const [departments, setDepartments] = useState<any[]>([]);
     const [gradeLevels, setGradeLevels] = useState<string[]>([]);
-    const [classrooms, setClassrooms] = useState<string[]>([]);
     const [year, setYear] = useState<number>(new Date().getFullYear());
     const [semester, setSemester] = useState<number>(1);
     const [type, setType] = useState<EvalType>('student_teaching');
@@ -33,7 +32,6 @@ export function EvaluationFeature() {
     const [subjectId, setSubjectId] = useState<number | ''>('');
     const [departmentId, setDepartmentId] = useState<number | ''>('');
     const [classLevel, setClassLevel] = useState<string>('');
-    const [room, setRoom] = useState<string>('');
 
     // Fetch academic years on mount
     useEffect(() => {
@@ -51,7 +49,6 @@ export function EvaluationFeature() {
         DirectorApiService.getSubjectsLookup().then(data => setSubjects(data || [])).catch(() => {});
         DirectorApiService.getLearningSubjectGroups().then(data => setDepartments(data || [])).catch(() => {});
         DirectorApiService.getGradeLevels().then(data => setGradeLevels(data || [])).catch(() => {});
-        DirectorApiService.getClassrooms().then(data => setClassrooms(data || [])).catch(() => {});
     }, []);
 
     const load = () => {
@@ -61,7 +58,6 @@ export function EvaluationFeature() {
             subject_id: subjectId ? Number(subjectId) : undefined,
             department_id: departmentId ? Number(departmentId) : undefined,
             class_level: classLevel || undefined,
-            room: room || undefined,
         };
         DirectorApiService.getEvaluationResults(year, semester, type, filters)
             .then(rows => { setTopics(rows || []); setLoading(false); })
@@ -83,7 +79,6 @@ export function EvaluationFeature() {
         setSubjectId('');
         setDepartmentId('');
         setClassLevel('');
-        setRoom('');
     };
 
     const selectedYearData = academicYears.find(y => Number(y.year_name) === year);
@@ -97,12 +92,12 @@ export function EvaluationFeature() {
 
     return (
         <div className="space-y-6">
-            <section className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
                 <div className="relative z-10">
                     <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-sm font-medium mb-4">Evaluation</div>
                     <h1 className="text-3xl font-bold">ผลการประเมิน</h1>
-                    <p className="text-emerald-50 mt-2">สรุปผลประเมิน ปี {year} / ภาค {semester}</p>
+                    <p className="text-pink-50 mt-2">สรุปผลประเมิน ปี {year} / ภาค {semester}</p>
                 </div>
             </section>
 
@@ -191,7 +186,7 @@ export function EvaluationFeature() {
                         </>
                     )}
 
-                    {/* Class Level & Room filter – show only for advisor types */}
+                    {/* Class Level filter – show only for advisor types */}
                     {isAdvisorType && (
                         <>
                             <div>
@@ -207,37 +202,24 @@ export function EvaluationFeature() {
                                     ))}
                                 </select>
                             </div>
-                            <div>
-                                <label className="text-xs text-slate-500 block mb-1">ห้อง</label>
-                                <select
-                                    className="px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 font-medium min-w-[100px]"
-                                    value={room}
-                                    onChange={(e) => setRoom(e.target.value)}
-                                >
-                                    <option value="">ทั้งหมด</option>
-                                    {classrooms.map((c) => (
-                                        <option key={c} value={c}>{c}</option>
-                                    ))}
-                                </select>
-                            </div>
                         </>
                     )}
 
-                    <button onClick={load} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors shadow-sm">
+                    <button onClick={load} className="px-5 py-2 bg-pink-600 text-white rounded-xl font-medium hover:bg-pink-700 transition-colors shadow-sm">
                         ดึงข้อมูล
                     </button>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="md:col-span-4 bg-emerald-50 rounded-2xl px-6 py-4 border border-emerald-100 flex items-center gap-6">
+                <div className="md:col-span-4 bg-pink-50 rounded-2xl px-6 py-4 border border-pink-100 flex items-center gap-6">
                     <div className="flex flex-col">
-                        <span className="text-xs text-emerald-600 font-bold uppercase tracking-wider">รวมทั้งสิ้น</span>
-                        <span className="text-4xl font-black text-emerald-700">{topics.length}</span>
-                        <span className="text-xs text-emerald-500">รายการที่พบ</span>
+                        <span className="text-xs text-pink-600 font-bold uppercase tracking-wider">รวมทั้งสิ้น</span>
+                        <span className="text-4xl font-black text-pink-700">{topics.length}</span>
+                        <span className="text-xs text-pink-500">รายการที่พบ</span>
                     </div>
-                    <div className="h-12 w-px bg-emerald-200"></div>
-                    <div className="text-sm text-emerald-700 font-medium">{TYPE_LABELS[type]}</div>
+                    <div className="h-12 w-px bg-pink-200"></div>
+                    <div className="text-sm text-pink-700 font-medium">{TYPE_LABELS[type]}</div>
                 </div>
             </div>
 
@@ -247,7 +229,7 @@ export function EvaluationFeature() {
                 </div>
                 {loading ? (
                     <div className="p-12 text-center text-slate-400 flex flex-col items-center gap-3">
-                        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
                         <span>กำลังประมวลผลข้อมูล...</span>
                     </div>
                 ) : topics.length === 0 ? (
@@ -276,9 +258,9 @@ export function EvaluationFeature() {
                                     const score = Number(t.avg_score || 0);
                                     let level = "ปรับปรุง";
                                     let color = "bg-red-100 text-red-700 border-red-200";
-                                    if (score >= 4.5) { level = "ดีเยี่ยม"; color = "bg-emerald-100 text-emerald-700 border-emerald-200"; }
-                                    else if (score >= 3.5) { level = "ดี"; color = "bg-blue-100 text-blue-700 border-blue-200"; }
-                                    else if (score >= 2.5) { level = "พอใช้"; color = "bg-amber-100 text-amber-700 border-amber-200"; }
+                                    if (score >= 4.5) { level = "ดีเยี่ยม"; color = "bg-pink-100 text-pink-700 border-pink-200"; }
+                                    else if (score >= 3.5) { level = "ดี"; color = "bg-pink-100 text-pink-700 border-pink-200"; }
+                                    else if (score >= 2.5) { level = "พอใช้"; color = "bg-red-100 text-red-700 border-red-200"; }
 
                                     return (
                                         <tr key={t.id || i} className="hover:bg-slate-50 transition-colors">
@@ -292,7 +274,7 @@ export function EvaluationFeature() {
                                                     const answered = t.responses_count || 0;
                                                     const total = t.total_expected || 0;
                                                     const pct = total > 0 ? answered / total : 0;
-                                                    const ratioColor = pct >= 1 ? 'text-emerald-600' : pct >= 0.5 ? 'text-amber-600' : 'text-red-500';
+                                                    const ratioColor = pct >= 1 ? 'text-pink-600' : pct >= 0.5 ? 'text-red-600' : 'text-red-500';
                                                     return (
                                                         <div className="flex flex-col items-center justify-center">
                                                             <div className="flex items-baseline gap-1">

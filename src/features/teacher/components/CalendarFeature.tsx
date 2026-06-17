@@ -13,14 +13,14 @@ export type Target = {
 const TH_MONTHS = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
 
 const EVENT_COLORS = [
-    { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", hover: "hover:bg-emerald-100/80" },
-    { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", hover: "hover:bg-blue-100/80" },
-    { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200", hover: "hover:bg-amber-100/80" },
+    { bg: "bg-pink-50", text: "text-pink-700", border: "border-pink-200", hover: "hover:bg-pink-100/80" },
+    { bg: "bg-pink-50", text: "text-pink-700", border: "border-pink-200", hover: "hover:bg-pink-100/80" },
+    { bg: "bg-red-50", text: "text-red-700", border: "border-red-200", hover: "hover:bg-red-100/80" },
     { bg: "bg-rose-50", text: "text-rose-700", border: "border-rose-200", hover: "hover:bg-rose-100/80" },
-    { bg: "bg-indigo-50", text: "text-indigo-700", border: "border-indigo-200", hover: "hover:bg-indigo-100/80" },
-    { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200", hover: "hover:bg-orange-100/80" },
-    { bg: "bg-teal-50", text: "text-teal-700", border: "border-teal-200", hover: "hover:bg-teal-100/80" },
-    { bg: "bg-fuchsia-50", text: "text-fuchsia-700", border: "border-fuchsia-200", hover: "hover:bg-fuchsia-100/80" },
+    { bg: "bg-red-50", text: "text-red-700", border: "border-red-200", hover: "hover:bg-red-100/80" },
+    { bg: "bg-red-50", text: "text-red-700", border: "border-red-200", hover: "hover:bg-red-100/80" },
+    { bg: "bg-red-50", text: "text-red-700", border: "border-red-200", hover: "hover:bg-red-100/80" },
+    { bg: "bg-pink-50", text: "text-pink-700", border: "border-pink-200", hover: "hover:bg-pink-100/80" },
 ];
 
 const getEventColor = (ev: any) => {
@@ -245,7 +245,7 @@ export function CalendarFeature({ session }: { session: any }) {
                         className={`border border-slate-200 p-1 align-top h-20 cursor-pointer ${!isCurrent ? 'opacity-30 bg-slate-50/50' : 'bg-white hover:bg-slate-50'} transition-colors group`}
                         onClick={() => isCurrent && dateKey && openAddForm(dateKey)}
                     >
-                        <div className={`text-right text-xs p-1 ${isToday ? 'text-emerald-600 font-bold' : 'text-slate-400'}`}>{display}</div>
+                        <div className={`text-right text-xs p-1 ${isToday ? 'text-pink-600 font-bold' : 'text-slate-400'}`}>{display}</div>
                         <div className="flex flex-col gap-1 px-1">
                             {dayEvs.slice(0, 2).map((ev: any, idx: number) => (
                                 <div
@@ -270,12 +270,12 @@ export function CalendarFeature({ session }: { session: any }) {
 
     return (
         <div className="space-y-6">
-            <section className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl py-6 px-8 text-white shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl py-6 px-8 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
                 <div className="relative z-10">
                     <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-xs font-medium mb-3">Calendar</div>
                     <h1 className="text-2xl font-bold">ปฏิทินกิจกรรม</h1>
-                    <p className="text-emerald-100 mt-1 text-sm">จัดการกิจกรรมและตารางนัดหมาย</p>
+                    <p className="text-pink-100 mt-1 text-sm">จัดการกิจกรรมและตารางนัดหมาย</p>
                 </div>
             </section>
 
@@ -287,7 +287,7 @@ export function CalendarFeature({ session }: { session: any }) {
                         {TH_MONTHS[month]} {year + 543}
                     </span>
                 </div>
-                <button onClick={() => { setShowAdd(!showAdd); setSelectedEvent(null); }} className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors text-sm">+ เพิ่มกิจกรรม</button>
+                <button onClick={() => { setShowAdd(!showAdd); setSelectedEvent(null); }} className="px-4 py-2 bg-pink-600 text-white rounded-xl font-medium hover:bg-pink-700 transition-colors text-sm">+ เพิ่มกิจกรรม</button>
             </div>
 
             {/* Unified Activity Modal */}
@@ -315,7 +315,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">ชื่อกิจกรรม</label>
                                         <input 
-                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 placeholder:text-slate-400" 
+                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 placeholder:text-slate-400" 
                                             placeholder="ระบุชื่อกิจกรรม..."
                                             value={showAdd ? form.title : editForm.title} 
                                             onChange={e => showAdd ? setForm({...form, title: e.target.value}) : setEditForm({...editForm, title: e.target.value})} 
@@ -324,7 +324,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                      <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">ปีการศึกษา</label>
                                         <select 
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? addFormYear : editFormYear}
                                             onChange={e => {
                                                 const yearId = e.target.value;
@@ -344,7 +344,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">ภาคเรียน</label>
                                         <select 
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? form.semester_id : editForm.semester_id}
                                             onChange={e => showAdd ? setForm({...form, semester_id: e.target.value}) : setEditForm({...editForm, semester_id: e.target.value})}
                                             disabled={!(showAdd ? addFormYear : editFormYear)}
@@ -363,7 +363,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">ประเภทกิจกรรม</label>
                                         <select 
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? form.event_type_id : editForm.event_type_id}
                                             onChange={e => showAdd ? setForm({...form, event_type_id: e.target.value}) : setEditForm({...editForm, event_type_id: e.target.value})}
                                         >
@@ -376,7 +376,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">ฝ่ายที่รับผิดชอบ</label>
                                         <select 
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? form.department_id : editForm.department_id}
                                             onChange={e => {
                                                 const val = e.target.value;
@@ -394,7 +394,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">ครูที่รับผิดชอบ</label>
                                         <select 
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? form.responsible_teacher_id : editForm.responsible_teacher_id}
                                             onChange={e => showAdd ? setForm({...form, responsible_teacher_id: e.target.value}) : setEditForm({...editForm, responsible_teacher_id: e.target.value})}
                                         >
@@ -417,7 +417,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                         <label className="text-sm font-medium text-slate-700">วันที่เริ่ม</label>
                                         <input 
                                             type="date" 
-                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800"
+                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800"
                                             value={showAdd ? form.event_date : editForm.event_date} 
                                             onChange={e => showAdd ? setForm({...form, event_date: e.target.value}) : setEditForm({...editForm, event_date: e.target.value})} 
                                         />
@@ -426,7 +426,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                         <label className="text-sm font-medium text-slate-700">วันที่สิ้นสุด</label>
                                         <input 
                                             type="date" 
-                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800"
+                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800"
                                             value={showAdd ? form.end_date : editForm.end_date} 
                                             onChange={e => showAdd ? setForm({...form, end_date: e.target.value}) : setEditForm({...editForm, end_date: e.target.value})} 
                                         />
@@ -437,7 +437,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                         <label className="text-sm font-medium text-slate-700">เวลาเริ่ม</label>
                                         <input 
                                             type="time" 
-                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800"
+                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800"
                                             value={showAdd ? form.start_time : editForm.start_time} 
                                             onChange={e => showAdd ? setForm({...form, start_time: e.target.value}) : setEditForm({...editForm, start_time: e.target.value})} 
                                         />
@@ -446,7 +446,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                         <label className="text-sm font-medium text-slate-700">เวลาสิ้นสุด</label>
                                         <input 
                                             type="time" 
-                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800"
+                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800"
                                             value={showAdd ? form.end_time : editForm.end_time} 
                                             onChange={e => showAdd ? setForm({...form, end_time: e.target.value}) : setEditForm({...editForm, end_time: e.target.value})} 
                                         />
@@ -455,10 +455,10 @@ export function CalendarFeature({ session }: { session: any }) {
                                     {/* Location Selection */}
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700 flex items-center gap-1">
-                                            <Building2 size={14} className="text-emerald-500" /> อาคาร
+                                            <Building2 size={14} className="text-pink-500" /> อาคาร
                                         </label>
                                         <select 
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? form.building_id : editForm.building_id}
                                             onChange={async (e) => {
                                                 const bId = e.target.value;
@@ -479,10 +479,10 @@ export function CalendarFeature({ session }: { session: any }) {
                                     </div>
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700 flex items-center gap-1">
-                                            <DoorOpen size={14} className="text-emerald-500" /> ห้อง
+                                            <DoorOpen size={14} className="text-pink-500" /> สถานที่
                                         </label>
                                         <select 
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? form.room_id : editForm.room_id}
                                             onChange={e => showAdd ? setForm({...form, room_id: e.target.value}) : setEditForm({...editForm, room_id: e.target.value})}
                                             disabled={!(showAdd ? form.building_id : editForm.building_id)}
@@ -495,14 +495,14 @@ export function CalendarFeature({ session }: { session: any }) {
                                     {/* Dynamic Participation Scope */}
                                     <div className="md:col-span-2 space-y-3 border-t border-slate-100 pt-4">
                                         <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                                            <Users size={16} className="text-emerald-600" /> กลุ่มเป้าหมายผู้เข้าร่วม
+                                            <Users size={16} className="text-pink-600" /> กลุ่มเป้าหมายผู้เข้าร่วม
                                         </label>
                                         
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
                                             <div className="space-y-1">
                                                 <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">ประเภทกลุ่มเป้าหมาย</label>
                                                 <select 
-                                                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+                                                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none text-sm"
                                                     value={(showAdd ? form.targets[0]?.target_type : editForm.targets[0]?.target_type) || ""}
                                                     onChange={async (e) => {
                                                         const type = e.target.value;
@@ -535,12 +535,12 @@ export function CalendarFeature({ session }: { session: any }) {
                                                 <div className="md:col-span-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200 pt-2 border-t border-slate-100 mt-2">
                                                     <div className="flex items-center justify-between">
                                                         <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                                                            ระบุรายละเอียด <span className="text-emerald-600 font-normal normal-case">(เลือกได้มากกว่า 1)</span>
+                                                            ระบุรายละเอียด <span className="text-pink-600 font-normal normal-case">(เลือกได้มากกว่า 1)</span>
                                                         </label>
                                                         {targetOptions.length > 0 && (
                                                             <button
                                                                 type="button"
-                                                                className="text-[11px] font-medium text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded transition-colors"
+                                                                className="text-[11px] font-medium text-pink-600 hover:text-pink-700 bg-pink-50 hover:bg-pink-100 px-2 py-1 rounded transition-colors"
                                                                 onClick={() => {
                                                                     const currentTargets = showAdd ? form.targets : editForm.targets;
                                                                     const targetType = currentTargets[0]?.target_type;
@@ -579,10 +579,10 @@ export function CalendarFeature({ session }: { session: any }) {
                                                                 const isChecked = currentTargets.some(t => t.target_value === String(opt.id));
                                                                 
                                                                 return (
-                                                                    <label key={opt.id} className={`flex items-start gap-2 text-sm cursor-pointer p-2 rounded-lg border transition-all ${isChecked ? 'bg-emerald-50 border-emerald-200' : 'hover:bg-slate-50 border-transparent'}`}>
+                                                                    <label key={opt.id} className={`flex items-start gap-2 text-sm cursor-pointer p-2 rounded-lg border transition-all ${isChecked ? 'bg-pink-50 border-pink-200' : 'hover:bg-slate-50 border-transparent'}`}>
                                                                         <input 
                                                                             type="checkbox" 
-                                                                            className="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 pointer-events-none"
+                                                                            className="mt-0.5 rounded text-pink-600 focus:ring-pink-500 border-slate-300 pointer-events-none"
                                                                             checked={isChecked}
                                                                             onChange={(e) => {
                                                                                 const checked = e.target.checked;
@@ -606,7 +606,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                                                                 else setEditForm({ ...editForm, targets: updated });
                                                                             }}
                                                                         />
-                                                                        <span className={`text-sm select-none ${isChecked ? 'font-medium text-emerald-800' : 'text-slate-600'}`}>
+                                                                        <span className={`text-sm select-none ${isChecked ? 'font-medium text-pink-800' : 'text-slate-600'}`}>
                                                                             {opt.label}
                                                                         </span>
                                                                     </label>
@@ -625,7 +625,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                     <div className="md:col-span-2 space-y-1">
                                         <label className="text-sm font-medium text-slate-700">รายละเอียด</label>
                                         <textarea 
-                                            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 placeholder:text-slate-400 min-h-[100px] resize-none pb-20" 
+                                            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 placeholder:text-slate-400 min-h-[100px] resize-none pb-20" 
                                             placeholder="..."
                                             value={showAdd ? form.description : editForm.description} 
                                             onChange={e => showAdd ? setForm({...form, description: e.target.value}) : setEditForm({...editForm, description: e.target.value})} 
@@ -652,7 +652,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                 )}
                                 <button 
                                     onClick={showAdd ? handleAdd : handleUpdate} 
-                                    className="px-7 py-2 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all shadow-md active:scale-95 text-sm"
+                                    className="px-7 py-2 bg-pink-600 text-white rounded-xl font-bold hover:bg-pink-700 transition-all shadow-md active:scale-95 text-sm"
                                 >
                                     {selectedEvent ? "บันทึก" : "เพิ่ม"}
                                 </button>
@@ -667,7 +667,7 @@ export function CalendarFeature({ session }: { session: any }) {
                     <thead>
                         <tr className="bg-slate-50">
                             {["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."].map((d, i) => (
-                                <th key={i} className={`py-3 px-2 text-center font-medium border-b border-slate-200 ${i === 0 ? 'text-emerald-500' : i === 6 ? 'text-teal-500' : 'text-slate-600'}`}>{d}</th>
+                                <th key={i} className={`py-3 px-2 text-center font-medium border-b border-slate-200 ${i === 0 ? 'text-pink-500' : i === 6 ? 'text-red-500' : 'text-slate-600'}`}>{d}</th>
                             ))}
                         </tr>
                     </thead>
@@ -678,7 +678,7 @@ export function CalendarFeature({ session }: { session: any }) {
             {/* Upcoming list */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
                 <div className="flex items-center gap-2 mb-4">
-                    <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                    <div className="p-2 bg-pink-50 text-pink-600 rounded-lg">
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                         </svg>
@@ -690,7 +690,7 @@ export function CalendarFeature({ session }: { session: any }) {
                         <div 
                             key={i} 
                             onClick={() => openEditModal(ev)}
-                            className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-all cursor-pointer hover:bg-white hover:shadow-sm active:scale-[0.99] group"
+                            className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-pink-200 transition-all cursor-pointer hover:bg-white hover:shadow-sm active:scale-[0.99] group"
                         >
                             <div>
                                 <div className={`text-sm font-bold flex items-center gap-2 mb-1 transition-colors ${getEventTextOnlyColor(ev)}`}>
@@ -708,7 +708,7 @@ export function CalendarFeature({ session }: { session: any }) {
                                     </div>
                                     <div className="flex flex-wrap items-center gap-3">
                                         {ev.event_type_name && (
-                                            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold uppercase tracking-wider">
+                                            <span className="px-2 py-0.5 bg-pink-100 text-pink-700 rounded-lg text-[10px] font-bold uppercase tracking-wider">
                                                 {ev.event_type_name}
                                             </span>
                                         )}
@@ -719,13 +719,13 @@ export function CalendarFeature({ session }: { session: any }) {
                                         )}
                                         {ev.location && (
                                             <span className="text-slate-600 font-medium flex items-center gap-1">
-                                                <MapPin size={12} className="text-emerald-500" />
+                                                <MapPin size={12} className="text-pink-500" />
                                                 {ev.location}
                                             </span>
                                         )}
                                         {ev.responsible_teacher_name && (
-                                            <span className="text-emerald-600 font-medium flex items-center gap-1">
-                                                <User size={12} className="text-emerald-500" />
+                                            <span className="text-pink-600 font-medium flex items-center gap-1">
+                                                <User size={12} className="text-pink-500" />
                                                 {ev.responsible_teacher_name}
                                             </span>
                                         )}

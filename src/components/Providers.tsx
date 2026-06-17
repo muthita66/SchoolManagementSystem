@@ -31,7 +31,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                     },
                     success: {
                         iconTheme: {
-                            primary: '#10B981', // Emerald 500
+                            primary: '#EC4899', // pink 500
                             secondary: '#fff',
                         },
                     },

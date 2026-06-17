@@ -10,14 +10,7 @@ function currentAcademicYearGuess() {
 
 function formatClassRoomDisplay(classLevel?: string | null, room?: string | null) {
     const level = String(classLevel || "").trim();
-    const roomValue = String(room || "").trim();
-
-    if (!level && !roomValue) return "-";
-    if (!roomValue) return level || "-";
-    if (!level) return roomValue;
-    if (roomValue === level || roomValue.startsWith(`${level}/`)) return roomValue;
-
-    return `${level}/${roomValue}`;
+    return level || "-";
 }
 
 export function StudentsFeature({ session }: { session: any }) {
@@ -70,19 +63,19 @@ export function StudentsFeature({ session }: { session: any }) {
         const q = search.trim().toLowerCase();
         if (!q) return students;
         return students.filter((s) => {
-            const text = `${s.student_code || ""} ${s.prefix || ""} ${s.first_name || ""} ${s.last_name || ""} ${s.class_level || ""} ${s.room || ""}`.toLowerCase();
+            const text = `${s.student_code || ""} ${s.prefix || ""} ${s.first_name || ""} ${s.last_name || ""} ${s.class_level || ""}`.toLowerCase();
             return text.includes(q);
         });
     }, [students, search]);
 
     return (
         <div className="space-y-6">
-            <section className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
                 <div className="relative z-10">
                     <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-sm font-medium mb-4">Student List</div>
                     <h1 className="text-3xl font-bold">รายชื่อนักเรียน</h1>
-                    <p className="text-emerald-100 mt-2">รายชื่อนักเรียนในความดูแล จำนวน {students.length} คน</p>
+                    <p className="text-pink-100 mt-2">รายชื่อนักเรียนในความดูแล จำนวน {students.length} คน</p>
                 </div>
             </section>
 
@@ -103,18 +96,18 @@ export function StudentsFeature({ session }: { session: any }) {
                         <option value={2}>2</option>
                     </select>
                 </div>
-                <button onClick={loadStudents} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors">
+                <button onClick={loadStudents} className="px-5 py-2 bg-pink-600 text-white rounded-xl font-medium hover:bg-pink-700 transition-colors">
                     ดึงข้อมูลนักเรียน
                 </button>
                 <input
-                    className="md:ml-auto w-full md:w-96 px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+                    className="md:ml-auto w-full md:w-96 px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none"
                     placeholder="ค้นหานักเรียน..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
             </div>
 
-            {notice && <div className="bg-emerald-50 border-emerald-200 text-emerald-800 rounded-2xl px-4 py-3 text-sm">{notice}</div>}
+            {notice && <div className="bg-pink-50 border-pink-200 text-pink-800 rounded-2xl px-4 py-3 text-sm">{notice}</div>}
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 {loading ? (
@@ -130,7 +123,7 @@ export function StudentsFeature({ session }: { session: any }) {
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">เลขที่</th>
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">รหัสนักเรียน</th>
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">ชื่อ-นามสกุล</th>
-                                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">ชั้น/ห้อง</th>
+                                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-600">ระดับชั้น</th>
                                 <th className="px-6 py-3 text-center text-sm font-semibold text-slate-600">ดูข้อมูล</th>
                             </tr>
                         </thead>
@@ -142,7 +135,7 @@ export function StudentsFeature({ session }: { session: any }) {
                                     <td className="px-6 py-4 text-sm text-slate-800 font-medium">{`${s.prefix || ""}${s.first_name || ""} ${s.last_name || ""}`.trim()}</td>
                                     <td className="px-6 py-4 text-sm text-slate-600">{formatClassRoomDisplay(s.class_level, s.room)}</td>
                                     <td className="px-6 py-4 text-center">
-                                        <Link href={`/teacher/student_profile?id=${s.id}`} className="text-xs text-emerald-600 hover:text-emerald-700 font-medium bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors">ดูโปรไฟล์</Link>
+                                        <Link href={`/teacher/student_profile?id=${s.id}`} className="text-xs text-pink-600 hover:text-pink-700 font-medium bg-pink-50 px-3 py-1.5 rounded-lg hover:bg-pink-100 transition-colors">ดูโปรไฟล์</Link>
                                     </td>
                                 </tr>
                             ))}

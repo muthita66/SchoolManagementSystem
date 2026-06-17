@@ -146,14 +146,14 @@ export function EditModal({
                                             placeholder={field.placeholder}
                                             required={field.required}
                                             rows={4}
-                                            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                                            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500"
                                         />
                                     ) : field.type === "select" ? (
                                         <select
                                             value={values[field.key] ?? ""}
                                             onChange={(e) => onChange(field.key, e.target.value)}
                                             required={field.required}
-                                            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                         >
                                             {resolvedOptions.map((opt, idx) => {
                                                 const resolvedLabels = typeof field.labels === "function" ? field.labels(values) : field.labels;
@@ -171,7 +171,7 @@ export function EditModal({
                                             onChange={(e) => onChange(field.key, e.target.value)}
                                             placeholder={field.placeholder}
                                             required={field.required}
-                                            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                                            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500"
                                         />
                                     )}
                                 </label>
@@ -192,7 +192,7 @@ export function EditModal({
                         type="button"
                         onClick={onSubmit}
                         disabled={saving}
-                        className="px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60"
+                        className="px-4 py-2 rounded-xl bg-pink-600 text-white hover:bg-pink-700 disabled:opacity-60"
                     >
                         {saving ? "กำลังบันทึก..." : (submitLabel || "บันทึก")}
                     </button>
@@ -435,17 +435,17 @@ function CrudFeature({
                 <div className="flex flex-col lg:flex-row items-center gap-4">
                     <div className="flex flex-1 w-full gap-3">
                         <input
-                            className="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+                            className="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none"
                             placeholder={searchLabel || "ค้นหา..."}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && load()}
                         />
-                        <button onClick={load} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors">
+                        <button onClick={load} className="px-5 py-2 bg-pink-600 text-white rounded-xl font-medium hover:bg-pink-700 transition-colors">
                             ค้นหา
                         </button>
                         {hasCreate && (
-                            <button onClick={openCreateModal} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors whitespace-nowrap">
+                            <button onClick={openCreateModal} className="px-5 py-2 bg-pink-600 text-white rounded-xl font-medium hover:bg-pink-700 transition-colors whitespace-nowrap">
                                 เพิ่ม
                             </button>
                         )}
@@ -464,7 +464,7 @@ function CrudFeature({
                                 <select
                                     value={filterValues[filter.key] ?? ""}
                                     onChange={(e) => setFilterValues((prev) => ({ ...prev, [filter.key]: e.target.value }))}
-                                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white font-medium text-slate-700"
+                                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none bg-white font-medium text-slate-700"
                                 >
                                     <option value="">ทั้งหมด</option>
                                     {filter.options(items).map((opt: string) => (
@@ -513,7 +513,7 @@ function CrudFeature({
                                                         <button
                                                             onClick={() => openEditModal(item)}
                                                             title="แก้ไข"
-                                                            className="p-2 text-amber-600 hover:text-amber-700 bg-amber-50 rounded-xl hover:bg-amber-100 transition-all duration-200"
+                                                            className="p-2 text-red-600 hover:text-red-700 bg-red-50 rounded-xl hover:bg-red-100 transition-all duration-200"
                                                         >
                                                             <Pencil size={18} />
                                                         </button>
@@ -589,13 +589,11 @@ export function TeachersFeature() {
     const [positionOptions, setPositionOptions] = useState<{ id: number; title: string }[]>([]);
     const [subjectGroupOptions, setSubjectGroupOptions] = useState<{ id: number; group_name: string }[]>([]);
     const [gradeLevelOptions, setGradeLevelOptions] = useState<string[]>([]);
-    const [roomOptions, setRoomOptions] = useState<string[]>([]);
 
     useEffect(() => {
         DirectorApiService.getTeacherPositions().then(setPositionOptions).catch(() => { });
         DirectorApiService.getLearningSubjectGroups().then(setSubjectGroupOptions).catch(() => { });
         DirectorApiService.getGradeLevels().then(setGradeLevelOptions).catch(() => { });
-        DirectorApiService.getClassrooms().then(setRoomOptions).catch(() => { });
     }, []);
 
     const posSelectOptions = ["", ...positionOptions.map(p => p.title)];
@@ -606,7 +604,7 @@ export function TeachersFeature() {
             title="จัดการครู"
             badgeText="Teachers"
             subtitle="ข้อมูลครูทั้งหมด"
-            color="from-emerald-700 to-teal-800"
+            color="from-pink-700 to-red-800"
             fetchFn={(s) => DirectorApiService.getTeachers(s)}
             createFn={(data) => {
                 const pos = positionOptions.find(p => p.title === data.position);
@@ -642,11 +640,6 @@ export function TeachersFeature() {
                     key: "advisor_level",
                     label: "ระดับชั้นที่ปรึกษา",
                     options: (items) => Array.from(new Set(items.map((t: any) => (t.advisor_level ?? "").toString().trim()).filter((v: string) => v.length > 0))).sort((a, b) => a.localeCompare(b, "th")),
-                },
-                {
-                    key: "advisor_room",
-                    label: "ห้อง",
-                    options: (items) => Array.from(new Set(items.map((t: any) => (t.advisor_room ?? "").toString().trim()).filter((v: string) => v.length > 0))).sort((a, b) => a.localeCompare(b, "th", { numeric: true })),
                 }
             ]}
             createFields={() => {
@@ -700,12 +693,6 @@ export function TeachersFeature() {
                     return levelA.localeCompare(levelB, "th", { numeric: true });
                 }
 
-                // 2. Sort by Advisor Room Numerically
-                const roomA = parseInt(a.advisor_room || "0");
-                const roomB = parseInt(b.advisor_room || "0");
-                if (roomA !== roomB) return roomA - roomB;
-
-                // 3. Fallback to teacher code
                 return String(a.teacher_code || "").localeCompare(String(b.teacher_code || ""));
             }}
         />
@@ -716,14 +703,12 @@ export function StudentsFeature() {
     const [counts, setCounts] = useState<any[]>([]);
     const [loadingCounts, setLoadingCounts] = useState(true);
     const [gradeLevelOptions, setGradeLevelOptions] = useState<string[]>([]);
-    const [roomOptions, setRoomOptions] = useState<string[]>([]);
 
     useEffect(() => {
         DirectorApiService.getStudentCount()
             .then(d => { setCounts(d || []); setLoadingCounts(false); })
             .catch(() => setLoadingCounts(false));
         DirectorApiService.getGradeLevels().then(setGradeLevelOptions).catch(() => { });
-        DirectorApiService.getClassrooms().then(setRoomOptions).catch(() => { });
     }, []);
 
     const grouped = counts.reduce((acc: Record<string, { total: number; male: number; female: number }>, r: any) => {
@@ -746,21 +731,21 @@ export function StudentsFeature() {
             {Object.entries(grouped).map(([level, data], i) => (
                 <div key={i} className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 text-center">
                     <div className="text-xs text-slate-500 font-medium mb-1">{level}</div>
-                    <div className="text-2xl font-bold text-emerald-700">{data.total}</div>
+                    <div className="text-2xl font-bold text-pink-700">{data.total}</div>
                     <div className="text-[10px] text-slate-400 mb-2">คน</div>
                     <div className="flex justify-center gap-3 text-[11px] border-t border-slate-100 pt-2 mt-1">
-                        <div className="text-emerald-600">ชาย: <span className="font-bold">{data.male}</span></div>
-                        <div className="text-teal-500">หญิง: <span className="font-bold">{data.female}</span></div>
+                        <div className="text-pink-600">ชาย: <span className="font-bold">{data.male}</span></div>
+                        <div className="text-red-500">หญิง: <span className="font-bold">{data.female}</span></div>
                     </div>
                 </div>
             ))}
-            <div className="bg-emerald-600 rounded-2xl p-4 shadow-md text-center text-white">
+            <div className="bg-pink-600 rounded-2xl p-4 shadow-md text-center text-white">
                 <div className="text-xs font-medium mb-1 opacity-80">ทั้งหมด</div>
                 <div className="text-2xl font-bold">{totals.total}</div>
                 <div className="text-[10px] opacity-80 mb-2">คน</div>
                 <div className="flex justify-center gap-3 text-[11px] border-t border-white/20 pt-2 mt-1">
-                    <div className="text-emerald-200">ชาย: <span className="font-bold text-white">{totals.male}</span></div>
-                    <div className="text-teal-200">หญิง: <span className="font-bold text-white">{totals.female}</span></div>
+                    <div className="text-pink-200">ชาย: <span className="font-bold text-white">{totals.male}</span></div>
+                    <div className="text-red-200">หญิง: <span className="font-bold text-white">{totals.female}</span></div>
                 </div>
             </div>
         </div>
@@ -770,7 +755,7 @@ export function StudentsFeature() {
         <CrudFeature
             title="ข้อมูลนักเรียน"
             subtitle="จัดการข้อมูลนักเรียนทั้งหมด"
-            color="from-emerald-600 to-teal-700"
+            color="from-pink-600 to-red-700"
             topContent={!loadingCounts && countSummary}
             fetchFn={(s) => DirectorApiService.getStudents({ search: s })}
             createFn={(data) => DirectorApiService.createStudent(data)}
@@ -781,16 +766,6 @@ export function StudentsFeature() {
                     key: "class_level",
                     label: "ระดับชั้น",
                     options: () => gradeLevelOptions.sort((a, b) => a.localeCompare(b, "th")),
-                },
-                {
-                    key: "room",
-                    label: "ห้อง",
-                    options: () => roomOptions.sort((a, b) => {
-                        const na = parseInt(a);
-                        const nb = parseInt(b);
-                        if (!isNaN(na) && !isNaN(nb)) return na - nb;
-                        return a.localeCompare(b, "th");
-                    }),
                 }
             ]}
             createFields={(items) => {
@@ -802,7 +777,6 @@ export function StudentsFeature() {
                     )).sort((a, b) => a.localeCompare(b, "th"));
 
                 const classLevelOptions = uniqueValues("class_level");
-                const roomOptions = uniqueValues("room");
                 const genderOptions = uniqueValues("gender");
                 const statusOptions = uniqueValues("status");
                 const prefixFromData = uniqueValues("prefix");
@@ -822,7 +796,6 @@ export function StudentsFeature() {
                     { key: "first_name", label: "ชื่อ" },
                     { key: "last_name", label: "นามสกุล" },
                     { key: "class_level", label: "ระดับชั้น", type: "select", options: ["", ...classLevelOptions] },
-                    { key: "room", label: "ห้อง", type: "select", options: ["", ...roomOptions] },
                     { key: "gender", label: "เพศ", type: "select", options: ["", ...(genderOptions.length ? genderOptions : ["ชาย", "หญิง"])] },
                     { key: "status", label: "สถานะ", type: "select", options: ["", ...statusOptions] },
                     { key: "phone", label: "เบอร์โทรศัพท์" },
@@ -837,7 +810,6 @@ export function StudentsFeature() {
                     )).sort((a, b) => a.localeCompare(b, "th"));
 
                 const classLevelOptions = uniqueValues("class_level");
-                const roomOptions = uniqueValues("room");
                 const genderOptions = uniqueValues("gender");
                 const statusOptions = uniqueValues("status");
                 const prefixFromData = uniqueValues("prefix");
@@ -856,8 +828,7 @@ export function StudentsFeature() {
                     { key: "prefix", label: "คำนำหน้า", type: "select", options: prefixOptions },
                     { key: "first_name", label: "ชื่อ" },
                     { key: "last_name", label: "นามสกุล" },
-                    { key: "class_level", label: "ชั้น", type: "select", options: ["", ...classLevelOptions] },
-                    { key: "room", label: "ห้อง", type: "select", options: ["", ...roomOptions] },
+                    { key: "class_level", label: "ระดับชั้น", type: "select", options: ["", ...classLevelOptions] },
                     { key: "gender", label: "เพศ", type: "select", options: ["", ...(genderOptions.length ? genderOptions : ["ชาย", "หญิง"])] },
                     { key: "status", label: "สถานะ", type: "select", options: ["", ...statusOptions] },
                     { key: "phone", label: "โทร" },
@@ -866,8 +837,7 @@ export function StudentsFeature() {
             columns={[
                 { key: "student_code", label: "รหัส" },
                 { key: "first_name", label: "ชื่อ-สกุล", render: (_, r) => `${r.prefix || ""}${r.first_name || ""} ${r.last_name || ""}` },
-                { key: "class_level", label: "ชั้น" },
-                { key: "room", label: "ห้อง" },
+                { key: "class_level", label: "ระดับชั้น" },
                 { key: "gender", label: "เพศ" },
                 { key: "phone", label: "โทร" },
             ]}
@@ -890,7 +860,7 @@ export function SubjectsFeature() {
         <CrudFeature
             title="โครงสร้างและรายวิชา"
             subtitle="รายวิชาทั้งหมด"
-            color="from-emerald-600 to-teal-700"
+            color="from-pink-600 to-red-700"
             fetchFn={(s, f) => DirectorApiService.getSubjects({
                 search: s,
                 level: f?.level,
@@ -1019,7 +989,7 @@ export function ProjectsFeature() {
             title="โครงการและงบประมาณนักเรียน"
             badgeText="Projects"
             subtitle="จัดการโครงการ"
-            color="from-emerald-700 to-teal-800"
+            color="from-pink-700 to-red-800"
             fetchFn={(s, f) => DirectorApiService.getProjects(s, f?.year ? Number(f.year) : undefined)}
             createFn={(data) => {
                 const pType = ptOptions.find(o => o.label === data.project_type);
@@ -1127,9 +1097,9 @@ export function ProjectsFeature() {
                     render: (v, _, { toggleExpand, isExpanded }) => (
                         <button
                             onClick={toggleExpand}
-                            className="text-left font-semibold text-slate-800 hover:text-emerald-700 flex items-center gap-2 group transition-colors"
+                            className="text-left font-semibold text-slate-800 hover:text-pink-700 flex items-center gap-2 group transition-colors"
                         >
-                            <span className={`w-5 h-5 flex items-center justify-center rounded-full bg-emerald-50 text-emerald-600 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}>
+                            <span className={`w-5 h-5 flex items-center justify-center rounded-full bg-pink-50 text-pink-600 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}>
                                 ▾
                             </span>
                             <span className="group-hover:underline">{v}</span>
@@ -1150,7 +1120,7 @@ export function ProjectsFeature() {
             ]}
             renderDetail={(item) => (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-white p-7 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 opacity-20 -mr-10 -mt-10 rounded-full"></div>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-pink-50 opacity-20 -mr-10 -mt-10 rounded-full"></div>
 
                     <div className="space-y-1.5">
                         <p className="text-xs font-semibold text-slate-500">ฝ่ายที่รับผิดชอบ</p>
@@ -1171,23 +1141,23 @@ export function ProjectsFeature() {
 
                     <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1.5">
                         <p className="text-xs font-semibold text-slate-500">งบประมาณภาคเรียนที่ 1</p>
-                        <p className="text-lg font-bold text-emerald-600">{(item.budget_used_sem1 || 0).toLocaleString("th-TH")} <span className="text-sm font-normal text-slate-500">บาท</span></p>
+                        <p className="text-lg font-bold text-pink-600">{(item.budget_used_sem1 || 0).toLocaleString("th-TH")} <span className="text-sm font-normal text-slate-500">บาท</span></p>
                     </div>
                     <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1.5">
                         <p className="text-xs font-semibold text-slate-500">งบประมาณภาคเรียนที่ 2</p>
-                        <p className="text-lg font-bold text-emerald-600">{(item.budget_used_sem2 || 0).toLocaleString("th-TH")} <span className="text-sm font-normal text-slate-500">บาท</span></p>
+                        <p className="text-lg font-bold text-pink-600">{(item.budget_used_sem2 || 0).toLocaleString("th-TH")} <span className="text-sm font-normal text-slate-500">บาท</span></p>
                     </div>
-                    <div className="p-4 rounded-xl bg-emerald-600 text-white flex flex-col gap-1.5 shadow-md shadow-emerald-200">
-                        <p className="text-xs font-semibold text-emerald-100">งบประมาณใช้ไปรวมทั้งสิ้น</p>
-                        <p className="text-xl font-bold">{((Number(item.budget_used_sem1) || 0) + (Number(item.budget_used_sem2) || 0)).toLocaleString("th-TH")} <span className="text-sm font-normal text-emerald-100">บาท</span></p>
+                    <div className="p-4 rounded-xl bg-pink-600 text-white flex flex-col gap-1.5 shadow-md shadow-pink-200">
+                        <p className="text-xs font-semibold text-pink-100">งบประมาณใช้ไปรวมทั้งสิ้น</p>
+                        <p className="text-xl font-bold">{((Number(item.budget_used_sem1) || 0) + (Number(item.budget_used_sem2) || 0)).toLocaleString("th-TH")} <span className="text-sm font-normal text-pink-100">บาท</span></p>
                     </div>
 
                     <div className="md:col-span-2 lg:col-span-3 space-y-3 pt-5 border-t border-slate-100 mt-2">
                         <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span className="w-2 h-2 rounded-full bg-pink-500"></span>
                             <p className="text-xs font-semibold text-slate-500">วัตถุประสงค์และรายละเอียดโครงการ</p>
                         </div>
-                        <p className="text-[15px] text-slate-700 leading-relaxed whitespace-pre-wrap pl-4 border-l-2 border-emerald-100 font-medium">
+                        <p className="text-[15px] text-slate-700 leading-relaxed whitespace-pre-wrap pl-4 border-l-2 border-pink-100 font-medium">
                             {item.description || "— ไม่ระบุวัตถุประสงค์โครงการ —"}
                         </p>
                     </div>
@@ -1213,7 +1183,7 @@ export function FinanceFeature() {
         <CrudFeature
             title="งบประมาณ"
             subtitle="บันทึกรายรับ-รายจ่ายโครงการ"
-            color="from-emerald-600 to-teal-700"
+            color="from-pink-600 to-red-700"
             fetchFn={() => DirectorApiService.getFinanceRecords()}
             createFn={(data) => {
                 const project = projectOptions.find(o => o.label === data.project_id);
@@ -1369,13 +1339,13 @@ export function ActivitiesFeature() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-slate-700">ชื่อกิจกรรม</label>
-                                    <input className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800"
+                                    <input className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800"
                                         placeholder="ระบุชื่อกิจกรรม..." value={form.title}
                                         onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-slate-700">ปีการศึกษา</label>
-                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 cursor-pointer"
+                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800 cursor-pointer"
                                         value={selectedYearId}
                                         onChange={e => {
                                             setSelectedYearId(e.target.value);
@@ -1388,7 +1358,7 @@ export function ActivitiesFeature() {
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-slate-700">ภาคเรียน</label>
-                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 cursor-pointer"
+                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800 cursor-pointer"
                                         value={form.semester_id}
                                         onChange={e => setForm(f => ({ ...f, semester_id: e.target.value }))}
                                         disabled={!selectedYearId}
@@ -1401,7 +1371,7 @@ export function ActivitiesFeature() {
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-slate-700">ประเภทกิจกรรม</label>
-                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 cursor-pointer"
+                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800 cursor-pointer"
                                         value={form.event_type_id} onChange={e => setForm(f => ({ ...f, event_type_id: e.target.value }))}>
                                         <option value="">ทั้งหมด</option>
                                         {eventTypes.map((t: any) => <option key={t.id} value={t.id}>{t.name}</option>)}
@@ -1409,7 +1379,7 @@ export function ActivitiesFeature() {
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-slate-700">ฝ่ายที่รับผิดชอบ</label>
-                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 cursor-pointer"
+                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800 cursor-pointer"
                                         value={form.department_id}
                                         onChange={e => setForm(f => ({ ...f, department_id: e.target.value, responsible_teacher_id: "" }))}>
                                         <option value="">ทั้งหมด</option>
@@ -1418,7 +1388,7 @@ export function ActivitiesFeature() {
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-slate-700">ครูที่รับผิดชอบ</label>
-                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 cursor-pointer"
+                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800 cursor-pointer"
                                         value={form.responsible_teacher_id} onChange={e => setForm(f => ({ ...f, responsible_teacher_id: e.target.value }))}>
                                         <option value="">ทั้งหมด</option>
                                         {teachers.filter((t: any) => !form.department_id || String(t.department_id) === String(form.department_id))
@@ -1427,27 +1397,27 @@ export function ActivitiesFeature() {
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-slate-700">วันที่เริ่ม</label>
-                                    <input type="date" className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800"
+                                    <input type="date" className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800"
                                         value={form.event_date} onChange={e => setForm(f => ({ ...f, event_date: e.target.value }))} />
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-slate-700">วันที่สิ้นสุด</label>
-                                    <input type="date" className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800"
+                                    <input type="date" className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800"
                                         value={form.end_date} onChange={e => setForm(f => ({ ...f, end_date: e.target.value }))} />
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-slate-700">เวลาเริ่ม</label>
-                                    <input type="time" className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800"
+                                    <input type="time" className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800"
                                         value={form.start_time} onChange={e => setForm(f => ({ ...f, start_time: e.target.value }))} />
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-slate-700">เวลาสิ้นสุด</label>
-                                    <input type="time" className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800"
+                                    <input type="time" className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800"
                                         value={form.end_time} onChange={e => setForm(f => ({ ...f, end_time: e.target.value }))} />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-slate-700 flex items-center gap-1"><Building2 size={14} className="text-emerald-500" /> อาคาร</label>
-                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 cursor-pointer"
+                                    <label className="text-sm font-medium text-slate-700 flex items-center gap-1"><Building2 size={14} className="text-pink-500" /> อาคาร</label>
+                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800 cursor-pointer"
                                         value={form.building_id}
                                         onChange={async (e) => {
                                             const bId = e.target.value;
@@ -1460,19 +1430,19 @@ export function ActivitiesFeature() {
                                     </select>
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-slate-700 flex items-center gap-1"><DoorOpen size={14} className="text-emerald-500" /> ห้อง</label>
-                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 cursor-pointer"
+                                    <label className="text-sm font-medium text-slate-700 flex items-center gap-1"><DoorOpen size={14} className="text-pink-500" /> สถานที่</label>
+                                    <select className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800 cursor-pointer"
                                         value={form.room_id} onChange={e => setForm(f => ({ ...f, room_id: e.target.value }))} disabled={!form.building_id}>
                                         <option value="">สมาคม / อื่นๆ</option>
                                         {localRooms.map((r: any) => <option key={r.id} value={r.id}>{r.label}</option>)}
                                     </select>
                                 </div>
                                 <div className="md:col-span-2 space-y-3 border-t border-slate-100 pt-4">
-                                    <label className="text-sm font-bold text-slate-700 flex items-center gap-2"><Users size={16} className="text-emerald-600" /> กลุ่มเป้าหมายผู้เข้าร่วม</label>
+                                    <label className="text-sm font-bold text-slate-700 flex items-center gap-2"><Users size={16} className="text-pink-600" /> กลุ่มเป้าหมายผู้เข้าร่วม</label>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
                                         <div className="space-y-1">
                                             <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">ประเภทกลุ่มเป้าหมาย</label>
-                                            <select className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+                                            <select className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none text-sm"
                                                 value={form.targets[0]?.target_type || ""}
                                                 onChange={async (e) => {
                                                     const type = e.target.value;
@@ -1491,9 +1461,9 @@ export function ActivitiesFeature() {
                                         {(form.targets[0]?.target_type && targetTypes.find((t: any) => t.code === form.targets[0]?.target_type)?.input_type === 'select') && (
                                             <div className="md:col-span-2 space-y-2 pt-2 border-t border-slate-100 mt-2">
                                                 <div className="flex items-center justify-between">
-                                                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">ระบุรายละเอียด <span className="text-emerald-600 font-normal normal-case">(เลือกได้มากกว่า 1)</span></label>
+                                                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">ระบุรายละเอียด <span className="text-pink-600 font-normal normal-case">(เลือกได้มากกว่า 1)</span></label>
                                                     {localTargetOptions.length > 0 && (
-                                                        <button type="button" className="text-[11px] font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded transition-colors"
+                                                        <button type="button" className="text-[11px] font-medium text-pink-600 bg-pink-50 hover:bg-pink-100 px-2 py-1 rounded transition-colors"
                                                             onClick={() => {
                                                                 const tt = form.targets[0]?.target_type;
                                                                 const sel = form.targets.map((t: Target) => t.target_value).filter(Boolean);
@@ -1511,8 +1481,8 @@ export function ActivitiesFeature() {
                                                         {localTargetOptions.map((opt: any) => {
                                                             const isChecked = form.targets.some((t: Target) => t.target_value === String(opt.id));
                                                             return (
-                                                                <label key={opt.id} className={`flex items-start gap-2 text-sm cursor-pointer p-2 rounded-lg border transition-all ${isChecked ? 'bg-emerald-50 border-emerald-200' : 'hover:bg-slate-50 border-transparent'}`}>
-                                                                    <input type="checkbox" className="mt-0.5 rounded text-emerald-600 border-slate-300"
+                                                                <label key={opt.id} className={`flex items-start gap-2 text-sm cursor-pointer p-2 rounded-lg border transition-all ${isChecked ? 'bg-pink-50 border-pink-200' : 'hover:bg-slate-50 border-transparent'}`}>
+                                                                    <input type="checkbox" className="mt-0.5 rounded text-pink-600 border-slate-300"
                                                                         checked={isChecked}
                                                                         onChange={(e) => {
                                                                             const tt = form.targets[0]?.target_type;
@@ -1526,7 +1496,7 @@ export function ActivitiesFeature() {
                                                                             }
                                                                             setForm(f => ({ ...f, targets: updated }));
                                                                         }} />
-                                                                    <span className={`text-sm select-none ${isChecked ? 'font-medium text-emerald-800' : 'text-slate-600'}`}>{opt.label}</span>
+                                                                    <span className={`text-sm select-none ${isChecked ? 'font-medium text-pink-800' : 'text-slate-600'}`}>{opt.label}</span>
                                                                 </label>
                                                             );
                                                         })}
@@ -1540,7 +1510,7 @@ export function ActivitiesFeature() {
                                 </div>
                                 <div className="md:col-span-2 space-y-1">
                                     <label className="text-sm font-medium text-slate-700">รายละเอียด</label>
-                                    <textarea className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 min-h-[100px] resize-none"
+                                    <textarea className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-slate-800 min-h-[100px] resize-none"
                                         placeholder="..." value={form.description}
                                         onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
                                 </div>
@@ -1549,7 +1519,7 @@ export function ActivitiesFeature() {
                         <div className="p-4 px-6 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
                             <button onClick={onClose} className="px-5 py-2 text-slate-600 font-bold rounded-xl border border-slate-300 hover:bg-slate-100 transition-all text-sm">ยกเลิก</button>
                             <button onClick={handleSubmit} disabled={saving}
-                                className="px-7 py-2 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all shadow-md text-sm disabled:opacity-60">
+                                className="px-7 py-2 bg-pink-600 text-white rounded-xl font-bold hover:bg-pink-700 transition-all shadow-md text-sm disabled:opacity-60">
                                 {saving ? "กำลังบันทึก..." : (mode === 'edit' ? "บันทึก" : "เพิ่ม")}
                             </button>
                         </div>
@@ -1563,11 +1533,11 @@ export function ActivitiesFeature() {
         <div className="flex justify-end p-1">
             <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
                 <button onClick={() => setViewMode('list')}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'list' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'list' ? 'bg-white text-pink-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
                     <ListIcon size={16} /> รายการ
                 </button>
                 <button onClick={() => setViewMode('calendar')}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'calendar' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'calendar' ? 'bg-white text-pink-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
                     <CalendarIcon size={16} /> ปฏิทิน
                 </button>
             </div>
@@ -1581,7 +1551,7 @@ export function ActivitiesFeature() {
                     title="กิจกรรม"
                     badgeText="Activities"
                     subtitle="จัดการปฏิทินกิจกรรมโรงเรียน"
-                    color="from-emerald-600 to-teal-700"
+                    color="from-pink-600 to-red-700"
                     searchRightContent={switcher}
                     fetchFn={(s) => DirectorApiService.getActivities(s)}
                     deleteFn={(id) => DirectorApiService.deleteActivity(id)}
@@ -1618,14 +1588,14 @@ export function ActivitiesFeature() {
                                 <p className="text-sm font-semibold text-slate-500">วันที่เริ่มกิจกรรม</p>
                                 <p className="text-base font-normal text-slate-800">
                                     {item.date ? new Date(item.date).toLocaleDateString("th-TH") : "-"}
-                                    {item.start_time && <span className="ml-2 text-emerald-600">({item.start_time})</span>}
+                                    {item.start_time && <span className="ml-2 text-pink-600">({item.start_time})</span>}
                                 </p>
                             </div>
                             <div className="space-y-1">
                                 <p className="text-sm font-semibold text-slate-500">วันที่สิ้นสุดกิจกรรม</p>
                                 <p className="text-base font-normal text-slate-800">
                                     {item.end_date ? new Date(item.end_date).toLocaleDateString("th-TH") : "-"}
-                                    {item.end_time && <span className="ml-2 text-emerald-600">({item.end_time})</span>}
+                                    {item.end_time && <span className="ml-2 text-pink-600">({item.end_time})</span>}
                                 </p>
                             </div>
                             <div className="space-y-1">
@@ -1638,7 +1608,7 @@ export function ActivitiesFeature() {
                             </div>
                             <div className="md:col-span-2 lg:col-span-3 space-y-2 pt-5 border-t border-slate-100 mt-2">
                                 <p className="text-sm font-semibold text-slate-500">รายละเอียดกิจกรรม</p>
-                                <p className="text-base font-normal text-slate-700 leading-snug whitespace-pre-wrap pl-4 border-l-2 border-emerald-100">
+                                <p className="text-base font-normal text-slate-700 leading-snug whitespace-pre-wrap pl-4 border-l-2 border-pink-100">
                                     {item.note || "— ไม่ระบุรายละเอียดเพิ่มเติม —"}
                                 </p>
                             </div>
@@ -1650,8 +1620,8 @@ export function ActivitiesFeature() {
                             label: "ชื่อกิจกรรม",
                             render: (v, _, { toggleExpand, isExpanded }) => (
                                 <button onClick={toggleExpand}
-                                    className="text-left font-semibold text-slate-800 hover:text-emerald-700 flex items-center gap-2 group transition-colors">
-                                    <span className={`w-5 h-5 flex items-center justify-center rounded-full bg-emerald-50 text-emerald-600 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}>▾</span>
+                                    className="text-left font-semibold text-slate-800 hover:text-pink-700 flex items-center gap-2 group transition-colors">
+                                    <span className={`w-5 h-5 flex items-center justify-center rounded-full bg-pink-50 text-pink-600 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}>▾</span>
                                     <span className="group-hover:underline">{v}</span>
                                 </button>
                             )
@@ -1670,6 +1640,4 @@ export function ActivitiesFeature() {
         </div>
     );
 }
-
-
 

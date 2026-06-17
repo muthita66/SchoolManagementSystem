@@ -6,7 +6,6 @@ import Portal from "@/components/Portal";
 type AdvisorFormState = {
     teacher_id: string;
     class_level: string;
-    room: string;
     year: string;
     semester: string;
 };
@@ -19,7 +18,6 @@ function emptyAdvisorForm(currentYear?: number, currentSemester?: number): Advis
     return {
         teacher_id: "",
         class_level: "",
-        room: "",
         year: currentYear ? String(currentYear) : "",
         semester: currentSemester ? String(currentSemester) : "1",
     };
@@ -41,7 +39,6 @@ function buildAdvisorPayload(form: AdvisorFormState) {
     return {
         teacher_id,
         class_level,
-        room: form.room.trim(),
         year: nextYear,
         semester: nextSemester,
     };
@@ -65,9 +62,7 @@ export function AdvisorsFeature() {
     const [form, setForm] = useState<AdvisorFormState>(emptyAdvisorForm());
 
     const [levelOptions, setLevelOptions] = useState<string[]>([]);
-    const [roomOptionsList, setRoomOptionsList] = useState<string[]>([]);
     const [selectedLevel, setSelectedLevel] = useState<string>("");
-    const [selectedRoom, setSelectedRoom] = useState<string>("");
 
     const refreshAllAdvisors = () => {
         DirectorApiService.getAdvisors().then((rows) => setAllAdvisors(rows || [])).catch(() => { });
@@ -80,12 +75,11 @@ export function AdvisorsFeature() {
             year,
             semester,
             class_level: selectedLevel || undefined,
-            room: selectedRoom || undefined
         })
             .then(async (rows) => {
                 const list = rows || [];
 
-                if (list.length === 0 && year < 2400 && !selectedLevel && !selectedRoom) {
+                if (list.length === 0 && year < 2400 && !selectedLevel) {
                     const beYear = year + 543;
                     const beRows = (await DirectorApiService.getAdvisors({ year: beYear, semester }).catch(() => [])) || [];
                     if (beRows.length > 0) {
@@ -96,7 +90,7 @@ export function AdvisorsFeature() {
                     }
                 }
 
-                if (list.length === 0 && !selectedLevel && !selectedRoom) {
+                if (list.length === 0 && !selectedLevel) {
                     const allRows = (await DirectorApiService.getAdvisors().catch(() => [])) || [];
                     if (allRows.length > 0) {
                         const latest = allRows.find((r: any) => r?.year != null && r?.semester != null) || allRows[0];
@@ -127,7 +121,7 @@ export function AdvisorsFeature() {
 
     useEffect(() => {
         load();
-    }, [year, semester, selectedLevel, selectedRoom]);
+    }, [year, semester, selectedLevel]);
 
     useEffect(() => {
         Promise.all([
@@ -135,14 +129,12 @@ export function AdvisorsFeature() {
             DirectorApiService.getTeachers().catch(() => []),
             DirectorApiService.getStudentCount().catch(() => []),
             DirectorApiService.getGradeLevels().catch(() => []),
-            DirectorApiService.getClassrooms().catch(() => []),
             DirectorApiService.getAcademicYears().catch(() => []),
-        ]).then(([advisorRows, teacherRows, studentCountRows, levels, rooms, years]) => {
+        ]).then(([advisorRows, teacherRows, studentCountRows, levels, years]) => {
             setAllAdvisors(advisorRows || []);
             setTeachers(teacherRows || []);
             setStudentCounts(studentCountRows || []);
             setLevelOptions(levels || []);
-            setRoomOptionsList(rooms || []);
             setAcademicYears(years || []);
         });
     }, []);
@@ -159,7 +151,6 @@ export function AdvisorsFeature() {
         setForm({
             teacher_id: advisor.teacher_id == null ? "" : String(advisor.teacher_id),
             class_level: advisor.class_level ?? "",
-            room: advisor.room ?? "",
             year: advisor.year == null ? String(year) : String(advisor.year),
             semester: advisor.semester == null ? String(semester) : String(advisor.semester),
         });
@@ -239,15 +230,6 @@ export function AdvisorsFeature() {
         ...(studentCounts || []).map((r: any) => String(r.class_level || "")),
         form.class_level || "",
     ]);
-    const roomOptionsForForm = uniqueSorted([
-        ...(advisorSource || [])
-            .filter((a: any) => !form.class_level || String(a.class_level || "") === form.class_level)
-            .map((a: any) => String(a.room || "")),
-        ...(studentCounts || [])
-            .filter((r: any) => !form.class_level || String(r.class_level || "") === form.class_level)
-            .map((r: any) => String(r.room || "")),
-        form.room || "",
-    ]);
     const yearOptions = Array.from(new Set([
         ...(academicYears || []).map(y => String(y.year_name)),
         ...(advisorSource || []).map((a: any) => String(a.year ?? "")).filter(Boolean),
@@ -266,12 +248,12 @@ export function AdvisorsFeature() {
 
     return (
         <div className="space-y-6">
-            <section className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
                 <div className="relative z-10">
                     <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-sm font-medium mb-4">Advisors</div>
                     <h1 className="text-3xl font-bold">ครูที่ปรึกษา</h1>
-                    <p className="text-emerald-100 mt-2">ปีการศึกษา {year} ภาคเรียนที่ {semester} ({advisors.length} รายการ)</p>
+                    <p className="text-pink-100 mt-2">ปีการศึกษา {year} ภาคเรียนที่ {semester} ({advisors.length} รายการ)</p>
                 </div>
             </section>
 
@@ -279,7 +261,7 @@ export function AdvisorsFeature() {
                 <div className="flex flex-col gap-1">
                     <label className="text-xs text-slate-500 font-medium ml-1">ปีการศึกษา</label>
                     <select
-                        className="px-3 py-2 border border-slate-200 rounded-xl w-32 focus:ring-2 focus:ring-emerald-500 outline-none transition-all bg-white"
+                        className="px-3 py-2 border border-slate-200 rounded-xl w-32 focus:ring-2 focus:ring-pink-500 outline-none transition-all bg-white"
                         value={year}
                         onChange={(e) => setYear(Number(e.target.value))}
                     >
@@ -289,7 +271,7 @@ export function AdvisorsFeature() {
                 <div className="flex flex-col gap-1">
                     <label className="text-xs text-slate-500 font-medium ml-1">ภาคเรียน</label>
                     <select
-                        className="px-3 py-2 border border-slate-200 rounded-xl w-24 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                        className="px-3 py-2 border border-slate-200 rounded-xl w-24 focus:ring-2 focus:ring-pink-500 outline-none transition-all"
                         value={semester}
                         onChange={(e) => setSemester(Number(e.target.value))}
                     >
@@ -300,31 +282,17 @@ export function AdvisorsFeature() {
                 <div className="flex flex-col gap-1">
                     <label className="text-xs text-slate-500 font-medium ml-1">ระดับชั้น</label>
                     <select
-                        className="px-3 py-2 border border-slate-200 rounded-xl min-w-[140px] focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                        className="px-3 py-2 border border-slate-200 rounded-xl min-w-[140px] focus:ring-2 focus:ring-pink-500 outline-none transition-all"
                         value={selectedLevel}
-                        onChange={(e) => {
-                            setSelectedLevel(e.target.value);
-                            setSelectedRoom(""); // Reset room when level changes
-                        }}
+                        onChange={(e) => setSelectedLevel(e.target.value)}
                     >
                         <option value="">ทั้งหมด</option>
                         {levelOptions.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
                     </select>
                 </div>
-                <div className="flex flex-col gap-1">
-                    <label className="text-xs text-slate-500 font-medium ml-1">ห้อง</label>
-                    <select
-                        className="px-3 py-2 border border-slate-200 rounded-xl min-w-[100px] focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
-                        value={selectedRoom}
-                        onChange={(e) => setSelectedRoom(e.target.value)}
-                    >
-                        <option value="">ทั้งหมด</option>
-                        {roomOptionsList.map(rm => <option key={rm} value={rm}>{rm}</option>)}
-                    </select>
-                </div>
 
                 <div className="flex gap-2">
-                    <button onClick={openCreateModal} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-all shadow-sm active:scale-95">
+                    <button onClick={openCreateModal} className="px-5 py-2 bg-pink-600 text-white rounded-xl font-medium hover:bg-pink-700 transition-all shadow-sm active:scale-95">
                         เพิ่ม
                     </button>
                 </div>
@@ -351,8 +319,7 @@ export function AdvisorsFeature() {
                         <thead>
                             <tr className="bg-slate-50 border-b border-slate-200">
                                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">ลำดับ</th>
-                                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">ชั้น</th>
-                                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">ห้อง</th>
+                                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">ระดับชั้น</th>
                                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">ครูที่ปรึกษา</th>
                                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">ปีการศึกษา/ภาคเรียน</th>
                                 <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600">จัดการ</th>
@@ -363,12 +330,11 @@ export function AdvisorsFeature() {
                                 <tr key={a.id} className="border-b border-slate-100 hover:bg-slate-50">
                                     <td className="px-4 py-3 text-sm text-slate-500">{i + 1}</td>
                                     <td className="px-4 py-3 text-sm text-slate-800 font-medium">{a.class_level}</td>
-                                    <td className="px-4 py-3 text-sm text-slate-600">{a.room || "-"}</td>
                                     <td className="px-4 py-3 text-sm text-slate-700">{a.teachers ? `${a.teachers.first_name} ${a.teachers.last_name}` : "-"}</td>
                                     <td className="px-4 py-3 text-sm text-slate-500">{a.year}/{a.semester}</td>
                                     <td className="px-4 py-3 text-center">
                                         <div className="flex items-center justify-center gap-2">
-                                            <button onClick={() => openEditModal(a)} className="text-xs text-amber-700 hover:text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors font-medium">แก้ไข</button>
+                                            <button onClick={() => openEditModal(a)} className="text-xs text-red-700 hover:text-red-800 bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors font-medium">แก้ไข</button>
                                             <button onClick={() => handleDelete(a.id)} className="text-xs text-red-500 hover:text-red-700 bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors font-medium">ลบ</button>
                                         </div>
                                     </td>
@@ -395,7 +361,7 @@ export function AdvisorsFeature() {
                                     <select
                                         value={form.teacher_id}
                                         onChange={(e) => setForm((p) => ({ ...p, teacher_id: e.target.value }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                     >
                                         <option value="">- เลือกครู -</option>
                                         {form.teacher_id && !teachers.some((t: any) => String(t.id) === form.teacher_id) && (
@@ -410,26 +376,14 @@ export function AdvisorsFeature() {
                                 </label>
 
                                 <label className="block">
-                                    <span className="text-sm font-medium text-slate-700">ชั้น</span>
+                                    <span className="text-sm font-medium text-slate-700">ระดับชั้น</span>
                                     <select
                                         value={form.class_level}
-                                        onChange={(e) => setForm((p) => ({ ...p, class_level: e.target.value, room: "" }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                        onChange={(e) => setForm((p) => ({ ...p, class_level: e.target.value }))}
+                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                     >
-                                        <option value="">- เลือกชั้น -</option>
+                                        <option value="">- เลือกระดับชั้น -</option>
                                         {classLevelOptionsForForm.map((lvl) => <option key={lvl} value={lvl}>{lvl}</option>)}
-                                    </select>
-                                </label>
-
-                                <label className="block">
-                                    <span className="text-sm font-medium text-slate-700">ห้อง</span>
-                                    <select
-                                        value={form.room}
-                                        onChange={(e) => setForm((p) => ({ ...p, room: e.target.value }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
-                                    >
-                                        <option value="">- เลือกห้อง -</option>
-                                        {roomOptionsForForm.map((room) => <option key={room} value={room}>{room}</option>)}
                                     </select>
                                 </label>
 
@@ -438,7 +392,7 @@ export function AdvisorsFeature() {
                                     <select
                                         value={form.year}
                                         onChange={(e) => setForm((p) => ({ ...p, year: e.target.value }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                     >
                                         {form.year && !yearOptions.includes(form.year) && <option value={form.year}>{form.year}</option>}
                                         {yearOptions.map((y) => <option key={y} value={y}>{y}</option>)}
@@ -450,7 +404,7 @@ export function AdvisorsFeature() {
                                     <select
                                         value={form.semester}
                                         onChange={(e) => setForm((p) => ({ ...p, semester: e.target.value }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                     >
                                         {semesterOptions.map((sem) => <option key={sem} value={sem}>{sem}</option>)}
                                     </select>
@@ -459,7 +413,7 @@ export function AdvisorsFeature() {
                         </div>
                         <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-slate-200 bg-slate-50">
                             <button type="button" onClick={closeModal} disabled={isSaving} className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 disabled:opacity-60">ยกเลิก</button>
-                            <button type="button" onClick={isCreateMode ? handleSaveCreate : handleSaveEdit} disabled={isSaving} className="px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60">
+                            <button type="button" onClick={isCreateMode ? handleSaveCreate : handleSaveEdit} disabled={isSaving} className="px-4 py-2 rounded-xl bg-pink-600 text-white hover:bg-pink-700 disabled:opacity-60">
                                 {isSaving ? "กำลังบันทึก..." : (isCreateMode ? "เพิ่ม" : "บันทึก")}
                             </button>
                         </div>

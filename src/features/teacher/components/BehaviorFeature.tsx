@@ -27,8 +27,6 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
     const [availableSemesters, setAvailableSemesters] = useState<number[]>([]);
     const [levels, setLevels] = useState<any[]>([]);
     const [selectedLevel, setSelectedLevel] = useState<number | string>('');
-    const [classrooms, setClassrooms] = useState<any[]>([]);
-    const [selectedRoom, setSelectedRoom] = useState<number | string>('');
 
     // Behavior Recording
     const [behaviorTypes, setBehaviorTypes] = useState<any[]>([]);
@@ -81,34 +79,16 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
 
     useEffect(() => {
         fetchStudents();
-    }, [session.id, year, semester, selectedLevel, selectedRoom]);
-
-    // Filter classrooms based on selected level
-    const filteredClassrooms = React.useMemo(() => {
-        if (!selectedLevel) return [];
-        return classrooms.filter(c => c.grade_level_id === Number(selectedLevel));
-    }, [classrooms, selectedLevel]);
-
-    useEffect(() => {
-        if (selectedLevel && filteredClassrooms.length === 0) {
-            // If no rooms found for this level in the pre-fetched list, 
-            // maybe try one more API call or just clear the room selection
-            setSelectedRoom('');
-        }
-    }, [selectedLevel, filteredClassrooms]);
+    }, [session.id, year, semester, selectedLevel]);
 
     const initData = async () => {
         try {
-            const [metaData, classroomsData] = await Promise.all([
-                TeacherApiService.getBehaviorMetadata(),
-                TeacherApiService.getBehaviorClassrooms() // Fetch all classrooms
-            ]);
+            const metaData = await TeacherApiService.getBehaviorMetadata();
 
             setLevels(metaData.levels || []);
             setBehaviorTypes(metaData.behaviorTypes || []);
             setAvailableYears(metaData.academicYears || []);
             setAvailableSemesters(metaData.semesters || []);
-            setClassrooms(classroomsData || []);
 
             // If user is an approver, fetch initial pending records count for the badge
             if (isApprover) {
@@ -125,15 +105,6 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
         }
     };
 
-    const fetchClassrooms = async (levelId: number) => {
-        try {
-            const data = await TeacherApiService.getBehaviorClassrooms(levelId);
-            setClassrooms(data || []);
-        } catch (error) {
-            console.error('Error fetching classrooms:', error);
-        }
-    };
-
     const fetchStudents = async () => {
         setIsLoading(true);
         try {
@@ -141,8 +112,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                 teacher_id: (session.role === 'teacher' && !isApprover) ? session.id : undefined,
                 year,
                 semester,
-                level_id: selectedLevel ? Number(selectedLevel) : undefined,
-                classroom_id: selectedRoom ? Number(selectedRoom) : undefined
+                level_id: selectedLevel ? Number(selectedLevel) : undefined
             });
             setStudents(Array.isArray(data) ? data : []);
         } catch (error) {
@@ -238,9 +208,9 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
         const s = status.toUpperCase();
         switch (s) {
             case 'APPROVED':
-                return <span className="px-3 py-1 bg-emerald-100 text-emerald-600 rounded-lg font-bold text-xs whitespace-nowrap">อนุมัติแล้ว</span>;
+                return <span className="px-3 py-1 bg-pink-100 text-pink-600 rounded-lg font-bold text-xs whitespace-nowrap">อนุมัติแล้ว</span>;
             case 'PENDING':
-                return <span className="px-3 py-1 bg-teal-100 text-teal-600 rounded-lg font-bold text-xs whitespace-nowrap">รอนุมัติ</span>;
+                return <span className="px-3 py-1 bg-red-100 text-red-600 rounded-lg font-bold text-xs whitespace-nowrap">รอนุมัติ</span>;
             case 'REJECTED':
                 return (
                     <div className="flex flex-col items-center gap-1">
@@ -257,12 +227,12 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
         <>
             <div className="space-y-6 p-4 pb-20">
                 {/* Header */}
-                <section className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden mb-6">
+                <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden mb-6">
                     <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
                     <div className="relative z-10">
                         <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-sm font-medium mb-4 uppercase tracking-wider">Behavior Records</div>
                         <h1 className="text-3xl font-bold">บันทึกพฤติกรรม</h1>
-                        <p className="text-emerald-100 mt-2">จัดการพฤติกรรมและความประพฤติของนักเรียน</p>
+                        <p className="text-pink-100 mt-2">จัดการพฤติกรรมและความประพฤติของนักเรียน</p>
                     </div>
                 </section>
 
@@ -271,13 +241,13 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                     <div className="flex bg-slate-100 p-1.5 rounded-2xl w-fit">
                         <button
                             onClick={() => setActiveTab('students')}
-                            className={`px-8 py-2.5 rounded-xl font-bold text-sm transition-all ${activeTab === 'students' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            className={`px-8 py-2.5 rounded-xl font-bold text-sm transition-all ${activeTab === 'students' ? 'bg-white text-pink-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                         >
                             รายชื่อนักเรียน
                         </button>
                         <button
                             onClick={() => { setActiveTab('pending'); fetchPendingRecords(); }}
-                            className={`px-8 py-2.5 rounded-xl font-bold text-sm transition-all relative ${activeTab === 'pending' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            className={`px-8 py-2.5 rounded-xl font-bold text-sm transition-all relative ${activeTab === 'pending' ? 'bg-white text-pink-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                         >
                             รายการรอนุมัติ
                             {pendingRecords.length > 0 && (
@@ -297,7 +267,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                             <select
                                 value={year}
                                 onChange={(e) => setYear(Number(e.target.value))}
-                                className="w-32 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-medium text-slate-700"
+                                className="w-32 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all font-medium text-slate-700"
                             >
                                 {availableYears.map(y => (
                                     <option key={y.id} value={y.year_name}>{y.year_name}</option>
@@ -311,7 +281,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                             <select
                                 value={semester}
                                 onChange={(e) => setSemester(Number(e.target.value))}
-                                className="w-32 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-medium text-slate-700"
+                                className="w-32 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all font-medium text-slate-700"
                             >
                                 {availableSemesters.map(s => (
                                     <option key={s} value={s}> {s}</option>
@@ -330,7 +300,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                             <select
                                 value={selectedLevel}
                                 onChange={(e) => setSelectedLevel(e.target.value)}
-                                className="w-52 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-medium text-slate-700"
+                                className="w-52 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all font-medium text-slate-700"
                             >
                                 <option value="">ทั้งหมด</option>
                                 {levels.map(l => (
@@ -344,14 +314,14 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                         <div className="flex-1" />
 
                         <div className="relative group min-w-[300px]">
-                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-pink-600 transition-colors">
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
                             <input
                                 placeholder="ชื่อ หรือรหัสประจำตัว..."
-                                className="w-full pl-12 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-medium text-slate-700"
+                                className="w-full pl-12 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all font-medium text-slate-700"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
@@ -369,7 +339,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                         <th className="px-3 py-5 text-sm font-bold text-slate-500 uppercase whitespace-nowrap">เลขที่</th>
                                         <th className="px-3 py-5 text-sm font-bold text-slate-500 uppercase whitespace-nowrap">รหัสประจำตัว</th>
                                         <th className="px-3 py-5 text-sm font-bold text-slate-500 uppercase">ชื่อ-นามสกุล</th>
-                                        <th className="px-3 py-5 text-sm font-bold text-slate-500 uppercase">ระดับชั้น/ห้อง</th>
+                                        <th className="px-3 py-5 text-sm font-bold text-slate-500 uppercase">ระดับชั้น</th>
                                         <th className="px-3 py-5 text-sm font-bold text-slate-500 uppercase whitespace-nowrap text-center">คะแนนความประพฤติ</th>
                                         <th className="px-3 py-5 text-sm font-bold text-slate-500 uppercase whitespace-nowrap text-center">การจัดการ</th>
                                         <th className="px-3 py-5 text-sm font-bold text-slate-500 uppercase whitespace-nowrap text-center">สถานะ</th>
@@ -381,7 +351,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                         <tr>
                                             <td colSpan={8} className="text-center py-20">
                                                 <div className="flex flex-col items-center gap-3">
-                                                    <div className="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                                                    <div className="w-8 h-8 border-3 border-pink-600 border-t-transparent rounded-full animate-spin"></div>
                                                     <span className="text-slate-400 font-bold text-base tracking-tight">กำลังโหลดข้อมูล...</span>
                                                 </div>
                                             </td>
@@ -402,18 +372,18 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                                     <span className="text-slate-600 text-sm font-medium tracking-tight">{s.student_code}</span>
                                                 </td>
                                                 <td className="px-3 py-5">
-                                                    <div className="font-normal text-slate-800 text-base group-hover:text-emerald-600 transition-colors tracking-tight">
+                                                    <div className="font-normal text-slate-800 text-base group-hover:text-pink-600 transition-colors tracking-tight">
                                                         {s.prefix}{s.first_name} {s.last_name}
                                                     </div>
                                                 </td>
                                                 <td className="px-3 py-5">
                                                     <div className="text-sm font-medium text-slate-700 tracking-tight">
-                                                        {s.class_level}/{s.room.includes('/') ? s.room.split('/')[1] : s.room}
+                                                        {s.class_level || "-"}
                                                     </div>
                                                 </td>
                                                 <td className="px-3 py-5 text-center">
                                                     <div
-                                                        className={`text-base font-bold ${s.behavior_score > 100 ? 'text-emerald-600' :
+                                                        className={`text-base font-bold ${s.behavior_score > 100 ? 'text-pink-600' :
                                                             s.behavior_score < 100 ? 'text-rose-600' : 'text-slate-600'
                                                             }`}
                                                     >
@@ -424,7 +394,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                                     <div className="flex items-center justify-center">
                                                         <button
                                                             onClick={() => handleOpenModal(s)}
-                                                            className="px-5 py-2.5 bg-emerald-600 text-white rounded-lg font-bold text-sm shadow-lg shadow-emerald-500/10 hover:bg-emerald-700 hover:-translate-y-0.5 transition-all"
+                                                            className="px-5 py-2.5 bg-pink-600 text-white rounded-lg font-bold text-sm shadow-lg shadow-pink-500/10 hover:bg-pink-700 hover:-translate-y-0.5 transition-all"
                                                         >
                                                             บันทึกพฤติกรรม
                                                         </button>
@@ -438,7 +408,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                                 <td className="px-3 py-5 text-center">
                                                     <button
                                                         onClick={() => fetchHistory(s)}
-                                                        className="p-1.5 hover:bg-slate-100 rounded-lg transition-all text-slate-400 hover:text-emerald-600 group/history"
+                                                        className="p-1.5 hover:bg-slate-100 rounded-lg transition-all text-slate-400 hover:text-pink-600 group/history"
                                                         title="ดูประวัติ"
                                                     >
                                                         <History className="w-4 h-4" />
@@ -455,7 +425,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                     <tr className="bg-slate-50 border-b border-slate-100">
                                         <th className="px-6 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">วันที่</th>
                                         <th className="px-6 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">นักเรียน</th>
-                                        <th className="px-6 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest text-center">ระดับชั้น/ห้อง</th>
+                                        <th className="px-6 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest text-center">ระดับชั้น</th>
                                         <th className="px-6 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">พฤติกรรม</th>
                                         <th className="px-6 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest text-center">คะแนน</th>
                                         <th className="px-6 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest text-right">การจัดการ</th>
@@ -465,7 +435,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                     {isPendingLoading ? (
                                         <tr>
                                             <td colSpan={6} className="text-center py-20">
-                                                <div className="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                                <div className="w-8 h-8 border-3 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
                                             </td>
                                         </tr>
                                     ) : pendingRecords.length === 0 ? (
@@ -491,11 +461,11 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                                         <div className="text-[10px] text-slate-400 font-bold">{student?.student_code}</div>
                                                     </td>
                                                     <td className="px-6 py-5 text-center text-sm font-bold text-slate-700">
-                                                        {classroom?.levels?.name}/{classroom?.room_name.split('/')[1] || classroom?.room_name}
+                                                        {classroom?.levels?.name || "-"}
                                                     </td>
                                                     <td className="px-6 py-5">
                                                         <div className="flex flex-col">
-                                                            <span className={`text-xs font-black uppercase ${r.behavior_types?.is_positive ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                                            <span className={`text-xs font-black uppercase ${r.behavior_types?.is_positive ? 'text-pink-500' : 'text-rose-500'}`}>
                                                                 {r.behavior_types?.is_positive ? 'เชิงบวก' : 'เชิงลบ'}
                                                             </span>
                                                             <span className="font-bold text-slate-700 text-sm mt-0.5">{r.behavior_types?.name}</span>
@@ -503,7 +473,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-5 text-center">
-                                                        <span className={`font-black text-base ${r.points_awarded > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                        <span className={`font-black text-base ${r.points_awarded > 0 ? 'text-pink-600' : 'text-rose-600'}`}>
                                                             {r.points_awarded > 0 ? `+${r.points_awarded}` : r.points_awarded}
                                                         </span>
                                                     </td>
@@ -517,7 +487,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                                             </button>
                                                             <button
                                                                 onClick={() => handleApprove(r.id)}
-                                                                className="px-4 py-1.5 bg-emerald-600 text-white rounded-lg font-bold text-xs shadow-lg shadow-emerald-500/10 hover:bg-emerald-700 transition-all"
+                                                                className="px-4 py-1.5 bg-pink-600 text-white rounded-lg font-bold text-xs shadow-lg shadow-pink-500/10 hover:bg-pink-700 transition-all"
                                                             >
                                                                 อนุมัติ
                                                             </button>
@@ -559,9 +529,9 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                 <div className="grid grid-cols-2 gap-3 bg-slate-100 p-1.5 rounded-2xl">
                                     <button
                                         onClick={() => { setIsPositive(true); setSelectedType(''); setPoints(0); }}
-                                        className={`py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isPositive ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                        className={`py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isPositive ? 'bg-white text-pink-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                                     >
-                                        <div className={`w-2 h-2 rounded-full ${isPositive ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+                                        <div className={`w-2 h-2 rounded-full ${isPositive ? 'bg-pink-500' : 'bg-slate-300'}`} />
                                         เชิงบวก (บวกแต้ม)
                                     </button>
                                     <button
@@ -579,7 +549,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                     <select
                                         value={selectedType}
                                         onChange={(e) => handleTypeChange(e.target.value)}
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-medium text-base text-slate-700"
+                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-pink-500/10 focus:border-pink-500 outline-none transition-all font-medium text-base text-slate-700"
                                     >
                                         <option value="">เลือกหัวข้อการบันทึก...</option>
                                         {behaviorTypes
@@ -598,7 +568,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                             type="number"
                                             value={points}
                                             onChange={(e) => setPoints(Number(e.target.value))}
-                                            className={`w-full px-6 py-4 border rounded-2xl outline-none transition-all font-black text-xl text-center shadow-inner ${isPositive ? 'bg-emerald-50 border-emerald-100 text-emerald-600 focus:ring-4 focus:ring-emerald-500/10' : 'bg-rose-50 border-rose-100 text-rose-600 focus:ring-4 focus:ring-rose-500/10'}`}
+                                            className={`w-full px-6 py-4 border rounded-2xl outline-none transition-all font-black text-xl text-center shadow-inner ${isPositive ? 'bg-pink-50 border-pink-100 text-pink-600 focus:ring-4 focus:ring-pink-500/10' : 'bg-rose-50 border-rose-100 text-rose-600 focus:ring-4 focus:ring-rose-500/10'}`}
                                         />
                                     </div>
                                     <div className="col-span-2 space-y-2">
@@ -607,7 +577,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                             placeholder="รายละเอียดเพิ่มเติม..."
                                             value={note}
                                             onChange={(e) => setNote(e.target.value)}
-                                            className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold text-slate-700"
+                                            className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-pink-500/10 focus:border-pink-500 outline-none transition-all font-bold text-slate-700"
                                         />
                                     </div>
                                 </div>
@@ -623,7 +593,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                 <button
                                     onClick={handleSaveBehavior}
                                     disabled={!selectedType || points === 0 || isRecording}
-                                    className={`flex-1 py-2.5 text-white rounded-xl font-bold text-sm shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100 ${isPositive ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-100' : 'bg-rose-600 hover:bg-rose-700 shadow-rose-100'}`}
+                                    className={`flex-1 py-2.5 text-white rounded-xl font-bold text-sm shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100 ${isPositive ? 'bg-pink-600 hover:bg-pink-700 shadow-pink-100' : 'bg-rose-600 hover:bg-rose-700 shadow-rose-100'}`}
                                 >
                                     {isRecording ? (
                                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -651,12 +621,12 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                             <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 flex-shrink-0">
                                 <div>
                                     <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-3">
-                                        <History className="w-7 h-7 text-emerald-600" />
+                                        <History className="w-7 h-7 text-pink-600" />
                                         Behavior History
                                     </h3>
                                     <p className="text-slate-500 font-bold text-sm mt-1">
                                         ประวัติพฤติกรรม: {selectedStudentForHistory?.prefix}{selectedStudentForHistory?.first_name} {selectedStudentForHistory?.last_name}
-                                        <span className="ml-2 px-2 py-0.5 bg-emerald-200 text-emerald-700 rounded-lg text-xs font-black">
+                                        <span className="ml-2 px-2 py-0.5 bg-pink-200 text-pink-700 rounded-lg text-xs font-black">
                                             รหัสประจำตัว: {selectedStudentForHistory?.student_code}
                                         </span>
                                     </p>
@@ -669,7 +639,7 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                         <div className="flex-1 overflow-y-auto p-8">
                             {isHistoryLoading ? (
                                 <div className="flex flex-col items-center justify-center py-20 gap-4">
-                                    <div className="w-10 h-10 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                                    <div className="w-10 h-10 border-4 border-pink-600 border-t-transparent rounded-full animate-spin" />
                                     <p className="text-slate-400 font-bold animate-pulse">กำลังโหลดประวัติ...</p>
                                 </div>
                             ) : behaviorHistory.length === 0 ? (
@@ -711,12 +681,12 @@ export function BehaviorFeature({ session }: BehaviorFeatureProps) {
                                                         <div className="text-base font-normal text-slate-800">
                                                             {h.behavior_types?.name}
                                                         </div>
-                                                        <div className={`text-xs font-medium uppercase ${h.behavior_types?.is_positive ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                                        <div className={`text-xs font-medium uppercase ${h.behavior_types?.is_positive ? 'text-pink-500' : 'text-rose-500'}`}>
                                                             {h.behavior_types?.is_positive ? 'เชิงบวก' : 'เชิงลบ'}
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={`text-base font-bold ${h.points_awarded > 0 ? 'text-emerald-600' : h.points_awarded < 0 ? 'text-rose-600' : 'text-slate-400'}`}>
+                                                        <span className={`text-base font-bold ${h.points_awarded > 0 ? 'text-pink-600' : h.points_awarded < 0 ? 'text-rose-600' : 'text-slate-400'}`}>
                                                             {h.points_awarded > 0 ? `+${h.points_awarded}` : h.points_awarded}
                                                         </span>
                                                     </td>

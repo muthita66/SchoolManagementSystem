@@ -19,7 +19,7 @@ export function AdvisorEvaluationHubFeature({ session }: AdvisorEvaluationHubFea
                         type="button"
                         onClick={() => setActiveTab("evaluate_teacher")}
                         className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "evaluate_teacher"
-                            ? "bg-teal-600 text-white"
+                            ? "bg-red-600 text-white"
                             : "bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100"
                             }`}
                     >
@@ -29,7 +29,7 @@ export function AdvisorEvaluationHubFeature({ session }: AdvisorEvaluationHubFea
                         type="button"
                         onClick={() => setActiveTab("teacher_result")}
                         className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "teacher_result"
-                            ? "bg-emerald-600 text-white"
+                            ? "bg-pink-600 text-white"
                             : "bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100"
                             }`}
                     >

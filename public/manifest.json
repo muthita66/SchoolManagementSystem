@@ -1,7 +1,7 @@
 {
-    "name": "WinAI School",
-    "short_name": "WinAI",
-    "description": "ระบบจัดการโรงเรียน WinAI - ตรวจสอบเกรด ตารางเรียน สุขภาพ และอื่นๆ",
+    "name": "Ban Khlong Nong Lek School",
+    "short_name": "Ban Khlong Nong Lek School",
+    "description": "ระบบจัดการโรงเรียน Ban Khlong Nong Lek School - ตรวจสอบเกรด ตารางเรียน สุขภาพ และอื่นๆ",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#f8fafc",

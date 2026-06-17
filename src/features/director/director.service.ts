@@ -103,13 +103,21 @@ async function resolveClassroomIdFromPayload(data: any) {
     const classLevel = String(data?.class_level || '').trim();
     const classroomName = String(data?.classroom || '').trim();
     if (!classLevel && !classroomName) return null;
-    if (!classLevel || !classroomName) return null;
 
     const classrooms = await prisma.classrooms.findMany({
         include: {
             levels: { select: { name: true } },
         },
+        orderBy: [{ grade_level_id: 'asc' }, { room_name: 'asc' }],
     });
+
+    if (classLevel && !classroomName) {
+        const classroomByLevel = classrooms.find((c) => String(c.levels?.name || '') === classLevel);
+        if (!classroomByLevel) throw new Error(`ไม่พบระดับชั้น ${classLevel}`);
+        return classroomByLevel.id;
+    }
+
+    if (!classLevel || !classroomName) return null;
 
     const classroom = classrooms.find((c) => {
         const levelName = String(c.levels?.name || '');
@@ -422,11 +430,12 @@ export const DirectorService = {
             }
         });
 
-        if (data.classroom_id) {
+        const classroomId = await resolveClassroomIdFromPayload(data);
+        if (classroomId) {
             await prisma.classroom_students.create({
                 data: {
                     student_id: student.id,
-                    classroom_id: Number(data.classroom_id),
+                    classroom_id: classroomId,
                     academic_year: data.academic_year || (new Date().getFullYear() + 543)
                 }
             });
@@ -441,26 +450,28 @@ export const DirectorService = {
         if (data.last_name) updateData.last_name = data.last_name;
         if (data.phone !== undefined) updateData.phone = data.phone;
         if (data.address !== undefined) updateData.address = data.address;
-        if (data.classroom_id !== undefined) {
+        if (data.classroom_id !== undefined || data.class_level !== undefined) {
             const academicYear = data.academic_year || (new Date().getFullYear() + 543);
             if (data.classroom_id === null) {
                 await prisma.classroom_students.deleteMany({
                     where: { student_id: id, academic_year: academicYear }
                 });
             } else {
+                const classroomId = await resolveClassroomIdFromPayload(data);
+                if (!classroomId) throw new Error('Classroom not found');
                 const existingMapping = await prisma.classroom_students.findFirst({
                     where: { student_id: id, academic_year: academicYear }
                 });
                 if (existingMapping) {
                     await prisma.classroom_students.update({
                         where: { id: existingMapping.id },
-                        data: { classroom_id: Number(data.classroom_id) }
+                        data: { classroom_id: classroomId }
                     });
                 } else {
                     await prisma.classroom_students.create({
                         data: {
                             student_id: id,
-                            classroom_id: Number(data.classroom_id),
+                            classroom_id: classroomId,
                             academic_year: academicYear
                         }
                     });
@@ -509,21 +520,17 @@ export const DirectorService = {
             }
         });
 
-        // Group by class_level + room
-        const counts = new Map<string, { class_level: string; room: string; total: number; male: number; female: number }>();
+        // Group by level only. Room names are intentionally hidden from the web UI.
+        const counts = new Map<string, { class_level: string; total: number; male: number; female: number }>();
         (students as any[]).forEach(s => {
             const currentClassroom = s.classroom_students?.[0]?.classrooms;
             const level = (currentClassroom?.levels?.name || 'ไม่ระบุ').trim();
-            const room = roomOnlyLabel(
-                currentClassroom?.levels?.name || '',
-                currentClassroom?.room_name || ''
-            ) || 'ไม่ระบุ';
 
             const isMale = maleGender && s.gender_id === maleGender.id;
             const isFemale = femaleGender && s.gender_id === femaleGender.id;
 
-            const key = `${level}-${room}`;
-            const existing = counts.get(key) || { class_level: level, room, total: 0, male: 0, female: 0 };
+            const key = level;
+            const existing = counts.get(key) || { class_level: level, total: 0, male: 0, female: 0 };
             existing.total++;
             if (isMale) existing.male++;
             if (isFemale) existing.female++;
@@ -531,8 +538,7 @@ export const DirectorService = {
         });
 
         return Array.from(counts.values()).sort((a, b) => {
-            if (a.class_level !== b.class_level) return a.class_level.localeCompare(b.class_level);
-            return a.room.localeCompare(b.room);
+            return a.class_level.localeCompare(b.class_level);
         });
     },
 
@@ -864,7 +870,6 @@ export const DirectorService = {
 
         if (!Number.isFinite(teacher_id) || teacher_id <= 0) throw new Error('teacher_id is required');
         if (!class_level) throw new Error('class_level is required');
-        if (!room) throw new Error('room is required');
 
         const teacher = await prisma.teachers.findUnique({
             where: { id: teacher_id },
@@ -913,7 +918,6 @@ export const DirectorService = {
 
         if (!Number.isFinite(teacher_id) || teacher_id <= 0) throw new Error('teacher_id is required');
         if (!class_level) throw new Error('class_level is required');
-        if (!room) throw new Error('room is required');
 
         const existing = await prisma.classroom_advisors.findUnique({
             where: { id: nid },

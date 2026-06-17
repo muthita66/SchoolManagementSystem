@@ -277,7 +277,7 @@ export function ScheduleFeature({ session }: ScheduleFeatureProps) {
             groupedExams.set(key, {
                 subject_code: r.subject_code || "-",
                 subject_name: r.subject_name || "-",
-                group: r.class_level || r.room ? `${r.class_level || ""}${r.room ? "/" + r.room : ""}` : "-",
+                group: r.class_level || "-",
                 midterm: null,
                 final: null
             });
@@ -297,7 +297,7 @@ export function ScheduleFeature({ session }: ScheduleFeatureProps) {
         if (!exam) return "-";
         const date = exam.exam_date ? formatThaiDate(exam.exam_date) : "-";
         const time = exam.time_range || "-";
-        const room = exam.room ? `ห้อง ${exam.room}` : "-";
+        const room = exam.room ? `สถานที่ ${exam.room}` : "-";
         return (
             <div className="flex flex-col items-center">
                 <div>{date}</div>
@@ -310,32 +310,32 @@ export function ScheduleFeature({ session }: ScheduleFeatureProps) {
     return (
         <div className="w-full min-w-0 max-w-full overflow-x-hidden">
             <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-6 w-full min-w-0">
-                <section className="bg-gradient-to-r from-emerald-700 to-teal-800 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+                <section className="bg-gradient-to-r from-pink-700 to-red-800 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
                     <div className="relative z-10">
                         <div className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-xs font-medium mb-3 backdrop-blur-sm border border-white/20">
                             Schedule
                         </div>
                         <h1 className="text-2xl font-bold mb-1">ตารางเรียน / ตารางสอบ</h1>
-                        <p className="text-emerald-100 text-sm max-w-2xl">
+                        <p className="text-pink-100 text-sm max-w-2xl">
                             เลือกปีการศึกษาและภาคเรียนเพื่อดูตารางล่าสุด
                         </p>
                     </div>
 
                 {/* Background Decoration */}
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform skew-x-12 translate-x-20"></div>
-                <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-emerald-500 rounded-full blur-2xl opacity-50"></div>
+                <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-pink-500 rounded-full blur-2xl opacity-50"></div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-5 relative z-10">
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
-                        <div className="text-emerald-200 text-xs mb-1">จำนวนคาบเรียน</div>
+                        <div className="text-pink-200 text-xs mb-1">จำนวนคาบเรียน</div>
                         <div className="text-2xl font-bold">{classRows.length}</div>
                     </div>
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
-                        <div className="text-emerald-200 text-xs mb-1">จำนวนสอบ</div>
+                        <div className="text-pink-200 text-xs mb-1">จำนวนสอบ</div>
                         <div className="text-2xl font-bold">{examRows.length}</div>
                     </div>
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
-                        <div className="text-emerald-200 text-xs mb-1">ครูที่ปรึกษา</div>
+                        <div className="text-pink-200 text-xs mb-1">ครูที่ปรึกษา</div>
                         <div className="text-base font-bold truncate">
                             {advisors.length > 0 ? (
                                 advisors.map((adv: any, idx: number) => (
@@ -357,7 +357,7 @@ export function ScheduleFeature({ session }: ScheduleFeatureProps) {
                         <div className="flex items-center gap-3">
                             <label className="text-xs font-bold text-slate-500 uppercase tracking-tight">ปีการศึกษา</label>
                             <select
-                                className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-medium focus:ring-2 focus:ring-teal-500 outline-none bg-slate-50"
+                                className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-medium focus:ring-2 focus:ring-red-500 outline-none bg-slate-50"
                                 value={year}
                                 onChange={e => {
                                     setHasManualTermSelection(true);
@@ -372,7 +372,7 @@ export function ScheduleFeature({ session }: ScheduleFeatureProps) {
                         <div className="flex items-center gap-3">
                             <label className="text-xs font-bold text-slate-500 uppercase tracking-tight">ภาคเรียน</label>
                             <select
-                                className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-medium focus:ring-2 focus:ring-teal-500 outline-none bg-slate-50"
+                                className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-medium focus:ring-2 focus:ring-red-500 outline-none bg-slate-50"
                                 value={semester}
                                 onChange={e => {
                                     setHasManualTermSelection(true);
@@ -399,21 +399,21 @@ export function ScheduleFeature({ session }: ScheduleFeatureProps) {
                     <div className="flex flex-wrap items-center gap-3">
                         {activeTab === 'exam' && (
                             <div className="flex bg-slate-100 p-1 rounded-xl">
-                                <button className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${examFilter === 'all' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`} onClick={() => setExamFilter('all')}>ทั้งหมด</button>
-                                <button className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${examFilter === 'midterm' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`} onClick={() => setExamFilter('midterm')}>กลางภาค</button>
-                                <button className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${examFilter === 'final' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`} onClick={() => setExamFilter('final')}>ปลายภาค</button>
+                                <button className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${examFilter === 'all' ? 'bg-white text-red-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`} onClick={() => setExamFilter('all')}>ทั้งหมด</button>
+                                <button className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${examFilter === 'midterm' ? 'bg-white text-red-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`} onClick={() => setExamFilter('midterm')}>กลางภาค</button>
+                                <button className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${examFilter === 'final' ? 'bg-white text-red-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`} onClick={() => setExamFilter('final')}>ปลายภาค</button>
                             </div>
                         )}
                         <div className="flex bg-slate-100 p-1 rounded-xl">
                             <button
-                                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${activeTab === 'class' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${activeTab === 'class' ? 'bg-white text-red-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                                 onClick={() => setActiveTab('class')}
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
                                 ตารางเรียน
                             </button>
                             <button
-                                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${activeTab === 'exam' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${activeTab === 'exam' ? 'bg-white text-red-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                                 onClick={() => setActiveTab('exam')}
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
@@ -473,11 +473,11 @@ export function ScheduleFeature({ session }: ScheduleFeatureProps) {
                                                             return (
                                                                 <td key={slot} className={`px-2 py-3 border-r border-slate-200 align-top ${matches.length > 1 ? 'bg-rose-50/60' : ''}`}>
                                                                     {matches.map((r, i) => (
-                                                                        <div key={`${r.source || 'registered'}-${r.section_id || r.subject_code || i}-${i}`} className={`rounded-xl p-3.5 mb-3 last:mb-0 border shadow-sm shrink-0 ${r.source === 'cart' ? 'bg-amber-50 border-amber-200' : 'bg-teal-50 border-teal-100'}`}>
-                                                                            <div className={`font-bold text-sm mb-1.5 leading-tight truncate ${r.source === 'cart' ? 'text-amber-700' : 'text-teal-700'}`}>{r.subject_code || "-"}</div>
+                                                                        <div key={`${r.source || 'registered'}-${r.section_id || r.subject_code || i}-${i}`} className={`rounded-xl p-3.5 mb-3 last:mb-0 border shadow-sm shrink-0 ${r.source === 'cart' ? 'bg-red-50 border-red-200' : 'bg-red-50 border-red-100'}`}>
+                                                                            <div className={`font-bold text-sm mb-1.5 leading-tight truncate ${r.source === 'cart' ? 'text-red-700' : 'text-red-700'}`}>{r.subject_code || "-"}</div>
                                                                             <div className="text-[15px] text-slate-800 font-extrabold leading-snug mb-2 line-clamp-2">{r.subject_name || "-"}</div>
                                                                             <div className="text-xs text-slate-800 font-semibold whitespace-nowrap overflow-hidden text-ellipsis" title={`ผู้สอน ${r.teacher || "-"}`}>ผู้สอน: {r.teacher || "-"}</div>
-                                                                            <div className="text-xs text-slate-500 font-medium mt-1.5 whitespace-nowrap overflow-hidden text-ellipsis">ห้อง: {(r.room_name || r.room || "-").replace(/ห้องเรียน|ห้อง/g, "").trim()}</div>
+                                                                            <div className="text-xs text-slate-500 font-medium mt-1.5 whitespace-nowrap overflow-hidden text-ellipsis">ระดับชั้น: {r.class_level || "-"}</div>
                                                                         </div>
                                                                     ))}
                                                                     {matches.length > 1 && (
@@ -500,7 +500,7 @@ export function ScheduleFeature({ session }: ScheduleFeatureProps) {
                         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
                             <div className="flex items-center gap-3 mb-6">
                                 <h3 className="text-lg font-bold text-slate-800">ตารางสอบ</h3>
-                                <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-md">กำหนดการสอบ</span>
+                                <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-md">กำหนดการสอบ</span>
                             </div>
 
                             <div className="overflow-hidden rounded-xl border border-slate-200">

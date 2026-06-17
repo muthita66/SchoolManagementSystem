@@ -43,12 +43,7 @@ function hasMeaningfulValue(v: any) {
 
 function formatClassRoomDisplay(classLevel: any, room: any) {
     const level = String(classLevel || "").trim();
-    const roomValue = String(room || "").trim();
-    if (!level && !roomValue) return "-";
-    if (!roomValue) return level || "-";
-    if (!level) return roomValue;
-    if (roomValue === level || roomValue.startsWith(`${level}/`)) return roomValue;
-    return `${level}/${roomValue}`;
+    return level || "-";
 }
 
 function normalizeGradeLabel(rawGrade: any) {
@@ -240,17 +235,17 @@ export function StudentProfileFeature({ session }: { session: any }) {
     if (!studentId || Number.isNaN(studentId)) {
         return (
             <div className="space-y-6">
-                <section className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+                <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
                     <div className="relative z-10">
                         <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-sm font-medium mb-4">Student Profile</div>
                         <h1 className="text-3xl font-bold">ประวัติส่วนตัวนักเรียน</h1>
-                        <p className="text-emerald-100 mt-2">เลือกนักเรียนจากหน้ารายชื่อนักเรียนในที่ปรึกษา</p>
+                        <p className="text-pink-100 mt-2">เลือกนักเรียนจากหน้ารายชื่อนักเรียนในที่ปรึกษา</p>
                     </div>
                 </section>
                 <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 text-center text-slate-500">
                     <div>กำลังพาไปหน้ารายชื่อนักเรียนในที่ปรึกษา...</div>
-                    <Link href="/teacher/students" className="inline-block mt-4 px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700">
+                    <Link href="/teacher/students" className="inline-block mt-4 px-4 py-2 rounded-xl bg-pink-600 text-white hover:bg-pink-700">
                         กลับไปหน้ารายชื่อนักเรียนในที่ปรึกษา
                     </Link>
                 </div>
@@ -273,7 +268,7 @@ export function StudentProfileFeature({ session }: { session: any }) {
                     {error || "ไม่พบข้อมูลนักเรียน"}
                 </div>
                 <div className="text-center">
-                    <Link href="/teacher/students" className="inline-block px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700">
+                    <Link href="/teacher/students" className="inline-block px-4 py-2 rounded-xl bg-pink-600 text-white hover:bg-pink-700">
                         กลับไปหน้ารายชื่อนักเรียนในที่ปรึกษา
                     </Link>
                 </div>
@@ -432,20 +427,20 @@ export function StudentProfileFeature({ session }: { session: any }) {
 
     const riskBadges = [
         alerts.length > 0 ? { label: `แจ้งเตือน ${alerts.length}`, tone: "rose" } : null,
-        attendance?.attendance_rate != null ? { label: `มาเรียน ${fmtPct(attendance.attendance_rate)}`, tone: "teal" } : null,
-        grades?.average_grade_point != null ? { label: `เกรดเฉลี่ย ${fmtNum(grades.average_grade_point, 2)}`, tone: "emerald" } : null,
-        health?.has_allergy_or_chronic ? { label: "มีข้อมูลสุขภาพต้องระวัง", tone: "teal" } : null,
+        attendance?.attendance_rate != null ? { label: `มาเรียน ${fmtPct(attendance.attendance_rate)}`, tone: "red" } : null,
+        grades?.average_grade_point != null ? { label: `เกรดเฉลี่ย ${fmtNum(grades.average_grade_point, 2)}`, tone: "pink" } : null,
+        health?.has_allergy_or_chronic ? { label: "มีข้อมูลสุขภาพต้องระวัง", tone: "red" } : null,
     ].filter(Boolean) as { label: string; tone: string }[];
 
     return (
         <div className="space-y-6">
-            <section className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
                 <div className="relative z-10 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                     <div>
                         <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-sm font-medium mb-4">Student Profile</div>
                         <h1 className="text-3xl font-bold">{`${profile.prefix || ""}${profile.first_name || ""} ${profile.last_name || ""}`.trim()}</h1>
-                        <p className="text-emerald-100 mt-2">ข้อมูลส่วนตัวนักเรียน • {profile.student_code}</p>
+                        <p className="text-pink-100 mt-2">ข้อมูลส่วนตัวนักเรียน • {profile.student_code}</p>
                         <div className="mt-3 flex flex-wrap gap-2 text-sm">
                             <span className="rounded-full bg-white/15 px-3 py-1">{formatClassRoomDisplay(profile.class_level, profile.room)}</span>
                             {advisory?.current && (
@@ -458,7 +453,7 @@ export function StudentProfileFeature({ session }: { session: any }) {
                             ))}
                         </div>
                     </div>
-                    <Link href="/teacher/students" className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-white text-emerald-700 font-medium hover:bg-emerald-50">
+                    <Link href="/teacher/students" className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-white text-pink-700 font-medium hover:bg-pink-50">
                         กลับหน้ารายชื่อนักเรียน
                     </Link>
                 </div>
@@ -540,9 +535,9 @@ export function StudentProfileFeature({ session }: { session: any }) {
                                 <p className="text-sm text-slate-500">สรุปการเช็คชื่อและรายการล่าสุดของนักเรียนคนนี้</p>
                             </div>
                             <div className="flex flex-wrap gap-2 text-xs">
-                                <span className="rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-teal-700">มา {attendance.present ?? 0}</span>
+                                <span className="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-red-700">มา {attendance.present ?? 0}</span>
                                 <span className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-rose-700">ขาด {attendance.absent ?? 0}</span>
-                                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700">สาย {attendance.late ?? 0}</span>
+                                <span className="rounded-full border border-pink-200 bg-pink-50 px-3 py-1 text-pink-700">สาย {attendance.late ?? 0}</span>
                                 <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-700">ลา {attendance.leave ?? 0}</span>
                             </div>
                         </div>
@@ -561,7 +556,7 @@ export function StudentProfileFeature({ session }: { session: any }) {
                                                         <span className="text-slate-500">{rate}%</span>
                                                     </div>
                                                     <div className="mt-2 h-2 rounded-full bg-white overflow-hidden">
-                                                        <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500" style={{ width: `${Math.max(0, Math.min(100, rate))}%` }} />
+                                                        <div className="h-full rounded-full bg-gradient-to-r from-pink-500 to-red-500" style={{ width: `${Math.max(0, Math.min(100, rate))}%` }} />
                                                     </div>
                                                     <div className="mt-2 text-xs text-slate-500">
                                                         มา {m.present || 0} • ขาด {m.absent || 0} • สาย {m.late || 0} • ลา {m.leave || 0}
@@ -584,9 +579,9 @@ export function StudentProfileFeature({ session }: { session: any }) {
                                             <div key={`${a.id}-${idx}`} className="px-4 py-3">
                                                 <div className="flex items-center justify-between gap-2">
                                                     <div className="text-sm font-medium text-slate-800">{fmtDate(a.date)}</div>
-                                                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold border ${a.normalized_status === "present" ? "border-teal-200 bg-teal-50 text-teal-700" :
+                                                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold border ${a.normalized_status === "present" ? "border-red-200 bg-red-50 text-red-700" :
                                                         a.normalized_status === "absent" ? "border-rose-200 bg-rose-50 text-rose-700" :
-                                                            a.normalized_status === "late" ? "border-emerald-200 bg-emerald-50 text-emerald-700" :
+                                                            a.normalized_status === "late" ? "border-pink-200 bg-pink-50 text-pink-700" :
                                                                 a.normalized_status === "leave" ? "border-slate-300 bg-slate-50 text-slate-700" :
                                                                     "border-slate-200 bg-white text-slate-700"
                                                         }`}>
@@ -627,8 +622,8 @@ export function StudentProfileFeature({ session }: { session: any }) {
                                             </div>
                                         ))}
                                         {hasMeaningfulValue(health?.latest?.allergies) && (
-                                            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 md:col-span-2">
-                                                <div className="text-xs text-emerald-700 font-semibold">การแพ้ยา / แพ้อาหาร</div>
+                                            <div className="rounded-xl border border-pink-200 bg-pink-50 p-3 md:col-span-2">
+                                                <div className="text-xs text-pink-700 font-semibold">การแพ้ยา / แพ้อาหาร</div>
                                                 <div className="mt-1 text-sm text-slate-800 break-words">{health.latest.allergies}</div>
                                             </div>
                                         )}
@@ -740,7 +735,7 @@ export function StudentProfileFeature({ session }: { session: any }) {
                                             <div key={`${r.id}-${idx}`} className="px-4 py-3">
                                                 <div className="flex items-center justify-between gap-2">
                                                     <div className="text-sm font-medium text-slate-800">{r.topic || "-"}</div>
-                                                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">{r.score ?? "-"}</span>
+                                                    <span className="rounded-full border border-pink-200 bg-pink-50 px-2.5 py-1 text-xs font-semibold text-pink-700">{r.score ?? "-"}</span>
                                                 </div>
                                                 <div className="mt-1 text-xs text-slate-500">ปี {r.year || "-"} ภาค {r.semester || "-"} • {fmtDateTime(r.created_at)}</div>
                                             </div>
@@ -759,7 +754,7 @@ export function StudentProfileFeature({ session }: { session: any }) {
                                             <div key={`${r.id}-${idx}`} className="px-4 py-3">
                                                 <div className="flex items-center justify-between gap-2">
                                                     <div className="text-sm font-medium text-slate-800">{r.topic || "-"}</div>
-                                                    <span className="rounded-full border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-semibold text-teal-700">{r.score ?? "-"}</span>
+                                                    <span className="rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">{r.score ?? "-"}</span>
                                                 </div>
                                                 <div className="mt-1 text-xs text-slate-500">{r.subject_code || "-"} • {r.subject_name || "-"}</div>
                                                 <div className="mt-1 text-xs text-slate-500">ปี {r.year || "-"} ภาค {r.semester || "-"} • {fmtDateTime(r.created_at)}</div>
@@ -779,13 +774,13 @@ export function StudentProfileFeature({ session }: { session: any }) {
                                             <div key={`${r.id}-${idx}`} className="rounded-xl border border-slate-100 bg-slate-50 p-3">
                                                 <div className="flex items-center justify-between gap-2">
                                                     <div className="text-sm font-medium text-slate-800">{r.name || "-"}</div>
-                                                    <span className="rounded-full border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-semibold text-teal-700">{r.score ?? "-"}</span>
+                                                    <span className="rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">{r.score ?? "-"}</span>
                                                 </div>
                                             </div>
                                         ))}
                                         {(evaluations.competency?.latest_term_feedback || []).slice(0, 3).map((f: any, idx: number) => (
-                                            <div key={`${f.id}-${idx}`} className="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
-                                                <div className="text-xs font-semibold text-emerald-700">ข้อเสนอแนะ</div>
+                                            <div key={`${f.id}-${idx}`} className="rounded-xl border border-pink-200 bg-pink-50 p-3">
+                                                <div className="text-xs font-semibold text-pink-700">ข้อเสนอแนะ</div>
                                                 <div className="mt-1 text-sm text-slate-800 whitespace-pre-wrap break-words">{f.feedback || "-"}</div>
                                             </div>
                                         ))}
@@ -813,9 +808,9 @@ export function StudentProfileFeature({ session }: { session: any }) {
                                         <div className="text-xs text-slate-500">สะสม</div>
                                         <div className={`mt-1 text-lg font-bold ${Number(conduct.total_points) < 0 ? "text-rose-600" : "text-slate-900"}`}>{fmtNum(conduct.total_points, 0)}</div>
                                     </div>
-                                    <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
-                                        <div className="text-xs text-emerald-700">บวก</div>
-                                        <div className="mt-1 text-lg font-bold text-emerald-800">{fmtNum(conduct.positive_points, 0)}</div>
+                                    <div className="rounded-xl border border-pink-200 bg-pink-50 p-3">
+                                        <div className="text-xs text-pink-700">บวก</div>
+                                        <div className="mt-1 text-lg font-bold text-pink-800">{fmtNum(conduct.positive_points, 0)}</div>
                                     </div>
                                     <div className="rounded-xl border border-rose-200 bg-rose-50 p-3">
                                         <div className="text-xs text-rose-700">ลบ</div>
@@ -827,7 +822,7 @@ export function StudentProfileFeature({ session }: { session: any }) {
                                         <div key={`${c.id}-${idx}`} className="rounded-xl border border-slate-100 bg-slate-50 p-3">
                                             <div className="flex items-center justify-between gap-2">
                                                 <div className="text-sm font-medium text-slate-800">{c.event || "-"}</div>
-                                                <span className={`rounded-full px-2.5 py-1 text-xs font-semibold border ${c.point_type === "positive" ? "border-emerald-200 bg-emerald-50 text-emerald-700" :
+                                                <span className={`rounded-full px-2.5 py-1 text-xs font-semibold border ${c.point_type === "positive" ? "border-pink-200 bg-pink-50 text-pink-700" :
                                                     c.point_type === "negative" ? "border-rose-200 bg-rose-50 text-rose-700" :
                                                         "border-slate-200 bg-white text-slate-700"
                                                     }`}>

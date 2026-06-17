@@ -328,14 +328,14 @@ export const LearningResultsService = {
 
         const results = Array.from(sectionMap.values()).map(sec => {
             let status = "ปกติ";
-            let color = "emerald";
+            let color = "pink";
 
             if (sec.score >= 7) {
                 status = "มีปัญหา";
                 color = "rose";
             } else if (sec.score === 6) {
                 status = "เสี่ยง";
-                color = "amber";
+                color = "red";
             }
 
             return {

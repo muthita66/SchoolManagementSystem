@@ -222,7 +222,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                             !isCurrent ? 'opacity-30 bg-slate-50/50 text-slate-300' : 'bg-white hover:bg-slate-50'
                         }`}
                     >
-                        <div className={`text-right text-xs p-1 font-bold ${isToday ? 'text-emerald-600' : 'text-slate-400'}`}>
+                        <div className={`text-right text-xs p-1 font-bold ${isToday ? 'text-pink-600' : 'text-slate-400'}`}>
                             {display}
                         </div>
                         <div className="flex flex-col gap-1.5 px-1 overflow-hidden">
@@ -230,7 +230,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                 <button
                                     key={idx}
                                     onClick={() => openEditModal(ev)}
-                                    className="text-left text-xs px-2 py-1 bg-emerald-50 text-emerald-700 rounded-md border border-emerald-200 truncate hover:bg-emerald-100 font-bold transition-colors shadow-sm"
+                                    className="text-left text-xs px-2 py-1 bg-pink-50 text-pink-700 rounded-md border border-pink-200 truncate hover:bg-pink-100 font-bold transition-colors shadow-sm"
                                     title={`แก้ไข: ${ev.name || ev.title}`}
                                 >
                                     {ev.name || ev.title}
@@ -253,8 +253,8 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            {/* Emerald Header Section */}
-            <section className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl py-6 px-8 text-white shadow-lg relative overflow-hidden">
+            {/* pink Header Section */}
+            <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl py-6 px-8 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
                 <div className="relative z-10 flex items-center gap-4">
                     {onBack && (
@@ -268,7 +268,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                     <div className="text-left">
                         <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-xs font-medium mb-2">Calendar</div>
                         <h1 className="text-2xl font-bold">ปฏิทินกิจกรรม</h1>
-                        <p className="text-emerald-100 mt-0.5 text-sm">จัดการกิจกรรมและตารางนัดหมาย</p>
+                        <p className="text-pink-100 mt-0.5 text-sm">จัดการกิจกรรมและตารางนัดหมาย</p>
                     </div>
                 </div>
             </section>
@@ -294,7 +294,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                 </h2>
                 <button
                     onClick={() => { setShowAdd(!showAdd); setSelectedEvent(null); }}
-                    className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors text-sm shadow-md shadow-emerald-200 flex items-center gap-2"
+                    className="px-4 py-2 bg-pink-600 text-white rounded-xl font-medium hover:bg-pink-700 transition-colors text-sm shadow-md shadow-pink-200 flex items-center gap-2"
                 >
                     + เพิ่มกิจกรรม
                 </button>
@@ -325,7 +325,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">ชื่อกิจกรรม</label>
                                         <input
-                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 placeholder:text-slate-400"
+                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 placeholder:text-slate-400"
                                             placeholder="ระบุชื่อกิจกรรม..."
                                             value={showAdd ? form.title : editForm.title}
                                             onChange={e => showAdd ? setForm({...form, title: e.target.value}) : setEditForm({...editForm, title: e.target.value})}
@@ -334,7 +334,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                      <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">ปีการศึกษา</label>
                                         <select
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? addFormYear : editFormYear}
                                             onChange={e => {
                                                 const yearId = e.target.value;
@@ -354,7 +354,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">ภาคเรียน</label>
                                         <select
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? form.semester_id : editForm.semester_id}
                                             onChange={e => showAdd ? setForm({...form, semester_id: e.target.value}) : setEditForm({...editForm, semester_id: e.target.value})}
                                             disabled={!(showAdd ? addFormYear : editFormYear)}
@@ -373,7 +373,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">ประเภทกิจกรรม</label>
                                         <select
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? form.event_type_id : editForm.event_type_id}
                                             onChange={e => showAdd ? setForm({...form, event_type_id: e.target.value}) : setEditForm({...editForm, event_type_id: e.target.value})}
                                         >
@@ -386,7 +386,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">ฝ่ายที่รับผิดชอบ</label>
                                         <select
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? form.department_id : editForm.department_id}
                                             onChange={e => {
                                                 const val = e.target.value;
@@ -404,7 +404,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">ครูที่รับผิดชอบ</label>
                                         <select
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? form.responsible_teacher_id : editForm.responsible_teacher_id}
                                             onChange={e => showAdd ? setForm({...form, responsible_teacher_id: e.target.value}) : setEditForm({...editForm, responsible_teacher_id: e.target.value})}
                                         >
@@ -427,7 +427,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                         <label className="text-sm font-medium text-slate-700">วันที่เริ่ม</label>
                                         <input
                                             type="date"
-                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800"
+                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800"
                                             value={showAdd ? form.event_date : editForm.event_date}
                                             onChange={e => showAdd ? setForm({...form, event_date: e.target.value}) : setEditForm({...editForm, event_date: e.target.value})}
                                         />
@@ -436,7 +436,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                         <label className="text-sm font-medium text-slate-700">วันที่สิ้นสุด</label>
                                         <input
                                             type="date"
-                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800"
+                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800"
                                             value={showAdd ? form.end_date : editForm.end_date}
                                             onChange={e => showAdd ? setForm({...form, end_date: e.target.value}) : setEditForm({...editForm, end_date: e.target.value})}
                                         />
@@ -447,7 +447,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                         <label className="text-sm font-medium text-slate-700">เวลาเริ่ม</label>
                                         <input
                                             type="time"
-                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800"
+                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800"
                                             value={showAdd ? form.start_time : editForm.start_time}
                                             onChange={e => showAdd ? setForm({...form, start_time: e.target.value}) : setEditForm({...editForm, start_time: e.target.value})}
                                         />
@@ -456,7 +456,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                         <label className="text-sm font-medium text-slate-700">เวลาสิ้นสุด</label>
                                         <input
                                             type="time"
-                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800"
+                                            className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800"
                                             value={showAdd ? form.end_time : editForm.end_time}
                                             onChange={e => showAdd ? setForm({...form, end_time: e.target.value}) : setEditForm({...editForm, end_time: e.target.value})}
                                         />
@@ -465,10 +465,10 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                     {/* Location Selection */}
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700 flex items-center gap-1">
-                                            <Building2 size={14} className="text-emerald-500" /> อาคาร
+                                            <Building2 size={14} className="text-pink-500" /> อาคาร
                                         </label>
                                         <select
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? form.building_id : editForm.building_id}
                                             onChange={async (e) => {
                                                 const bId = e.target.value;
@@ -489,10 +489,10 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                     </div>
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700 flex items-center gap-1">
-                                            <DoorOpen size={14} className="text-emerald-500" /> ห้อง
+                                            <DoorOpen size={14} className="text-pink-500" /> สถานที่
                                         </label>
                                         <select
-                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 cursor-pointer"
                                             value={showAdd ? form.room_id : editForm.room_id}
                                             onChange={e => showAdd ? setForm({...form, room_id: e.target.value}) : setEditForm({...editForm, room_id: e.target.value})}
                                             disabled={!(showAdd ? form.building_id : editForm.building_id)}
@@ -505,14 +505,14 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                     {/* Dynamic Participation Scope */}
                                     <div className="md:col-span-2 space-y-3 border-t border-slate-100 pt-4">
                                         <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                                            <Users size={16} className="text-emerald-600" /> กลุ่มเป้าหมายผู้เข้าร่วม
+                                            <Users size={16} className="text-pink-600" /> กลุ่มเป้าหมายผู้เข้าร่วม
                                         </label>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
                                             <div className="space-y-1">
                                                 <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">ประเภทกลุ่มเป้าหมาย</label>
                                                 <select
-                                                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+                                                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none text-sm"
                                                     value={(showAdd ? form.targets[0]?.target_type : editForm.targets[0]?.target_type) || ""}
                                                     onChange={async (e) => {
                                                         const type = e.target.value;
@@ -545,12 +545,12 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                                 <div className="md:col-span-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200 pt-2 border-t border-slate-100 mt-2">
                                                     <div className="flex items-center justify-between">
                                                         <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                                                            ระบุรายละเอียด <span className="text-emerald-600 font-normal normal-case">(เลือกได้มากกว่า 1)</span>
+                                                            ระบุรายละเอียด <span className="text-pink-600 font-normal normal-case">(เลือกได้มากกว่า 1)</span>
                                                         </label>
                                                         {targetOptions.length > 0 && (
                                                             <button
                                                                 type="button"
-                                                                className="text-[11px] font-medium text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded transition-colors"
+                                                                className="text-[11px] font-medium text-pink-600 hover:text-pink-700 bg-pink-50 hover:bg-pink-100 px-2 py-1 rounded transition-colors"
                                                                 onClick={() => {
                                                                     const currentTargets = showAdd ? form.targets : editForm.targets;
                                                                     const targetType = currentTargets[0]?.target_type;
@@ -589,10 +589,10 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                                                 const isChecked = currentTargets.some(t => t.target_value === String(opt.id));
 
                                                                 return (
-                                                                    <label key={opt.id} className={`flex items-start gap-2 text-sm cursor-pointer p-2 rounded-lg border transition-all ${isChecked ? 'bg-emerald-50 border-emerald-200' : 'hover:bg-slate-50 border-transparent'}`}>
+                                                                    <label key={opt.id} className={`flex items-start gap-2 text-sm cursor-pointer p-2 rounded-lg border transition-all ${isChecked ? 'bg-pink-50 border-pink-200' : 'hover:bg-slate-50 border-transparent'}`}>
                                                                         <input
                                                                             type="checkbox"
-                                                                            className="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 pointer-events-none"
+                                                                            className="mt-0.5 rounded text-pink-600 focus:ring-pink-500 border-slate-300 pointer-events-none"
                                                                             checked={isChecked}
                                                                             onChange={(e) => {
                                                                                 const checked = e.target.checked;
@@ -616,7 +616,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                                                                 else setEditForm({ ...editForm, targets: updated });
                                                                             }}
                                                                         />
-                                                                        <span className={`text-sm select-none ${isChecked ? 'font-medium text-emerald-800' : 'text-slate-600'}`}>
+                                                                        <span className={`text-sm select-none ${isChecked ? 'font-medium text-pink-800' : 'text-slate-600'}`}>
                                                                             {opt.label}
                                                                         </span>
                                                                     </label>
@@ -635,7 +635,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                     <div className="md:col-span-2 space-y-1">
                                         <label className="text-sm font-medium text-slate-700">รายละเอียด</label>
                                         <textarea
-                                            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-800 placeholder:text-slate-400 min-h-[100px] resize-none pb-20"
+                                            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all text-slate-800 placeholder:text-slate-400 min-h-[100px] resize-none pb-20"
                                             placeholder="..."
                                             value={showAdd ? form.description : editForm.description}
                                             onChange={e => showAdd ? setForm({...form, description: e.target.value}) : setEditForm({...editForm, description: e.target.value})}
@@ -662,7 +662,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                 )}
                                 <button
                                     onClick={showAdd ? handleAdd : handleUpdate}
-                                    className="px-7 py-2 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all shadow-md active:scale-95 text-sm"
+                                    className="px-7 py-2 bg-pink-600 text-white rounded-xl font-bold hover:bg-pink-700 transition-all shadow-md active:scale-95 text-sm"
                                 >
                                     {selectedEvent ? "บันทึก" : "เพิ่ม"}
                                 </button>
@@ -679,7 +679,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                         <tr className="bg-slate-50">
                             {["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."].map((d, i) => (
                                 <th key={i} className={`py-3 px-2 text-center font-bold text-xs uppercase border-b border-slate-200 ${
-                                    i === 0 ? 'text-red-500' : i === 6 ? 'text-teal-500' : 'text-slate-500'
+                                    i === 0 ? 'text-red-500' : i === 6 ? 'text-red-500' : 'text-slate-500'
                                 }`}>
                                     {d}
                                 </th>
@@ -691,7 +691,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                             <tr>
                                 <td colSpan={7} className="text-center py-20">
                                     <div className="flex flex-col items-center gap-3">
-                                        <div className="w-8 h-8 border-2 border-emerald-100 border-t-emerald-600 rounded-full animate-spin"></div>
+                                        <div className="w-8 h-8 border-2 border-pink-100 border-t-pink-600 rounded-full animate-spin"></div>
                                         <p className="text-xs font-medium text-slate-400">กำลังโหลด...</p>
                                     </div>
                                 </td>
@@ -704,7 +704,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
             {/* Upcoming List Section */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
                 <div className="flex items-center gap-2 mb-4">
-                    <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg shadow-sm border border-emerald-100">
+                    <div className="p-2 bg-pink-50 text-pink-600 rounded-lg shadow-sm border border-pink-100">
                         <Bookmark size={20} />
                     </div>
                     <h3 className="text-lg font-bold text-slate-800">รายการกิจกรรมทั้งหมด ({events.length})</h3>
@@ -715,11 +715,11 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                         <button
                             key={i}
                             onClick={() => openEditModal(ev)}
-                            className="w-full flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-all hover:bg-white hover:shadow-md group text-left"
+                            className="w-full flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-pink-200 transition-all hover:bg-white hover:shadow-md group text-left"
                         >
                             <div className="space-y-1.5 flex-1 min-w-0">
-                                <h4 className="text-sm font-bold text-emerald-700 flex items-center gap-2 truncate">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 transition-transform group-hover:scale-125"></span>
+                                <h4 className="text-sm font-bold text-pink-700 flex items-center gap-2 truncate">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-pink-400 transition-transform group-hover:scale-125"></span>
                                     {ev.name || ev.title}
                                 </h4>
                                 <div className="text-xs text-slate-500 flex flex-wrap items-center gap-x-4 gap-y-1">
@@ -727,7 +727,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                         <svg className="w-3.5 h-3.5 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                         <span>{(ev.date || ev.start_date) ? new Date(ev.date || ev.start_date).toLocaleDateString("th-TH") : "-"}</span>
                                     </div>
-                                    <div className="flex items-center gap-1.5 font-medium text-teal-600 bg-teal-50 px-1.5 py-0.5 rounded">
+                                    <div className="flex items-center gap-1.5 font-medium text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
                                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                         <span>{ev.start_time} - {ev.end_time}</span>
                                     </div>
@@ -739,7 +739,7 @@ export function ActivitiesCalendar({ onBack }: { onBack?: () => void }) {
                                     )}
                                     {ev.teacher_name && (
                                         <div className="flex items-center gap-1.5">
-                                            <User size={14} className="text-emerald-500" />
+                                            <User size={14} className="text-pink-500" />
                                             <span>{ev.teacher_name}</span>
                                         </div>
                                     )}

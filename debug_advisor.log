@@ -62,3 +62,29 @@
 [2026-06-16T16:15:45.623Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
 [2026-06-16T16:15:45.626Z] [EvaluationService] getAdvisorEvaluation: Resolved semesterId=4
 [2026-06-16T16:15:45.648Z] [EvaluationService] getAdvisorEvaluation: Found 0 response IDs for criteria (advisor or ที่ปรึกษา)
+[2026-06-17T07:07:17.589Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-06-17T07:07:17.637Z] [resolveEvaluationPeriodId] Resolved semester_id: 4
+[2026-06-17T07:07:17.806Z] [ensureForm] Found 8 questions directly from section_id=1
+[2026-06-17T07:07:17.912Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-06-17T07:07:17.918Z] [resolveEvaluationPeriodId] Resolved semester_id: 4
+[2026-06-17T07:07:17.921Z] [ensureForm] Found 8 questions directly from section_id=1
+[2026-06-17T07:07:27.249Z] [Template] Start: teacher=9, student=57, sub_mode=attributes
+[2026-06-17T07:07:27.360Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-06-17T07:07:27.372Z] [ensureForm] Found 8 questions directly from section_id=1
+[2026-06-17T07:07:27.384Z] [resolveEvaluationPeriodId] Resolved semester_id: 4
+[2026-06-17T07:07:27.391Z] [Template] Form: 2, Period: 4
+[2026-06-17T07:07:27.394Z] [Template] Selected scaleTypeID: 2
+[2026-06-17T07:07:27.416Z] [Template] Scale options count: 4
+[2026-06-17T07:07:27.521Z] [Template] Start: teacher=9, student=57, sub_mode=attributes
+[2026-06-17T07:07:27.530Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-06-17T07:07:27.534Z] [ensureForm] Found 8 questions directly from section_id=1
+[2026-06-17T07:07:27.541Z] [resolveEvaluationPeriodId] Resolved semester_id: 4
+[2026-06-17T07:07:27.544Z] [Template] Form: 2, Period: 4
+[2026-06-17T07:07:27.547Z] [Template] Selected scaleTypeID: 2
+[2026-06-17T07:07:27.552Z] [Template] Scale options count: 4
+[2026-06-17T07:07:50.101Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-06-17T07:07:50.107Z] [resolveEvaluationPeriodId] Resolved semester_id: 4
+[2026-06-17T07:07:50.113Z] [ensureForm] Found 8 questions directly from section_id=1
+[2026-06-17T07:07:50.374Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-06-17T07:07:50.377Z] [resolveEvaluationPeriodId] Resolved semester_id: 4
+[2026-06-17T07:07:50.384Z] [ensureForm] Found 8 questions directly from section_id=1

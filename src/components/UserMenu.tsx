@@ -15,7 +15,7 @@ export default function UserMenu({ session }: { session: any }) {
         return (
             <button
                 onClick={() => router.push('/login')}
-                className="h-9 px-4 rounded-full bg-emerald-50 text-emerald-600 hover:bg-emerald-100 text-sm font-semibold transition-colors shadow-sm"
+                className="h-9 px-4 rounded-full bg-pink-50 text-pink-600 hover:bg-pink-100 text-sm font-semibold transition-colors shadow-sm"
             >
                 เข้าสู่ระบบ
             </button>

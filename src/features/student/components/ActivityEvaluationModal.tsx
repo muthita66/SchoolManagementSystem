@@ -73,7 +73,7 @@ export default function ActivityEvaluationModal({
                     </div>
 
                     <div className="space-y-4">
-                        <div className="bg-emerald-50 text-emerald-700 p-4 rounded-xl text-sm font-medium border border-emerald-100">
+                        <div className="bg-pink-50 text-pink-700 p-4 rounded-xl text-sm font-medium border border-pink-100">
                             (รอแบบฟอร์มประเมินที่สมบูรณ์) ระบบจะบันทึกว่าคุณประเมินกิจกรรมนี้ด้วยคะแนนความพึงพอใจ 5 ดาว
                         </div>
 
@@ -82,7 +82,7 @@ export default function ActivityEvaluationModal({
                             <textarea 
                                 value={feedback}
                                 onChange={(e) => setFeedback(e.target.value)}
-                                className="w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all resize-none min-h-[100px]"
+                                className="w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all resize-none min-h-[100px]"
                                 placeholder="พิมพ์ข้อเสนอแนะของคุณ..."
                             />
                         </div>
@@ -99,7 +99,7 @@ export default function ActivityEvaluationModal({
                         <button 
                             onClick={handleSubmit}
                             disabled={submitting}
-                            className="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg transition-colors shadow-md text-sm flex items-center gap-2 disabled:opacity-70"
+                            className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors shadow-md text-sm flex items-center gap-2 disabled:opacity-70"
                         >
                             {submitting ? (
                                 <>

@@ -240,7 +240,7 @@ export function AdvisorTeacherEvaluationFeature({ session }: AdvisorTeacherEvalu
                         <th className="px-6 py-4 font-bold w-1/2 min-w-[300px]">หัวข้อประเมิน</th>
                         {scoreHeaders.map((label, i) => (
                             <th key={i} className="px-3 py-4 font-medium text-center">
-                                <div className="text-xs text-teal-700 font-bold">{scoreOptions[i]}</div>
+                                <div className="text-xs text-red-700 font-bold">{scoreOptions[i]}</div>
                                 <span className="text-sm font-semibold text-slate-700">{label}</span>
                             </th>
                         ))}
@@ -250,8 +250,8 @@ export function AdvisorTeacherEvaluationFeature({ session }: AdvisorTeacherEvalu
                     {tableRows.map((row, ri) => {
                         if (row.type === 'section') {
                             return (
-                                <tr key={`sec-${ri}`} className="bg-teal-50 border-y border-teal-200">
-                                    <td colSpan={6} className="px-6 py-3 font-bold text-teal-800 text-sm">
+                                <tr key={`sec-${ri}`} className="bg-red-50 border-y border-red-200">
+                                    <td colSpan={6} className="px-6 py-3 font-bold text-red-800 text-sm">
                                         {row.label}
                                     </td>
                                 </tr>
@@ -273,7 +273,7 @@ export function AdvisorTeacherEvaluationFeature({ session }: AdvisorTeacherEvalu
                                                 value={option}
                                                 checked={value === option}
                                                 onChange={() => handleScoreChange(name, option)}
-                                                className="w-5 h-5 text-teal-600 bg-slate-100 border-slate-300 focus:ring-teal-500 cursor-pointer"
+                                                className="w-5 h-5 text-red-600 bg-slate-100 border-slate-300 focus:ring-red-500 cursor-pointer"
                                             />
                                         </label>
                                     </td>
@@ -288,7 +288,7 @@ export function AdvisorTeacherEvaluationFeature({ session }: AdvisorTeacherEvalu
 
     return (
         <div className="space-y-6">
-            <section className="bg-gradient-to-br from-teal-600 to-emerald-700 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 -skew-x-12 translate-x-20" />
                 <div className="relative z-10 flex flex-col md:flex-row md:justify-between gap-6">
                     <div>
@@ -296,17 +296,17 @@ export function AdvisorTeacherEvaluationFeature({ session }: AdvisorTeacherEvalu
                             Advisor Evaluation
                         </div>
                         <h1 className="text-2xl font-bold mb-1">ประเมินครูที่ปรึกษา</h1>
-                        <p className="text-emerald-100 text-sm">
-                            ประเมินครูที่ปรึกษาของคุณ (เลือกได้เฉพาะครูที่ปรึกษาในห้องของตนเอง)
+                        <p className="text-pink-100 text-sm">
+                            ประเมินครูที่ปรึกษาของคุณ (เลือกได้เฉพาะครูที่ปรึกษาในระดับชั้นของตนเอง)
                         </p>
                     </div>
 
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 min-w-[230px]">
-                        <div className="text-emerald-100 text-xs font-medium mb-1.5">สถานะล่าสุด</div>
+                        <div className="text-pink-100 text-xs font-medium mb-1.5">สถานะล่าสุด</div>
                         <div className="text-lg font-bold">
                             {submittedAt ? "ประเมินแล้ว" : "รอการประเมิน"}
                         </div>
-                        <div className="text-[10px] text-emerald-100 mt-1.5">
+                        <div className="text-[10px] text-pink-100 mt-1.5">
                             {selectedAdvisor?.name || "ยังไม่ได้เลือกครูที่ปรึกษา"}
                         </div>
                     </div>
@@ -315,7 +315,7 @@ export function AdvisorTeacherEvaluationFeature({ session }: AdvisorTeacherEvalu
 
             <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2 bg-teal-50 text-teal-600 rounded-lg">
+                    <div className="p-2 bg-red-50 text-red-600 rounded-lg">
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                         </svg>
@@ -367,8 +367,8 @@ export function AdvisorTeacherEvaluationFeature({ session }: AdvisorTeacherEvalu
                         กำลังโหลดข้อมูลครูที่ปรึกษา...
                     </div>
                 ) : advisors.length === 0 ? (
-                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-                        ไม่พบครูที่ปรึกษาสำหรับห้องของคุณ
+                    <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+                        ไม่พบครูที่ปรึกษาสำหรับระดับชั้นของคุณ
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -380,7 +380,7 @@ export function AdvisorTeacherEvaluationFeature({ session }: AdvisorTeacherEvalu
                                     type="button"
                                     onClick={() => setSelectedTeacherId(Number(advisor.teacher_id))}
                                     className={`text-left p-4 rounded-2xl border transition-colors ${active
-                                        ? "border-teal-500 bg-teal-50 ring-2 ring-teal-100"
+                                        ? "border-red-500 bg-red-50 ring-2 ring-red-100"
                                         : "border-slate-200 bg-white hover:bg-slate-50"
                                         }`}
                                 >
@@ -409,7 +409,7 @@ export function AdvisorTeacherEvaluationFeature({ session }: AdvisorTeacherEvalu
                         </p>
                     </div>
                     {submittedAt && (
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-pink-50 text-pink-700 border border-pink-200">
                             ประเมินแล้ว
                         </span>
                     )}
@@ -448,7 +448,7 @@ export function AdvisorTeacherEvaluationFeature({ session }: AdvisorTeacherEvalu
                                 disabled={isSubmitting || !selectedTeacherId || topics.length === 0}
                                 className={`px-6 py-3 rounded-xl font-medium ${isSubmitting || !selectedTeacherId || topics.length === 0
                                     ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                                    : "bg-teal-600 text-white hover:bg-teal-700"
+                                    : "bg-red-600 text-white hover:bg-red-700"
                                     }`}
                             >
                                 {isSubmitting ? "กำลังบันทึก..." : "ส่งประเมินครูที่ปรึกษา"}

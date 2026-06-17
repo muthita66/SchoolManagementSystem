@@ -280,7 +280,7 @@ export function RegistrationFeature({ session }: { session: UserSession }) {
             {/* Hero Section */}
             <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl flex justify-between items-center shadow-sm">
                 <div>
-                    <div className="text-emerald-600 font-semibold text-xs mb-1">Registration</div>
+                    <div className="text-pink-600 font-semibold text-xs mb-1">Registration</div>
                     <div className="text-slate-600 text-sm">ค้นหาและจัดการตะกร้ารายวิชาในที่เดียว</div>
                 </div>
                 <div className="flex space-x-4">
@@ -320,7 +320,7 @@ export function RegistrationFeature({ session }: { session: UserSession }) {
                                 setHasManualTermSelection(true);
                                 setYear(Number(e.target.value));
                             }}
-                            className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5"
+                            className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-pink-500 focus:border-pink-500 block w-full p-2.5"
                         >
                             {yearOptions.map((y) => (
                                 <option key={y} value={y}>{y}</option>
@@ -335,7 +335,7 @@ export function RegistrationFeature({ session }: { session: UserSession }) {
                                 setHasManualTermSelection(true);
                                 setSemester(Number(e.target.value));
                             }}
-                            className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5"
+                            className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-pink-500 focus:border-pink-500 block w-full p-2.5"
                         >
                             {semesterOptions.length > 0 ? (
                                 semesterOptions.map((s: any) => (
@@ -371,7 +371,7 @@ export function RegistrationFeature({ session }: { session: UserSession }) {
                         onChange={(e) => setSearchKeyword(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         placeholder="ค้นหารหัส หรือชื่อวิชา..."
-                        className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 flex-1"
+                        className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-pink-500 focus:border-pink-500 block w-full p-2.5 flex-1"
                         disabled={isSearching}
                     />
                     <button
@@ -384,7 +384,7 @@ export function RegistrationFeature({ session }: { session: UserSession }) {
                     <button
                         onClick={handleBrowse}
                         disabled={isSearching}
-                        className="text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300 font-medium rounded-lg text-sm px-5 py-2.5 border border-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="text-white bg-pink-600 hover:bg-pink-700 focus:ring-4 focus:ring-pink-300 font-medium rounded-lg text-sm px-5 py-2.5 border border-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         ดูวิชาทั้งหมด
                     </button>
@@ -440,7 +440,7 @@ export function RegistrationFeature({ session }: { session: UserSession }) {
                                             );
 
                                         return (
-                                            <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:border-emerald-200 transition-colors">
+                                            <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:border-pink-200 transition-colors">
                                                 <div className="mb-4 sm:mb-0">
                                                     <div className="font-semibold text-slate-800 text-lg flex items-center gap-2">
                                                         <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-sm font-mono">{subj.subject_code}</span>
@@ -448,13 +448,13 @@ export function RegistrationFeature({ session }: { session: UserSession }) {
                                                     </div>
                                                     <div className="text-sm text-slate-600 mt-2 flex flex-wrap gap-x-4 gap-y-2">
                                                         <span className="flex items-center gap-1">
-                                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span>
                                                             หน่วยกิต: <span className="font-medium text-slate-800">{subj.credit}</span>
                                                         </span>
                                                         {subj.teacher_name && (
                                                             <span className="flex items-center gap-1">
-                                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-emerald-500">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-pink-500">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147L12 14.63l7.74-4.483m-15.48 0L12 5.63l7.74 4.517m-15.48 0L12 14.63m-7.74-4.483L12 5.63m7.74 4.517L12 14.63m7.74-4.483L12 14.63m0 0v7.5" />
                                                                 </svg>
                                                                 {subj.teacher_name}
@@ -464,13 +464,13 @@ export function RegistrationFeature({ session }: { session: UserSession }) {
                                                     <div className="mt-3 flex flex-wrap gap-2">
                                                         {subj.schedules && subj.schedules.length > 0 ? (
                                                             subj.schedules.map((sch: any, sIdx: number) => (
-                                                                <span key={sIdx} className="inline-flex items-center bg-emerald-50 text-emerald-700 text-xs font-medium px-3 py-1.5 rounded-xl border border-emerald-100 shadow-sm leading-none min-h-[32px]">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1.5 text-emerald-600 shrink-0">
+                                                                <span key={sIdx} className="inline-flex items-center bg-pink-50 text-pink-700 text-xs font-medium px-3 py-1.5 rounded-xl border border-pink-100 shadow-sm leading-none min-h-[32px]">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1.5 text-pink-600 shrink-0">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5a2.25 2.25 0 012.25 2.25v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-18 0h18" />
                                                                     </svg>
                                                                     <span className="mr-2">{sch.day_of_week}</span>
-                                                                    <span className="w-px h-3 bg-emerald-200 mr-2"></span>
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1.5 text-emerald-600 shrink-0">
+                                                                    <span className="w-px h-3 bg-pink-200 mr-2"></span>
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1.5 text-pink-600 shrink-0">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                                     </svg>
                                                                     <span>{sch.time_range}</span>
@@ -483,18 +483,18 @@ export function RegistrationFeature({ session }: { session: UserSession }) {
                                                 </div>
                                                 <div className="w-full sm:w-auto mt-2 sm:mt-0">
                                                     {isRegistered ? (
-                                                        <div className="w-full sm:w-auto text-center text-sm font-medium text-emerald-700 bg-emerald-50 px-6 py-3 rounded-xl border border-emerald-200 cursor-not-allowed">
+                                                        <div className="w-full sm:w-auto text-center text-sm font-medium text-pink-700 bg-pink-50 px-6 py-3 rounded-xl border border-pink-200 cursor-not-allowed">
                                                             ลงทะเบียนแล้ว
                                                         </div>
                                                     ) : isInCart ? (
-                                                        <div className="w-full sm:w-auto text-center text-sm font-medium text-amber-700 bg-amber-50 px-6 py-3 rounded-xl border border-amber-200 cursor-not-allowed">
+                                                        <div className="w-full sm:w-auto text-center text-sm font-medium text-red-700 bg-red-50 px-6 py-3 rounded-xl border border-red-200 cursor-not-allowed">
                                                             อยู่ในตะกร้าแล้ว
                                                         </div>
                                                     ) : ((subj.schedules && subj.schedules.length > 0) ? (
                                                         <button
                                                             onClick={() => handleSelectSubject(subj.schedules[0].section_id || subj.section_id)}
                                                             disabled={isActionLoading}
-                                                            className="w-full sm:w-auto text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300 font-medium rounded-xl text-sm px-6 py-3 shadow-sm hover:shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            className="w-full sm:w-auto text-white bg-pink-600 hover:bg-pink-700 focus:ring-4 focus:ring-pink-300 font-medium rounded-xl text-sm px-6 py-3 shadow-sm hover:shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                                                         >
                                                             {isActionLoading ? 'กำลังจัดเก็บ...' : '+ เลือกลงตะกร้า'}
                                                         </button>
@@ -540,7 +540,7 @@ export function RegistrationFeature({ session }: { session: UserSession }) {
                     <button
                         onClick={handleConfirmCart}
                         disabled={isActionLoading || cartItems.length === 0}
-                        className="text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300 font-medium rounded-lg text-sm px-5 py-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="text-white bg-pink-600 hover:bg-pink-700 focus:ring-4 focus:ring-pink-300 font-medium rounded-lg text-sm px-5 py-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isActionLoading ? 'กำลังบันทึก...' : (
                             <span className="flex items-center">

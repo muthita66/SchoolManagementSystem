@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 const roleMap = {
     student: {
@@ -74,16 +75,25 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden">
             {/* Decorative gradients */}
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-400/20 blur-3xl pointer-events-none"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-teal-500/20 blur-3xl pointer-events-none"></div>
+            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-pink-400/20 blur-3xl pointer-events-none"></div>
+            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-red-500/20 blur-3xl pointer-events-none"></div>
 
             <div className="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-slate-200 overflow-hidden relative z-10 transition-all duration-300">
 
                 {/* Header */}
                 <div className="p-8 pb-6 text-center border-b border-slate-100">
-                    <div className="mx-auto w-16 h-16 bg-gradient-to-tr from-emerald-600 to-teal-500 rounded-2xl flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-emerald-500/30 mb-4">
-                        W
-                    </div>
+                    <div className="flex justify-center mb-4">
+                        <div className="h-20 w-20 rounded-full bg-white shadow-md border border-slate-200 overflow-hidden flex items-center justify-center">
+                            <Image
+                                src="/school-logo.jpg"
+                                alt="Ban Khlong Nong Lek School logo"
+                                width={80}
+                                height={80}
+                                className="h-full w-full object-cover"
+                                priority
+                                />
+                            </div>
+                        </div>
                     <h1 className="text-2xl font-bold text-slate-800 tracking-tight">{config.title}</h1>
                     <p className="text-sm text-slate-500 mt-1">{config.subtitle}</p>
                 </div>
@@ -95,7 +105,7 @@ export default function LoginPage() {
                             key={r}
                             onClick={() => { setRole(r); setError(''); setCode(''); setPassword(''); }}
                             className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${role === r
-                                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
+                                ? 'bg-pink-600 text-white shadow-md shadow-pink-500/20'
                                 : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                                 }`}
                         >
@@ -114,7 +124,7 @@ export default function LoginPage() {
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
                                 placeholder={config.codePlaceholder}
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all duration-200 text-slate-700 placeholder-slate-400"
+                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition-all duration-200 text-slate-700 placeholder-slate-400"
                             />
                         </div>
 
@@ -125,7 +135,7 @@ export default function LoginPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="********"
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all duration-200 text-slate-700 placeholder-slate-400"
+                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition-all duration-200 text-slate-700 placeholder-slate-400"
                             />
                         </div>
 
@@ -138,7 +148,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/30 transform hover:-translate-y-0.5 transition-all duration-200 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="w-full py-3 px-4 bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-700 hover:to-red-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-pink-500/30 transform hover:-translate-y-0.5 transition-all duration-200 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {isLoading ? 'กำลังตรวจสอบ...' : 'เข้าสู่ระบบ'}
                         </button>

@@ -35,7 +35,7 @@ export function DashboardFeature({ session }: { session: any }) {
     if (loading) {
         return (
             <div className="bg-white rounded-2xl p-12 shadow-sm border border-slate-200 flex flex-col items-center justify-center text-slate-500">
-                <svg className="w-8 h-8 animate-spin text-emerald-600 mb-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                <svg className="w-8 h-8 animate-spin text-pink-600 mb-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                 <p>กำลังโหลดแดชบอร์ด...</p>
             </div>
         );
@@ -56,22 +56,22 @@ export function DashboardFeature({ session }: { session: any }) {
 
     const stats = [
         {
-            label: "นักเรียนในที่ปรึกษา", value: data?.advisoryStudents || 0, color: "from-emerald-600 to-teal-700", icon: (
+            label: "นักเรียนในที่ปรึกษา", value: data?.advisoryStudents || 0, color: "from-pink-600 to-red-700", icon: (
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
             ), href: "/teacher/students", show: data?.isAdvisor
         },
         {
-            label: "รายวิชาที่สอน", value: data?.subjects || 0, color: "from-emerald-500 to-teal-600", icon: (
+            label: "รายวิชาที่สอน", value: data?.subjects || 0, color: "from-pink-500 to-red-600", icon: (
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.432.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
             ), href: "/teacher/scores", show: true
         },
         {
-            label: "จำนวนรายการคะแนน", value: data?.scoreItems || 0, color: "from-teal-600 to-cyan-700", icon: (
+            label: "จำนวนรายการคะแนน", value: data?.scoreItems || 0, color: "from-pink-600 to-red-700", icon: (
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
             ), href: "/teacher/score_input", show: true
         },
         {
-            label: "กิจกรรมทั้งหมด", value: data?.allEvents || 0, color: "from-teal-500 to-emerald-600", icon: (
+            label: "กิจกรรมทั้งหมด", value: data?.allEvents || 0, color: "from-pink-500 to-red-600", icon: (
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             ), href: "/teacher/activity_calendar", show: true
         },
@@ -80,9 +80,9 @@ export function DashboardFeature({ session }: { session: any }) {
     return (
         <div className="space-y-6">
             {/* Hero */}
-            <section className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
-                <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-teal-500 rounded-full blur-2xl opacity-50"></div>
+                <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-red-500 rounded-full blur-2xl opacity-50"></div>
                 <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div>
                         <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-sm font-medium mb-4 backdrop-blur-sm border border-white/20">Teacher Console</div>
@@ -90,11 +90,11 @@ export function DashboardFeature({ session }: { session: any }) {
 
                     </div>
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 min-w-[220px]">
-                        <div className="text-emerald-100 text-sm font-medium mb-3">ภาพรวมวันนี้</div>
+                        <div className="text-pink-100 text-sm font-medium mb-3">ภาพรวมวันนี้</div>
                         <div className="space-y-3">
-                            <div className="flex justify-between text-sm"><span className="text-emerald-100">กิจกรรมใกล้ถึง</span><strong className="text-white">{data?.upcomingEvents || 0}</strong></div>
+                            <div className="flex justify-between text-sm"><span className="text-pink-100">กิจกรรมใกล้ถึง</span><strong className="text-white">{data?.upcomingEvents || 0}</strong></div>
                             {data?.isAdvisor && (
-                                <div className="flex justify-between text-sm"><span className="text-emerald-100">นักเรียนในที่ปรึกษา</span><strong className="text-white">{data?.advisoryStudents || 0}</strong></div>
+                                <div className="flex justify-between text-sm"><span className="text-pink-100">นักเรียนในที่ปรึกษา</span><strong className="text-white">{data?.advisoryStudents || 0}</strong></div>
                             )}
                         </div>
                     </div>
@@ -120,7 +120,7 @@ export function DashboardFeature({ session }: { session: any }) {
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
                     <div className="flex items-center justify-between mb-5">
                         <h3 className="text-lg font-bold text-slate-800">กิจกรรมล่าสุด</h3>
-                        <Link href="/teacher/activity_calendar" className="text-sm text-emerald-600 hover:text-emerald-700 font-medium">ดูทั้งหมด</Link>
+                        <Link href="/teacher/activity_calendar" className="text-sm text-pink-600 hover:text-pink-700 font-medium">ดูทั้งหมด</Link>
                     </div>
                     <div className="space-y-3">
                         {(data?.recentEvents || []).length === 0 ? (
@@ -140,7 +140,7 @@ export function DashboardFeature({ session }: { session: any }) {
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
                     <div className="flex items-center justify-between mb-5">
                         <h3 className="text-lg font-bold text-slate-800">งานที่ต้องทำ</h3>
-                        <span className="text-xs text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg font-medium border border-emerald-100">วันนี้</span>
+                        <span className="text-xs text-pink-600 bg-pink-50 px-2.5 py-1 rounded-lg font-medium border border-pink-100">วันนี้</span>
                     </div>
                     <div className="space-y-3">
                         {[
@@ -148,7 +148,7 @@ export function DashboardFeature({ session }: { session: any }) {
                                 text: "เช็คชื่อนักเรียน", 
                                 href: "/teacher/attendance",
                                 icon: (
-                                    <svg className="w-5 h-5 text-emerald-500 group-hover:text-emerald-600 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg className="w-5 h-5 text-pink-500 group-hover:text-pink-600 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                     </svg>
                                 )
@@ -157,7 +157,7 @@ export function DashboardFeature({ session }: { session: any }) {
                                 text: "บันทึกคะแนน", 
                                 href: "/teacher/score_input",
                                 icon: (
-                                    <svg className="w-5 h-5 text-emerald-500 group-hover:text-emerald-600 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg className="w-5 h-5 text-pink-500 group-hover:text-pink-600 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                 )
@@ -166,7 +166,7 @@ export function DashboardFeature({ session }: { session: any }) {
                                 text: "ตรวจสอบตารางสอน", 
                                 href: "/teacher/calendar",
                                 icon: (
-                                    <svg className="w-5 h-5 text-emerald-500 group-hover:text-emerald-600 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg className="w-5 h-5 text-pink-500 group-hover:text-pink-600 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                 )
@@ -176,7 +176,7 @@ export function DashboardFeature({ session }: { session: any }) {
                                 href: "/teacher/grade_cut",
 
                                 icon: (
-                                    <svg className="w-5 h-5 text-emerald-500 group-hover:text-emerald-600 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg className="w-5 h-5 text-pink-500 group-hover:text-pink-600 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path d="M12 14l9-5-9-5-9 5 9 5z" />
                                         <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                                     </svg>
@@ -187,15 +187,15 @@ export function DashboardFeature({ session }: { session: any }) {
                                 href: "/teacher/activity_calendar",
 
                                 icon: (
-                                    <svg className="w-5 h-5 text-emerald-500 group-hover:text-emerald-600 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg className="w-5 h-5 text-pink-500 group-hover:text-pink-600 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                                     </svg>
                                 )
                             },
                         ].map((task, i) => (
-                            <Link key={i} href={task.href} className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 hover:bg-emerald-50 hover:border-emerald-200 transition-colors group">
+                            <Link key={i} href={task.href} className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 hover:bg-pink-50 hover:border-pink-200 transition-colors group">
                                 {task.icon}
-                                <span className="text-sm text-slate-700 font-medium group-hover:text-emerald-700 transition-colors">{task.text}</span>
+                                <span className="text-sm text-slate-700 font-medium group-hover:text-pink-700 transition-colors">{task.text}</span>
                             </Link>
                         ))}
                     </div>

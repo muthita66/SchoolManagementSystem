@@ -8,7 +8,6 @@ type SectionFormState = {
     subject_group: string;
     teacher_id: string;
     class_level: string;
-    classroom: string;
     day_of_week: string;
     time_range: string;
     year: string;
@@ -19,27 +18,12 @@ function uniqueSorted(values: string[]) {
     return Array.from(new Set(values.filter((v) => v.trim() !== ""))).sort((a, b) => a.localeCompare(b, "th"));
 }
 
-function roomOnlyLabel(roomValue: unknown, classLevel?: unknown) {
-    const room = String(roomValue || "").trim();
-    if (!room) return "";
-
-    const level = String(classLevel || "").trim();
-    if (level && room.startsWith(level)) {
-        const rest = room.slice(level.length).trim();
-        if (!rest) return room;
-        return rest.replace(/^\/+/, "").trim() || room;
-    }
-
-    return room;
-}
-
 function emptySectionForm(currentYear?: number, currentSemester?: number): SectionFormState {
     return {
         subject_id: "",
         subject_group: "",
         teacher_id: "",
         class_level: "",
-        classroom: "",
         day_of_week: "",
         time_range: "",
         year: currentYear ? String(currentYear) : "",
@@ -64,7 +48,7 @@ function buildSectionPayload(form: SectionFormState) {
         subject_id,
         teacher_id,
         class_level: form.class_level.trim() || null,
-        classroom: form.classroom.trim() || null,
+        classroom: null,
         day_of_week: form.day_of_week.trim() || null,
         time_range: form.time_range.trim() || null,
         year: nextYear,
@@ -85,7 +69,6 @@ export function CurriculumFeature() {
     const [semester, setSemester] = useState(1);
 
     const [filterClassLevel, setFilterClassLevel] = useState("");
-    const [filterRoom, setFilterRoom] = useState("");
     const [filterSubjectGroup, setFilterSubjectGroup] = useState("");
 
     const [creatingSection, setCreatingSection] = useState(false);
@@ -155,7 +138,6 @@ export function CurriculumFeature() {
             subject_group: section.subjects?.subject_group || "",
             teacher_id: section.teacher_id == null ? "" : String(section.teacher_id),
             class_level: section.class_level ?? section.classrooms?.levels?.name ?? "",
-            classroom: section.classroom ?? section.classrooms?.room_name ?? "",
             day_of_week: section.day_of_week ?? firstSchedule?.day_of_weeks?.day_name_th ?? "",
             time_range: section.time_range ?? timeRangeFallback,
             year: section.year == null ? (section.semesters?.academic_years?.year_name ? String(section.semesters.academic_years.year_name) : String(year)) : String(section.year),
@@ -236,10 +218,6 @@ export function CurriculumFeature() {
             const cl = String(s.class_level || s.classrooms?.levels?.name || "");
             if (cl !== filterClassLevel) return false;
         }
-        if (filterRoom) {
-            const r = String(s.classroom || s.classrooms?.room_name || "");
-            if (r !== filterRoom) return false;
-        }
         if (filterSubjectGroup) {
             const sg = String(s.subjects?.subject_group || "");
             if (sg !== filterSubjectGroup) return false;
@@ -256,10 +234,7 @@ export function CurriculumFeature() {
         const levelB = String(b.class_level || b.classrooms?.levels?.name || "");
         if (levelA !== levelB) return levelA.localeCompare(levelB, "th");
 
-        // 3. Sort by Room
-        const roomA = String(a.classroom || a.classrooms?.room_name || "");
-        const roomB = String(b.classroom || b.classrooms?.room_name || "");
-        return roomA.localeCompare(roomB, "th");
+        return 0;
     });
 
     const optionSource = allSections.length > 0 ? allSections : sections;
@@ -268,23 +243,8 @@ export function CurriculumFeature() {
         ...(studentCounts || []).map((r: any) => String(r.class_level || "")),
         form.class_level || ""
     ]);
-    const roomOptions = uniqueSorted([
-        ...(optionSource || [])
-            .filter((s: any) => !form.class_level || String(s.class_level || s.classrooms?.levels?.name || "") === form.class_level)
-            .map((s: any) => String(s.classroom || s.classrooms?.room_name || "")),
-        ...(studentCounts || [])
-            .filter((r: any) => !form.class_level || String(r.class_level || "") === form.class_level)
-            .map((r: any) => String(r.room || "")),
-        form.classroom || "",
-    ]);
-
     const filterClassLevelOptions = uniqueSorted(
         (optionSource || []).map((s: any) => String(s.class_level || s.classrooms?.levels?.name || ""))
-    );
-    const filterRoomOptions = uniqueSorted(
-        (optionSource || [])
-            .filter((s: any) => !filterClassLevel || String(s.class_level || s.classrooms?.levels?.name || "") === filterClassLevel)
-            .map((s: any) => String(s.classroom || s.classrooms?.room_name || ""))
     );
     const filterSubjectGroupOptions = learningSubjectGroups.map((g: any) => String(g.group_name || ""));
 
@@ -326,12 +286,12 @@ export function CurriculumFeature() {
 
     return (
         <div className="space-y-6">
-            <section className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
                 <div className="relative z-10">
                     <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-sm font-medium mb-4">Curriculum</div>
                     <h1 className="text-3xl font-bold">หลักสูตรและตารางสอน</h1>
-                    <p className="text-emerald-100 mt-2">จัดการ Section ({filteredSections.length} รายการ)</p>
+                    <p className="text-pink-100 mt-2">จัดการ Section ({filteredSections.length} รายการ)</p>
                 </div>
             </section>
 
@@ -359,17 +319,17 @@ export function CurriculumFeature() {
                 </div>
                 <div>
                     <label className="text-xs text-slate-500 block mb-1">ชั้น</label>
-                    <select className="px-3 py-2 border border-slate-200 rounded-xl bg-white" value={filterClassLevel} onChange={(e) => { setFilterClassLevel(e.target.value); setFilterRoom(""); }}>
+                    <select className="px-3 py-2 border border-slate-200 rounded-xl bg-white" value={filterClassLevel} onChange={(e) => setFilterClassLevel(e.target.value)}>
                         <option value="">ทั้งหมด</option>
                         {filterClassLevelOptions.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                 </div>
 
 
-                <button onClick={load} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors">
+                <button onClick={load} className="px-5 py-2 bg-pink-600 text-white rounded-xl font-medium hover:bg-pink-700 transition-colors">
                     ดึงข้อมูล
                 </button>
-                <button onClick={openCreateModal} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors">
+                <button onClick={openCreateModal} className="px-5 py-2 bg-pink-600 text-white rounded-xl font-medium hover:bg-pink-700 transition-colors">
                     เพิ่ม
                 </button>
             </div>
@@ -387,7 +347,7 @@ export function CurriculumFeature() {
                                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">รหัสวิชา</th>
                                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">ชื่อวิชา</th>
                                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">ผู้สอน</th>
-                                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">ชั้น/ห้อง</th>
+                                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">ระดับชั้น</th>
                                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">วัน/เวลา</th>
                                 <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600">จัดการ</th>
                             </tr>
@@ -397,19 +357,17 @@ export function CurriculumFeature() {
                                 <tr key={s.id} className="border-b border-slate-100 hover:bg-slate-50">
                                     {(() => {
                                         const classLevel = s.class_level || s.classrooms?.levels?.name || "-";
-                                        const rawRoom = s.classroom || s.classrooms?.room_name || "-";
-                                        const roomLabel = roomOnlyLabel(rawRoom, classLevel) || "-";
                                         return (
                                             <>
                                                 <td className="px-4 py-3 text-sm text-slate-500">{i + 1}</td>
                                                 <td className="px-4 py-3 text-sm text-slate-700">{s.subjects?.subject_code || "-"}</td>
                                                 <td className="px-4 py-3 text-sm text-slate-800 font-medium">{s.subjects?.name || s.subjects?.subject_name || "-"}</td>
                                                 <td className="px-4 py-3 text-sm text-slate-600">{s.teachers ? `${s.teachers.first_name} ${s.teachers.last_name}` : "-"}</td>
-                                                <td className="px-4 py-3 text-sm text-slate-600">{classLevel}/{roomLabel}</td>
+                                                <td className="px-4 py-3 text-sm text-slate-600">{classLevel}</td>
                                                 <td className="px-4 py-3 text-sm text-slate-600">{s.day_of_week || "-"} {s.time_range || ""}</td>
                                                 <td className="px-4 py-3 text-center">
                                                     <div className="flex items-center justify-center gap-2">
-                                                        <button onClick={() => openEditModal(s)} className="text-xs text-amber-700 hover:text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors font-medium">แก้ไข</button>
+                                                        <button onClick={() => openEditModal(s)} className="text-xs text-red-700 hover:text-red-800 bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors font-medium">แก้ไข</button>
                                                         <button onClick={() => handleDelete(s.id)} className="text-xs text-red-500 hover:text-red-700 bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors font-medium">ลบ</button>
                                                     </div>
                                                 </td>
@@ -439,7 +397,7 @@ export function CurriculumFeature() {
                                     <select
                                         value={form.subject_group}
                                         onChange={(e) => setForm((p) => ({ ...p, subject_group: e.target.value, subject_id: "" }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                     >
                                         <option value="">เลือกกลุ่มสาระการเรียนรู้</option>
                                         {learningSubjectGroups.map((g: any) => (
@@ -453,7 +411,7 @@ export function CurriculumFeature() {
                                     <select
                                         value={form.subject_id}
                                         onChange={(e) => setForm((p) => ({ ...p, subject_id: e.target.value }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                     >
                                         <option value="">เลือกรายวิชา</option>
                                         {form.subject_id && !subjectOptions.some((s: any) => String(s.id) === form.subject_id) && (
@@ -484,7 +442,7 @@ export function CurriculumFeature() {
                                     <select
                                         value={form.teacher_id}
                                         onChange={(e) => setForm((p) => ({ ...p, teacher_id: e.target.value }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                     >
                                         <option value="">เลือกครูผู้สอน</option>
                                         {form.teacher_id && !teacherOptions.some((t: any) => String(t.id) === form.teacher_id) && (
@@ -499,11 +457,11 @@ export function CurriculumFeature() {
                                 </label>
 
                                 <label className="block">
-                                    <span className="text-sm font-medium text-slate-700">ชั้น</span>
+                                    <span className="text-sm font-medium text-slate-700">ระดับชั้น</span>
                                     <select
                                         value={form.class_level}
-                                        onChange={(e) => setForm((p) => ({ ...p, class_level: e.target.value, classroom: "" }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                        onChange={(e) => setForm((p) => ({ ...p, class_level: e.target.value }))}
+                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                     >
                                         <option value="">เลือกระดับชั้น</option>
                                         {classLevelOptions.map((lvl) => (
@@ -513,25 +471,11 @@ export function CurriculumFeature() {
                                 </label>
 
                                 <label className="block">
-                                    <span className="text-sm font-medium text-slate-700">ห้อง</span>
-                                    <select
-                                        value={form.classroom}
-                                        onChange={(e) => setForm((p) => ({ ...p, classroom: e.target.value }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
-                                    >
-                                        <option value="">เลือกห้อง</option>
-                                        {roomOptions.map((room) => (
-                                            <option key={room} value={room}>{roomOnlyLabel(room, form.class_level) || room}</option>
-                                        ))}
-                                    </select>
-                                </label>
-
-                                <label className="block">
                                     <span className="text-sm font-medium text-slate-700">วัน</span>
                                     <select
                                         value={form.day_of_week}
                                         onChange={(e) => setForm((p) => ({ ...p, day_of_week: e.target.value }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                     >
                                         {dayOptions.map((day) => (
                                             <option key={day || "empty"} value={day}>{day || "เลือกวัน"}</option>
@@ -544,7 +488,7 @@ export function CurriculumFeature() {
                                     <select
                                         value={form.time_range}
                                         onChange={(e) => setForm((p) => ({ ...p, time_range: e.target.value }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                     >
                                         <option value="">เลือกช่วงเวลา</option>
                                         {timeOptions.map((t) => (
@@ -558,7 +502,7 @@ export function CurriculumFeature() {
                                     <select
                                         value={form.year}
                                         onChange={(e) => setForm((p) => ({ ...p, year: e.target.value }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                     >
                                         {form.year && !yearOptions.includes(form.year) && <option value={form.year}>{form.year}</option>}
                                         {yearOptions.map((y) => (
@@ -572,7 +516,7 @@ export function CurriculumFeature() {
                                     <select
                                         value={form.semester}
                                         onChange={(e) => setForm((p) => ({ ...p, semester: e.target.value }))}
-                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                                     >
                                         {semesterOptions.map((sem) => (
                                             <option key={sem} value={sem}>{sem}</option>
@@ -583,7 +527,7 @@ export function CurriculumFeature() {
                         </div>
                         <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-slate-200 bg-slate-50">
                             <button type="button" onClick={closeModal} disabled={saving} className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 disabled:opacity-60">ยกเลิก</button>
-                            <button type="button" onClick={isCreateMode ? handleSaveCreate : handleSaveEdit} disabled={saving} className="px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60">
+                            <button type="button" onClick={isCreateMode ? handleSaveCreate : handleSaveEdit} disabled={saving} className="px-4 py-2 rounded-xl bg-pink-600 text-white hover:bg-pink-700 disabled:opacity-60">
                                 {saving ? "กำลังบันทึก..." : (isCreateMode ? "เพิ่ม" : "บันทึก")}
                             </button>
                         </div>

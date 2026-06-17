@@ -120,8 +120,8 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
     });
 
     const classifyEvent = (name = "") => {
-        if (name.includes("ประชุม")) return "meeting text-emerald-700 bg-emerald-50 border-emerald-200";
-        if (name.includes("สอบ") || name.includes("วิชาการ")) return "academic text-purple-700 bg-purple-50 border-purple-200";
+        if (name.includes("ประชุม")) return "meeting text-pink-700 bg-pink-50 border-pink-200";
+        if (name.includes("สอบ") || name.includes("วิชาการ")) return "academic text-pink-700 bg-pink-50 border-pink-200";
         if (name.includes("หยุด")) return "holiday text-red-700 bg-red-50 border-red-200";
         return "other text-slate-700 bg-slate-50 border-slate-200";
     };
@@ -159,7 +159,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                 days.push(
                     <td
                         key={i}
-                        className={`border border-slate-200 p-1 align-top h-20 md:h-28 transition-colors hover:bg-slate-50 relative cursor-pointer ${dayEvents.length > 0 ? 'bg-emerald-50/60' : !isCurrentMonth ? 'opacity-40 bg-slate-50/50' : 'bg-white'}`}
+                        className={`border border-slate-200 p-1 align-top h-20 md:h-28 transition-colors hover:bg-slate-50 relative cursor-pointer ${dayEvents.length > 0 ? 'bg-pink-50/60' : !isCurrentMonth ? 'opacity-40 bg-slate-50/50' : 'bg-white'}`}
                         onClick={() => {
                             if (dayEvents.length > 0) {
                                 setSelectedDateEvents({ date: dateKey, events: dayEvents });
@@ -167,7 +167,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                         }}
                     >
                         <div className="flex flex-col h-full">
-                            <div className={`text-right text-sm font-medium p-1 ${isCurrentMonth && dayNum - 1 === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear() ? 'text-teal-600 font-bold bg-teal-50 rounded-full w-7 h-7 flex items-center justify-center ml-auto' : 'text-slate-600'}`}>
+                            <div className={`text-right text-sm font-medium p-1 ${isCurrentMonth && dayNum - 1 === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear() ? 'text-red-600 font-bold bg-red-50 rounded-full w-7 h-7 flex items-center justify-center ml-auto' : 'text-slate-600'}`}>
                                 {displayDay}
                             </div>
                             <div className="flex-1 overflow-y-auto space-y-1 mt-1 pr-1 custom-scrollbar">
@@ -208,7 +208,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
 
         if (isEvalLoading) return (
             <div className="py-20 flex flex-col items-center justify-center gap-4">
-                <div className="w-10 h-10 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-10 h-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
                 <div className="text-slate-500 font-medium">กำลังโหลดรายการกิจกรรม...</div>
             </div>
         );
@@ -222,7 +222,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                             <select
                                 value={selectedYear}
                                 onChange={(e) => setSelectedYear(Number(e.target.value))}
-                                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all cursor-pointer shadow-sm"
+                                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold focus:ring-4 focus:ring-red-500/10 focus:border-red-500 outline-none transition-all cursor-pointer shadow-sm"
                             >
                                 {yearOptions.length > 0 ? (
                                     yearOptions.map((y) => (
@@ -238,7 +238,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                             <select
                                 value={selectedSemester}
                                 onChange={(e) => setSelectedSemester(Number(e.target.value))}
-                                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all cursor-pointer shadow-sm"
+                                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold focus:ring-4 focus:ring-red-500/10 focus:border-red-500 outline-none transition-all cursor-pointer shadow-sm"
                             >
                                 <option value={1}>1</option>
                                 <option value={2}>2</option>
@@ -260,7 +260,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                 ) : (
                     <div className="flex flex-col gap-3">
                         {pastEvals.map((ev: any) => (
-                            <div key={ev.id} className="group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:shadow-teal-900/5 hover:border-teal-200 transition-all duration-300 flex flex-col md:flex-row items-center p-4 gap-4">
+                            <div key={ev.id} className="group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:shadow-red-900/5 hover:border-red-200 transition-all duration-300 flex flex-col md:flex-row items-center p-4 gap-4">
                                 {/* Date Column */}
                                 <div className="flex flex-col items-center justify-center bg-slate-50/80 rounded-xl px-4 py-3 min-w-[120px] border border-slate-100/50">
                                     <span className="text-xs font-black text-slate-400 uppercase tracking-wider mb-0.5">DATE</span>
@@ -270,10 +270,10 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                                 {/* Main Info Column */}
                                 <div className="flex-1 min-w-0 text-center md:text-left">
                                     <div className="flex items-center gap-2 mb-1 justify-center md:justify-start">
-                                        <span className="text-xs font-black text-teal-600/50 uppercase tracking-wider">กิจกรรม</span>
+                                        <span className="text-xs font-black text-red-600/50 uppercase tracking-wider">กิจกรรม</span>
                                         <div className="h-px flex-1 bg-slate-100 hidden sm:block"></div>
                                     </div>
-                                    <h4 className="font-bold text-slate-800 text-lg sm:text-xl truncate group-hover:text-teal-600 transition-colors uppercase">{ev.title}</h4>
+                                    <h4 className="font-bold text-slate-800 text-lg sm:text-xl truncate group-hover:text-red-600 transition-colors uppercase">{ev.title}</h4>
                                     <div className="flex items-center gap-3 mt-1 justify-center md:justify-start">
                                         <div className="flex items-center gap-1.5 text-slate-500">
                                             <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
@@ -285,12 +285,12 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                                 {/* Status Column */}
                                 <div className="shrink-0">
                                     {ev.is_evaluated ? (
-                                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg border border-emerald-100 shadow-sm">
+                                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-pink-50 text-pink-600 rounded-lg border border-pink-100 shadow-sm">
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                                             <span className="text-xs font-bold">DONE</span>
                                         </div>
                                     ) : (
-                                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg border border-amber-100 shadow-sm">
+                                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg border border-red-100 shadow-sm">
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                             <span className="text-xs font-bold uppercase">Pending</span>
                                         </div>
@@ -306,7 +306,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                                     ) : ev.has_evaluation ? (
                                         <button
                                             onClick={() => setSelectedActivityForEval(ev)}
-                                            className="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-sm font-black shadow-md shadow-teal-600/10 transition-all flex items-center justify-center gap-2 group/btn"
+                                            className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-black shadow-md shadow-red-600/10 transition-all flex items-center justify-center gap-2 group/btn"
                                         >
                                             ประเมินกิจกรรม
                                             <svg className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
@@ -427,7 +427,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
     if (isLoading) {
         return (
             <div className="space-y-6">
-                <section className="bg-gradient-to-br from-teal-600 to-teal-800 rounded-3xl p-6 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+                <section className="bg-gradient-to-br from-pink-600 to-red-800 rounded-3xl p-6 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="w-full md:w-1/2">
                         <Skeleton variant="rounded" className="h-4 w-20 mb-3 bg-white/20" />
                         <Skeleton variant="rounded" className="h-7 w-64 mb-1 bg-white/20" />
@@ -471,20 +471,20 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
     return (
         <div className="space-y-6">
             {/* Hero Section */}
-            <section className="bg-gradient-to-br from-teal-600 to-teal-800 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10">
+            <section className="bg-gradient-to-br from-pink-600 to-red-800 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10">
                 <div className="relative z-10">
                     <div className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-xs font-medium mb-3 backdrop-blur-sm border border-white/20">
                         Activities
                     </div>
                     <h1 className="text-2xl font-bold mb-1">ปฏิทินกิจกรรมโรงเรียน</h1>
-                    <p className="text-teal-100 text-sm mb-4 max-w-xl">
+                    <p className="text-red-100 text-sm mb-4 max-w-xl">
                         ติดตามกิจกรรมที่จะมาถึงและกิจกรรมที่ผ่านมาทั้งหมดตลอดปีการศึกษา
                     </p>
                 </div>
 
                 {/* Decoration */}
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
-                <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-emerald-500 rounded-full blur-2xl opacity-50"></div>
+                <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-pink-500 rounded-full blur-2xl opacity-50"></div>
                 <svg className="absolute top-1/2 right-1/4 transform -translate-y-1/2 w-48 h-48 text-white/5 pointer-events-none" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z" />
                 </svg>
@@ -494,30 +494,30 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
             {upcomingEvents.length > 0 && (
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                        <div className="p-2 bg-pink-100 text-pink-600 rounded-lg">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </div>
                         <h3 className="text-xl font-bold text-slate-800">กิจกรรมที่กำลังจะมาถึง</h3>
-                        <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold leading-none">{upcomingEvents.length} รายการ</span>
+                        <span className="px-2.5 py-0.5 bg-pink-100 text-pink-700 rounded-full text-xs font-bold leading-none">{upcomingEvents.length} รายการ</span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {upcomingEvents.map((ev, idx) => (
-                            <div key={idx} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex gap-5 hover:shadow-md hover:border-emerald-200 transition-all group relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-50 opacity-50 transform rotate-45 translate-x-8 -translate-y-8"></div>
-                                <div className="flex flex-col items-center justify-center bg-emerald-50 text-emerald-700 rounded-xl p-3 min-w-[70px] h-[70px] shrink-0 border border-emerald-100 group-hover:bg-emerald-100 transition-colors z-10">
+                            <div key={idx} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex gap-5 hover:shadow-md hover:border-pink-200 transition-all group relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-16 h-16 bg-pink-50 opacity-50 transform rotate-45 translate-x-8 -translate-y-8"></div>
+                                <div className="flex flex-col items-center justify-center bg-pink-50 text-pink-700 rounded-xl p-3 min-w-[70px] h-[70px] shrink-0 border border-pink-100 group-hover:bg-pink-100 transition-colors z-10">
                                     <span className="text-2xl font-black leading-none">{ev.startDateObj.getDate()}</span>
                                     <span className="text-xs uppercase font-bold mt-1 tracking-wider">{TH_MONTHS_SHORT[ev.startDateObj.getMonth()]}</span>
                                 </div>
                                 <div className="flex-1 min-w-0 flex flex-col justify-center z-10">
-                                    <h4 className="font-bold text-slate-800 text-lg mb-2 truncate group-hover:text-emerald-700 transition-colors" title={ev.name}>{ev.name}</h4>
+                                    <h4 className="font-bold text-slate-800 text-lg mb-2 truncate group-hover:text-pink-700 transition-colors" title={ev.name}>{ev.name}</h4>
                                     <div className="flex flex-col gap-1.5 text-xs text-slate-500">
                                         <div className="flex items-center gap-2 min-w-0">
-                                            <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                            <svg className="w-3.5 h-3.5 text-pink-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                             <span className="truncate">{ev.location || "ไม่ได้ระบุสถานที่"}</span>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            <svg className="w-3.5 h-3.5 text-pink-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                             <span>{formatTimeRange(ev)}</span>
                                         </div>
                                     </div>
@@ -546,19 +546,19 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                     <div className="flex border border-slate-200 rounded-xl overflow-hidden shrink-0 shadow-sm p-1 bg-white">
                         <button
                             onClick={() => setView('month')}
-                            className={`px-5 py-2 rounded-lg font-bold text-xs transition-all ${view === 'month' ? 'bg-teal-600 text-white shadow-md' : 'bg-transparent text-slate-500 hover:bg-slate-50'}`}
+                            className={`px-5 py-2 rounded-lg font-bold text-xs transition-all ${view === 'month' ? 'bg-red-600 text-white shadow-md' : 'bg-transparent text-slate-500 hover:bg-slate-50'}`}
                         >
                             เดือน
                         </button>
                         <button
                             onClick={() => setView('list')}
-                            className={`px-5 py-2 rounded-lg font-bold text-xs transition-all ${view === 'list' ? 'bg-teal-600 text-white shadow-md' : 'bg-transparent text-slate-500 hover:bg-slate-50'}`}
+                            className={`px-5 py-2 rounded-lg font-bold text-xs transition-all ${view === 'list' ? 'bg-red-600 text-white shadow-md' : 'bg-transparent text-slate-500 hover:bg-slate-50'}`}
                         >
                             ลิสต์
                         </button>
                         <button
                             onClick={() => setView('evaluation')}
-                            className={`px-5 py-2 rounded-lg font-bold text-xs transition-all ${view === 'evaluation' ? 'bg-teal-600 text-white shadow-md' : 'bg-transparent text-slate-500 hover:bg-slate-50'}`}
+                            className={`px-5 py-2 rounded-lg font-bold text-xs transition-all ${view === 'evaluation' ? 'bg-red-600 text-white shadow-md' : 'bg-transparent text-slate-500 hover:bg-slate-50'}`}
                         >
                             ประเมินกิจกรรม
                         </button>
@@ -576,7 +576,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                                     <th className="py-4 px-2 text-center text-slate-600 font-black text-[10px] uppercase tracking-widest border-r border-slate-200 w-[14.28%]">พ.</th>
                                     <th className="py-4 px-2 text-center text-slate-600 font-black text-[10px] uppercase tracking-widest border-r border-slate-200 w-[14.28%]">พฤ.</th>
                                     <th className="py-4 px-2 text-center text-slate-600 font-black text-[10px] uppercase tracking-widest border-r border-slate-200 w-[14.28%]">ศ.</th>
-                                    <th className="py-4 px-2 text-center text-teal-600 font-black text-[10px] uppercase tracking-widest w-[14.28%]">ส.</th>
+                                    <th className="py-4 px-2 text-center text-red-600 font-black text-[10px] uppercase tracking-widest w-[14.28%]">ส.</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -600,7 +600,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
                         <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
                             {/* Modal Header */}
-                            <div className="bg-gradient-to-r from-teal-600 to-teal-800 p-6 text-white relative">
+                            <div className="bg-gradient-to-r from-pink-600 to-red-800 p-6 text-white relative">
                                 <button
                                     onClick={() => setSelectedDateEvents(null)}
                                     className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-colors"
@@ -610,7 +610,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                                 <h3 className="text-xl font-bold mb-1">
                                     กิจกรรมวันที่ {new Date(selectedDateEvents.date).getDate()} {TH_MONTHS[new Date(selectedDateEvents.date).getMonth()]} {new Date(selectedDateEvents.date).getFullYear() + 543}
                                 </h3>
-                                <p className="text-teal-100 text-sm opacity-90">
+                                <p className="text-red-100 text-sm opacity-90">
                                     พบ {selectedDateEvents.events.length} รายการ
                                 </p>
                             </div>
@@ -626,42 +626,42 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                                         <div className="space-y-4 text-sm text-slate-600">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                 <div className="flex flex-col gap-1 rounded-xl bg-slate-50 p-3 border border-slate-100 relative overflow-hidden group/item">
-                                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover/item:bg-teal-400 transition-colors"></div>
+                                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover/item:bg-red-400 transition-colors"></div>
                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">ประเภทกิจกรรม</span>
                                                     <span className="font-bold text-slate-700">{ev.event_type_name}</span>
                                                 </div>
                                                 <div className="flex flex-col gap-1 rounded-xl bg-slate-50 p-3 border border-slate-100 relative overflow-hidden group/item">
-                                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover/item:bg-teal-400 transition-colors"></div>
+                                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover/item:bg-red-400 transition-colors"></div>
                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">ฝ่ายที่รับผิดชอบ</span>
                                                     <span className="font-bold text-slate-700">{ev.department_name}</span>
                                                 </div>
                                                 <div className="flex flex-col gap-1 rounded-xl bg-slate-50 p-3 border border-slate-100 relative overflow-hidden group/item">
-                                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover/item:bg-teal-400 transition-colors"></div>
+                                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover/item:bg-red-400 transition-colors"></div>
                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">ครูผู้รับผิดชอบ</span>
                                                     <span className="font-bold text-slate-700">{ev.teacher_name}</span>
                                                 </div>
                                                 <div className="flex flex-col gap-1 rounded-xl bg-slate-50 p-3 border border-slate-100 relative overflow-hidden group/item">
-                                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover/item:bg-teal-400 transition-colors"></div>
+                                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover/item:bg-red-400 transition-colors"></div>
                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">วันเวลากิจกรรม</span>
                                                     <span className="font-bold text-slate-700">{formatTimeRange(ev)}</span>
                                                 </div>
                                                 <div className="flex flex-col gap-1 rounded-xl bg-slate-50 p-3 border border-slate-100 md:col-span-2 relative overflow-hidden group/item">
-                                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover/item:bg-teal-400 transition-colors"></div>
+                                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover/item:bg-red-400 transition-colors"></div>
                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">อาคาร / สถานที่</span>
                                                     <span className="font-bold text-slate-700">{ev.location || "ไม่ได้ระบุสถานที่"}</span>
                                                 </div>
                                             </div>
 
                                             {ev.targets && ev.targets.length > 0 && (
-                                                <div className="flex flex-col gap-2 rounded-xl bg-teal-50/40 p-3 border border-teal-100/60 relative overflow-hidden">
-                                                    <div className="absolute top-0 left-0 w-1 h-full bg-teal-400"></div>
-                                                    <span className="text-[10px] font-black text-teal-600 uppercase tracking-wider flex items-center gap-1.5">
+                                                <div className="flex flex-col gap-2 rounded-xl bg-red-50/40 p-3 border border-red-100/60 relative overflow-hidden">
+                                                    <div className="absolute top-0 left-0 w-1 h-full bg-red-400"></div>
+                                                    <span className="text-[10px] font-black text-red-600 uppercase tracking-wider flex items-center gap-1.5">
                                                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                                                         กลุ่มเป้าหมายผู้เข้าร่วม
                                                     </span>
                                                     <div className="flex flex-wrap gap-1.5 mt-1">
                                                         {ev.targets.map((t: any, i: number) => (
-                                                            <span key={i} className="inline-flex items-center px-2 py-1 rounded-md bg-white text-teal-700 text-xs font-bold border border-teal-200 shadow-sm">
+                                                            <span key={i} className="inline-flex items-center px-2 py-1 rounded-md bg-white text-red-700 text-xs font-bold border border-red-200 shadow-sm">
                                                                 {t.type_name}{t.value && t.value.trim() !== '' ? `: ${t.value}` : ""}
                                                             </span>
                                                         ))}
@@ -671,7 +671,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
 
                                             {ev.description && (
                                                 <div className="flex flex-col gap-2 rounded-xl bg-slate-50 p-4 border border-slate-100 mt-4 relative overflow-hidden group/desc min-h-[120px]">
-                                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-300 group-hover/desc:bg-teal-400 transition-colors"></div>
+                                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-300 group-hover/desc:bg-red-400 transition-colors"></div>
                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                                                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                                         รายละเอียดกิจกรรม
@@ -693,12 +693,12 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                                                         <div>
                                                             <p className="text-xs font-bold text-slate-500 uppercase mb-1">สถานะการประเมิน</p>
                                                             {evalInfo.is_evaluated ? (
-                                                                <div className="flex items-center gap-1.5 text-emerald-600 font-bold text-sm bg-emerald-50 px-3 py-1 rounded-md">
+                                                                <div className="flex items-center gap-1.5 text-pink-600 font-bold text-sm bg-pink-50 px-3 py-1 rounded-md">
                                                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
                                                                     ประเมินแล้ว
                                                                 </div>
                                                             ) : (
-                                                                <div className="flex items-center gap-1.5 text-yellow-600 font-bold text-sm bg-yellow-50 px-3 py-1 rounded-md">
+                                                                <div className="flex items-center gap-1.5 text-pink-600 font-bold text-sm bg-pink-50 px-3 py-1 rounded-md">
                                                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                                                     ยังไม่ได้ประเมิน
                                                                 </div>
@@ -708,7 +708,7 @@ export function ActivitiesFeature({ session }: ActivitiesFeatureProps) {
                                                         {!evalInfo.is_evaluated && (
                                                             <button
                                                                 onClick={() => setSelectedActivityForEval({ ...ev, form_id: evalInfo.form_id })}
-                                                                className="px-5 py-2 bg-emerald-600 text-white text-sm font-bold rounded-xl shadow-md hover:bg-emerald-700 transition-all hover:-translate-y-0.5"
+                                                                className="px-5 py-2 bg-pink-600 text-white text-sm font-bold rounded-xl shadow-md hover:bg-pink-700 transition-all hover:-translate-y-0.5"
                                                             >
                                                                 เริ่มการประเมิน
                                                             </button>

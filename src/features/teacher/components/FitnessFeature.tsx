@@ -247,12 +247,12 @@ export function FitnessFeature({ session }: { session: any }) {
 
     return (
         <div className="space-y-6">
-            <section className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+            <section className="bg-gradient-to-br from-pink-600 to-red-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-full bg-white opacity-5 transform -skew-x-12 translate-x-20"></div>
                 <div className="relative z-10">
                     <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-sm font-medium mb-4">Fitness Test</div>
                     <h1 className="text-3xl font-bold">บันทึกสุขภาพและสมรรถภาพ</h1>
-                    <p className="text-emerald-100 mt-2">บันทึกผลทดสอบสมรรถภาพทางกายนักเรียน</p>
+                    <p className="text-pink-100 mt-2">บันทึกผลทดสอบสมรรถภาพทางกายนักเรียน</p>
                 </div>
             </section>
 
@@ -343,7 +343,7 @@ export function FitnessFeature({ session }: { session: any }) {
                 <button 
                     disabled={!isAdvisor}
                     onClick={loadStudents} 
-                    className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-5 py-2 bg-pink-600 text-white rounded-xl font-medium hover:bg-pink-700 transition-colors shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     ค้นหา
                 </button>
@@ -362,13 +362,13 @@ export function FitnessFeature({ session }: { session: any }) {
             </div>
 
             {isAdvisor === false && (
-                <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-emerald-800 flex items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-500">
+                <div className="bg-pink-50 border border-pink-200 rounded-2xl p-6 text-pink-800 flex items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-500">
                     <svg className="w-6 h-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                     <div>
                         <h3 className="font-bold text-lg">เฉพาะครูที่ปรึกษา</h3>
-                        <p className="text-emerald-700">คุณไม่สามารถบันทึกข้อมูลสมรรถภาพได้ เนื่องจากคุณไม่ได้เป็นครูที่ปรึกษาประจำชั้นใดๆ</p>
+                        <p className="text-pink-700">คุณไม่สามารถบันทึกข้อมูลสมรรถภาพได้ เนื่องจากคุณไม่ได้เป็นครูที่ปรึกษาประจำชั้นใดๆ</p>
                     </div>
                 </div>
             )}
@@ -376,7 +376,7 @@ export function FitnessFeature({ session }: { session: any }) {
 
             {loading && <div className="text-center py-8 text-slate-500">กำลังโหลด...</div>}
             {!loading && hasSearched && students.length === 0 && (
-                <div className="bg-white rounded-2xl p-8 text-center text-slate-500 border border-slate-200">ไม่พบนักเรียนในชั้น/ห้องที่เลือก</div>
+                <div className="bg-white rounded-2xl p-8 text-center text-slate-500 border border-slate-200">ไม่พบนักเรียนในระดับชั้นที่เลือก</div>
             )}
 
             {!loading && students.length > 0 && (
@@ -412,8 +412,8 @@ export function FitnessFeature({ session }: { session: any }) {
                                     <>
                                         <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600 border-x border-slate-100">น้ำหนัก</th>
                                         <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600 border-x border-slate-100">ส่วนสูง</th>
-                                        <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600 border-x border-slate-100 bg-emerald-50/30">ผลสมรรถภาพ</th>
-                                        <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600 border-x border-slate-100 bg-emerald-50/30">เกณฑ์/สถานะ</th>
+                                        <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600 border-x border-slate-100 bg-pink-50/30">ผลสมรรถภาพ</th>
+                                        <th className="px-4 py-3 text-center text-sm font-semibold text-slate-600 border-x border-slate-100 bg-pink-50/30">เกณฑ์/สถานะ</th>
                                     </>
                                 )}
                             </tr>
@@ -448,13 +448,13 @@ export function FitnessFeature({ session }: { session: any }) {
                                                 {s.prefix}{s.first_name} {s.last_name}
                                             </div>
                                             {(classLevel === "ทั้งหมด" || room === "ทั้งหมด") && s.class_name && (
-                                                <div className="text-xs text-emerald-600 font-bold uppercase mt-1">{s.class_name}</div>
+                                                <div className="text-xs text-pink-600 font-bold uppercase mt-1">{s.class_level || s.class_name?.split("/")?.[0] || s.class_name}</div>
                                             )}
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             <span className={`inline-block px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wide shadow-sm ${
-                                                s.gender === 'ชาย' ? 'bg-teal-50 text-teal-600 border border-teal-100' : 
-                                                s.gender === 'หญิง' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 
+                                                s.gender === 'ชาย' ? 'bg-red-50 text-red-600 border border-red-100' : 
+                                                s.gender === 'หญิง' ? 'bg-pink-50 text-pink-600 border border-pink-100' : 
                                                 'bg-slate-50 text-slate-500 border border-slate-100'
                                             }`}>
                                                 {s.gender || '-'}
@@ -466,7 +466,7 @@ export function FitnessFeature({ session }: { session: any }) {
                                                 <td className="px-4 py-3 text-center">
                                                     <input
                                                         type="number"
-                                                        className="w-20 px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm"
+                                                        className="w-20 px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none text-sm"
                                                         placeholder="0.0"
                                                         value={res.weight || ""}
                                                         onChange={(e) => setResults({ ...results, [s.id]: { ...res, weight: e.target.value } })}
@@ -475,7 +475,7 @@ export function FitnessFeature({ session }: { session: any }) {
                                                 <td className="px-4 py-3 text-center">
                                                     <input
                                                         type="number"
-                                                        className="w-20 px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none text-sm"
+                                                        className="w-20 px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none text-sm"
                                                         placeholder="0"
                                                         value={res.height || ""}
                                                         onChange={(e) => setResults({ ...results, [s.id]: { ...res, height: e.target.value } })}
@@ -486,8 +486,8 @@ export function FitnessFeature({ session }: { session: any }) {
                                                         <span className="text-lg font-medium text-slate-700 tabular-nums leading-none">{bmi}</span>
                                                         {interpretation && (
                                                             <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md shadow-sm ${
-                                                                interpretation === "ปกติ" ? "bg-emerald-100 text-emerald-700" : 
-                                                                interpretation === "ผอม" ? "bg-amber-100 text-amber-700" : 
+                                                                interpretation === "ปกติ" ? "bg-pink-100 text-pink-700" : 
+                                                                interpretation === "ผอม" ? "bg-red-100 text-red-700" : 
                                                                 "bg-rose-100 text-rose-700"
                                                             }`}>
                                                                 {interpretation}
@@ -500,7 +500,7 @@ export function FitnessFeature({ session }: { session: any }) {
                                             <>
                                                 <td className="px-4 py-3 text-center">
                                                     <input
-                                                        className="w-24 px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none text-sm"
+                                                        className="w-24 px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none text-sm"
                                                         placeholder="ผล"
                                                         value={res.result || ""}
                                                         onChange={(e) => {
@@ -514,12 +514,12 @@ export function FitnessFeature({ session }: { session: any }) {
                                                     <div className="flex flex-col items-center gap-1">
                                                         <div className="flex items-center gap-1">
                                                             {res.comparison && (
-                                                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1 rounded border border-emerald-100">
+                                                                <span className="text-[10px] font-bold text-pink-600 bg-pink-50 px-1 rounded border border-pink-100">
                                                                     {res.comparison}
                                                                 </span>
                                                             )}
                                                             <input
-                                                                className={`w-20 px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm ${res.criteriaSource ? 'bg-slate-50 font-bold text-slate-700' : ''}`}
+                                                                className={`w-20 px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none text-sm ${res.criteriaSource ? 'bg-slate-50 font-bold text-slate-700' : ''}`}
                                                                 placeholder="เกณฑ์"
                                                                 value={res.standard || ""}
                                                                 onChange={(e) => {
@@ -538,7 +538,7 @@ export function FitnessFeature({ session }: { session: any }) {
                                                 </td>
                                                 <td className="px-4 py-3 text-center">
                                                     <span className={`inline-block px-3 py-1.5 rounded-lg text-sm font-bold ${!res.status ? "bg-slate-100 text-slate-400" :
-                                                        (res.status === "ไม่ผ่าน") ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"
+                                                        (res.status === "ไม่ผ่าน") ? "bg-rose-100 text-rose-700" : "bg-pink-100 text-pink-700"
                                                         }`}>
                                                         {res.status || "-"}
                                                     </span>
@@ -548,7 +548,7 @@ export function FitnessFeature({ session }: { session: any }) {
                                             <>
                                                 <td className="px-4 py-3 text-center">
                                                     <select
-                                                        className="w-full max-w-[120px] px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm"
+                                                        className="w-full max-w-[120px] px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none text-sm"
                                                         value={res.teeth_brushing || ""}
                                                         onChange={(e) => setResults({ ...results, [s.id]: { ...res, teeth_brushing: e.target.value } })}
                                                     >
@@ -562,7 +562,7 @@ export function FitnessFeature({ session }: { session: any }) {
                                             <>
                                                 <td className="px-4 py-3 text-center">
                                                     <select
-                                                        className="w-full max-w-[120px] px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm"
+                                                        className="w-full max-w-[120px] px-2 py-1.5 border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none text-sm"
                                                         value={res.milk_drinking || ""}
                                                         onChange={(e) => setResults({ ...results, [s.id]: { ...res, milk_drinking: e.target.value } })}
                                                     >
@@ -592,7 +592,7 @@ export function FitnessFeature({ session }: { session: any }) {
                                                         onChange={(e) => setResults({ ...results, [s.id]: { ...res, height: e.target.value } })}
                                                     />
                                                 </td>
-                                                <td className="px-4 py-3 text-center border-x border-slate-50 bg-emerald-50/20">
+                                                <td className="px-4 py-3 text-center border-x border-slate-50 bg-pink-50/20">
                                                     <input
                                                         className="w-20 px-1.5 py-1 border border-slate-200 rounded-lg text-center text-sm outline-none"
                                                         placeholder="ผล"
@@ -604,11 +604,11 @@ export function FitnessFeature({ session }: { session: any }) {
                                                         }}
                                                     />
                                                 </td>
-                                                <td className="px-4 py-3 text-center border-x border-slate-50 bg-teal-50/20">
+                                                <td className="px-4 py-3 text-center border-x border-slate-50 bg-red-50/20">
                                                     <div className="flex flex-col gap-1 items-center">
                                                         <div className="flex items-center gap-0.5">
                                                             {res.comparison && (
-                                                                <span className="text-[8px] font-bold text-teal-600 bg-teal-50 px-0.5 rounded border border-teal-100">
+                                                                <span className="text-[8px] font-bold text-red-600 bg-red-50 px-0.5 rounded border border-red-100">
                                                                     {res.comparison}
                                                                 </span>
                                                             )}
@@ -629,7 +629,7 @@ export function FitnessFeature({ session }: { session: any }) {
                                                             </div>
                                                         )}
                                                         <span className={`inline-block px-2 py-1 rounded-lg text-xs font-bold ${!res.status ? "bg-slate-100 text-slate-400" :
-                                                            (res.status === "ไม่ผ่าน") ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"
+                                                            (res.status === "ไม่ผ่าน") ? "bg-rose-100 text-rose-700" : "bg-pink-100 text-pink-700"
                                                             }`}>
                                                             {res.status || "-"}
                                                         </span>
@@ -646,7 +646,7 @@ export function FitnessFeature({ session }: { session: any }) {
                         <button onClick={handleCancel} className="px-8 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-semibold hover:bg-slate-200 transition-colors">
                             ยกเลิก
                         </button>
-                        <button onClick={handleSaveAll} disabled={saving} className="px-8 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50">
+                        <button onClick={handleSaveAll} disabled={saving} className="px-8 py-2.5 bg-pink-600 text-white rounded-xl font-semibold hover:bg-pink-700 transition-colors disabled:opacity-50">
                             {saving ? "กำลังบันทีึก..." : "บันทึกทั้งหมด"}
                         </button>
                     </div>
