@@ -35,7 +35,6 @@ export default async function Sidebar() {
         ],
         student: [
             { name: 'แดชบอร์ด', href: '/student/dashboard' },
-            { name: 'ลงทะเบียนเรียน', href: '/student/registration' },
             { name: 'ตารางเรียน', href: '/student/schedule' },
             { name: 'ข้อมูลส่วนตัว', href: '/student/profile' },
             { name: 'ผลการศึกษา', href: '/student/grades' },

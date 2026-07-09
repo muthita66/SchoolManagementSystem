@@ -16,6 +16,7 @@ RUN npx prisma generate
 RUN npm run build
 
 RUN cp -r .next/static .next/standalone/.next/static
+RUN cp -r public/. .next/standalone/public/
 
 EXPOSE 3000
 
