@@ -9,7 +9,7 @@ export const ProfileService = {
                 name_prefixes: true,
                 classroom_students: {
                     include: { classrooms: { include: { levels: true, programs: true } } },
-                    orderBy: { academic_year: 'desc' },
+                    orderBy: { academic_year_id: 'desc' },
                     take: 1
                 },
                 genders: true,

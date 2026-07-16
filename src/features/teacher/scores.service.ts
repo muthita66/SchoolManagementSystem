@@ -387,7 +387,7 @@ export const TeacherScoresService = {
                 students: {
                     include: {
                         name_prefixes: true,
-                        classroom_students: { take: 1, orderBy: { academic_year: 'desc' } },
+                        classroom_students: { take: 1, orderBy: { academic_year_id: 'desc' } },
                     }
                 }
             },

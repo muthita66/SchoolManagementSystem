@@ -8,72 +8,42 @@ datasource db {
 }
 
 model academic_years {
-  id         Int         @id @default(autoincrement())
-  year_name  String      @unique @db.VarChar(20)
-  start_date DateTime?   @db.Date
-  end_date   DateTime?   @db.Date
-  is_active  Boolean?    @default(false)
-  created_at DateTime?   @default(now()) @db.Timestamp(6)
-  projects   projects[]
-  semesters  semesters[]
+  id                    Int                     @id @default(autoincrement())
+  year_name             String                  @unique @db.VarChar(20)
+  start_date            DateTime?               @db.Date
+  end_date              DateTime?               @db.Date
+  is_active             Boolean?                @default(false)
+  created_at            DateTime?               @default(now()) @db.Timestamp(6)
+  classroom_assignments classroom_assignments[]
+  projects              projects[]
+  semesters             semesters[]
+  students              students[]
 
   @@unique([id, year_name], map: "academic_year_name_unique")
 }
 
-model allergens {
-  id                Int                 @id @default(autoincrement())
-  name              String              @unique @db.VarChar(150)
-  category          String?             @db.VarChar(100)
-  student_allergies student_allergies[]
-}
-
-model assessment_item_indicators {
-  assessment_item_id Int
-  indicator_id       Int
-  id                 Int              @id @default(autoincrement())
-  assessment_items   assessment_items @relation(fields: [assessment_item_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  indicators         indicators       @relation(fields: [indicator_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
 model assessment_items {
-  id                         Int                          @id @default(autoincrement())
-  grade_category_id          Int
-  name                       String                       @db.VarChar(255)
-  max_score                  Decimal                      @db.Decimal(5, 2)
-  created_at                 DateTime?                    @default(now()) @db.Timestamp(6)
-  assessment_item_indicators assessment_item_indicators[]
-  grade_categories           grade_categories             @relation(fields: [grade_category_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  student_scores             student_scores[]
+  id                Int              @id @default(autoincrement())
+  grade_category_id Int
+  name              String           @db.VarChar(255)
+  max_score         Decimal          @db.Decimal(5, 2)
+  created_at        DateTime?        @default(now()) @db.Timestamp(6)
+  grade_categories  grade_categories @relation(fields: [grade_category_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  student_scores    student_scores[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model attendance_records {
-  id                    Int                 @id @default(autoincrement())
-  attendance_session_id Int
-  enrollment_id         Int?
-  student_id            Int?
-  status                String              @db.VarChar(20)
-  remark                String?
-  created_at            DateTime?           @default(now()) @db.Timestamp(6)
-  updated_at            DateTime?           @default(now()) @db.Timestamp(6)
-  attendance_sessions   attendance_sessions @relation(fields: [attendance_session_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  enrollments           enrollments?        @relation(fields: [enrollment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  students              students?           @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
+  id                Int                @id @default(autoincrement())
+  student_id        Int?
+  check_date        DateTime           @db.Date
+  check_time        DateTime?          @db.Time(6)
+  status_id         Int?
+  remark            String?            @db.VarChar(255)
+  attendance_status attendance_status? @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  students          students?          @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-model attendance_sessions {
-  id                     Int                   @id @default(autoincrement())
-  teaching_assignment_id Int?
-  classroom_id           Int?
-  schedule_id            Int?
-  session_date           DateTime              @db.Date
-  created_at             DateTime?             @default(now()) @db.Timestamp(6)
-  recorded_by            Int?
-  attendance_records     attendance_records[]
-  users                  users?                @relation(fields: [recorded_by], references: [id], onUpdate: NoAction)
-  class_schedules        class_schedules?      @relation(fields: [schedule_id], references: [id], onUpdate: NoAction)
-  teaching_assignments   teaching_assignments? @relation(fields: [teaching_assignment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  classrooms             classrooms?           @relation(fields: [classroom_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  @@unique([student_id, check_date])
 }
 
 model audit_logs {
@@ -102,68 +72,37 @@ model buildings {
   rooms         rooms[]
 }
 
-model class_schedules {
-  id                     Int                   @id @default(autoincrement())
-  teaching_assignment_id Int
-  period_id              Int?
-  room_id                Int?
-  created_at             DateTime?             @db.Timestamp(6)
-  day_id                 Int?
-  attendance_sessions    attendance_sessions[]
-  teaching_assignments   teaching_assignments  @relation(fields: [teaching_assignment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  day_of_weeks           day_of_weeks?         @relation(fields: [day_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "day_id")
-  periods                periods?              @relation(fields: [period_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "period_id_fkey")
-  rooms                  rooms?                @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "room_id_fkey")
-
-  @@unique([teaching_assignment_id, day_id, period_id], map: "class_schedules_assignment_period_unique")
-}
-
-model classroom_advisors {
-  id           Int        @id @default(autoincrement())
-  classroom_id Int
-  teacher_id   Int
-  classrooms   classrooms @relation(fields: [classroom_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_advisor_classroom")
-  teachers     teachers   @relation(fields: [teacher_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_advisor_teacher")
-
-  @@unique([classroom_id, teacher_id], map: "unique_classroom_advisor")
-}
-
 model classroom_students {
-  id            Int        @id @default(autoincrement())
-  classroom_id  Int
-  student_id    Int
-  academic_year Int
-  roll_number   Int?
-  classrooms    classrooms @relation(fields: [classroom_id], references: [id], onDelete: Cascade)
-  students      students   @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  id               Int        @id @default(autoincrement())
+  classroom_id     Int
+  student_id       Int
+  academic_year_id Int
+  roll_number      Int?
+  classrooms       classrooms @relation(fields: [classroom_id], references: [id], onDelete: Cascade)
+  students         students   @relation(fields: [student_id], references: [id], onDelete: Cascade)
 
-  @@unique([classroom_id, student_id, academic_year])
+  @@unique([classroom_id, student_id, academic_year_id], map: "classroom_students_classroom_id_student_id_academic_year_key")
 }
 
 model classrooms {
-  id                   Int                    @id @default(autoincrement())
-  grade_level_id       Int
-  room_name            String                 @db.VarChar(50)
-  capacity             Int?
-  created_at           DateTime?              @default(now()) @db.Timestamp(6)
-  program_id           Int?
-  classroom_advisors   classroom_advisors[]
-  classroom_students   classroom_students[]
-  levels               levels                 @relation(fields: [grade_level_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  programs             programs?              @relation(fields: [program_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  teaching_assignments teaching_assignments[]
-  attendance_sessions  attendance_sessions[]
-
-  @@unique([grade_level_id, room_name])
+  id                    Int                     @id @default(autoincrement())
+  room_name             String                  @db.VarChar(50)
+  capacity              Int?
+  created_at            DateTime?               @default(now()) @db.Timestamp(6)
+  grade_level_id        Int                     @unique(map: "classrooms_unique_1")
+  class_schedule        class_schedule[]
+  classroom_assignments classroom_assignments[]
+  classroom_students    classroom_students[]
+  levels                grade_level             @relation(fields: [grade_level_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_grade_level_idalter")
 }
 
 model day_of_weeks {
-  id              Int               @id
-  day_name_th     String            @db.VarChar(20)
-  day_name_en     String            @db.VarChar(20)
-  short_name      String            @db.VarChar(10)
-  color_code      String?           @db.VarChar(7)
-  class_schedules class_schedules[]
+  id             Int              @id
+  day_name_th    String           @db.VarChar(20)
+  day_name_en    String           @db.VarChar(20)
+  short_name     String           @db.VarChar(10)
+  color_code     String?          @db.VarChar(7)
+  class_schedule class_schedule[]
 }
 
 model departments {
@@ -174,52 +113,17 @@ model departments {
   teachers        teachers[]
 }
 
-model diseases {
-  id               Int                @id @default(autoincrement())
-  name             String             @unique @db.VarChar(150)
-  description      String?
-  student_diseases student_diseases[]
-}
-
 model employment_types {
-  id        Int    @id @default(autoincrement())
-  type_name String @db.VarChar(100)
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model enrollments {
-  id                     Int                  @id @default(autoincrement())
-  student_id             Int
-  teaching_assignment_id Int
-  enrolled_at            DateTime?            @default(now()) @db.Timestamp(6)
-  status                 String?              @default("cart") @db.VarChar(20)
-  attendance_records     attendance_records[]
-  students               students             @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  teaching_assignments   teaching_assignments @relation(fields: [teaching_assignment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  final_grades           final_grades?
-  student_scores         student_scores[]
-
-  @@unique([student_id, teaching_assignment_id])
+  id        Int        @id @default(autoincrement())
+  type_name String     @db.VarChar(100)
+  teachers  teachers[]
 }
 
 model evaluation_types {
-  id              Int            @id @default(autoincrement())
-  evaluation_name String         @db.VarChar(100)
-  grade_scales    grade_scales[]
-  subjects        subjects[]
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model event_participants {
-  id            Int       @id @default(autoincrement())
-  event_id      Int
-  user_id       Int
-  status        String?   @default("registered") @db.VarChar(20)
-  registered_at DateTime? @default(now()) @db.Timestamp(6)
-  events        events    @relation(fields: [event_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  users         users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([event_id, user_id])
+  id                 Int                  @id @default(autoincrement())
+  evaluation_name    String               @db.VarChar(100)
+  grade_scale_groups grade_scale_groups[]
+  subject_categories subject_categories[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -242,65 +146,27 @@ model event_types {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model events {
-  id                   Int                    @id @default(autoincrement())
-  title                String                 @db.VarChar(200)
-  description          String?
-  start_datetime       DateTime               @db.Timestamp(6)
-  end_datetime         DateTime               @db.Timestamp(6)
-  is_all_day           Boolean?               @default(false)
-  location             String?                @db.VarChar(200)
-  created_by           Int?
-  visibility           String                 @db.VarChar(20)
-  created_at           DateTime?              @default(now()) @db.Timestamp(6)
-  teacher_id           Int?
-  event_type_id        Int?
-  department_id        Int?
-  semester_id          Int?
-  evaluation_responses evaluation_responses[]
-  event_evaluations    event_evaluations[]
-  event_participants   event_participants[]
-  event_targets        event_targets[]
-  semesters            semesters?             @relation(fields: [semester_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_semester_id_fkey")
-  users                users?                 @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  departments          departments?           @relation(fields: [department_id], references: [id], onUpdate: NoAction)
-  event_types          event_types?           @relation(fields: [event_type_id], references: [id], onUpdate: NoAction)
-  teachers             teachers?              @relation(fields: [teacher_id], references: [id], onUpdate: NoAction)
-}
-
-model exam_proctors {
-  id                    Int       @id @default(autoincrement())
-  teacher_id            Int
-  created_at            DateTime? @default(now()) @db.Timestamp(6)
-  exam_schedule_room_id Int?
-  teachers              teachers  @relation(fields: [teacher_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model exam_schedule_rooms {
-  id               Int            @id @default(autoincrement())
-  exam_schedule_id Int
-  room_id          Int
-  created_at       DateTime?      @default(now()) @db.Timestamp(6)
-  classroom_id     Int?
-  exam_schedules   exam_schedules @relation(fields: [exam_schedule_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  rooms            rooms          @relation(fields: [room_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([exam_schedule_id, room_id], map: "unique_exam_room")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model exam_schedules {
-  id                  Int                      @id @default(autoincrement())
-  semester_id         Int
-  subject_id          Int
-  exam_type           exam_type
-  exam_date           DateTime                 @db.Date
-  start_time          DateTime                 @db.Time(6)
-  end_time            DateTime                 @db.Time(6)
-  created_at          DateTime?                @default(now()) @db.Timestamp(6)
-  total_time          Unsupported("interval")? @default(dbgenerated("(end_time - start_time)"))
-  exam_schedule_rooms exam_schedule_rooms[]
-  semesters           semesters                @relation(fields: [semester_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  subjects            subjects                 @relation(fields: [subject_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id             Int                @id @default(autoincrement())
+  title          String             @db.VarChar(200)
+  description    String?
+  start_datetime DateTime           @db.Timestamp(6)
+  end_datetime   DateTime           @db.Timestamp(6)
+  is_all_day     Boolean?           @default(false)
+  location       String?            @db.VarChar(200)
+  created_by     Int?
+  visibility     String             @db.VarChar(20)
+  created_at     DateTime?          @default(now()) @db.Timestamp(6)
+  teacher_id     Int?
+  event_type_id  Int?
+  department_id  Int?
+  semester_id    Int?
+  status         enum_event_status?
+  event_targets  event_targets[]
+  semesters      semesters?         @relation(fields: [semester_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_semester_id_fkey")
+  users          users?             @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  departments    departments?       @relation(fields: [department_id], references: [id], onUpdate: NoAction)
+  event_types    event_types?       @relation(fields: [event_type_id], references: [id], onUpdate: NoAction)
+  teachers       teachers?          @relation(fields: [teacher_id], references: [id], onUpdate: NoAction)
 }
 
 model expense_categories {
@@ -312,28 +178,36 @@ model expense_categories {
 
 model final_grades {
   id             Int           @id @default(autoincrement())
-  enrollment_id  Int           @unique
   total_score    Decimal       @db.Decimal(6, 2)
   letter_grade   String?       @db.VarChar(10)
   grade_point    Decimal?      @db.Decimal(3, 2)
   is_locked      Boolean?      @default(false)
   created_at     DateTime?     @default(now()) @db.Timestamp(6)
   grade_scale_id Int?
-  enrollments    enrollments   @relation(fields: [enrollment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  student_id     Int?
+  subject_id     Int?
+  semester_id    Int?
+  calculated_by  Int?
+  calculated_at  DateTime?     @default(now()) @db.Timestamp(6)
+  semesters      semesters?    @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_final_grade_semester")
+  subjects       subjects?     @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_final_grade_subject")
+  teachers       teachers?     @relation(fields: [calculated_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_final_grades_calculated_by_teacher")
+  students       students?     @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_final_grades_student")
   grade_scales   grade_scales? @relation(fields: [grade_scale_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "grade_scale_id")
+
+  @@unique([student_id, subject_id, semester_id])
 }
 
 model fitness_test_criteria {
-  id                      Int                       @id @default(autoincrement())
-  test_name               String                    @db.VarChar(255)
-  unit                    String                    @db.VarChar(50)
-  passing_threshold       Decimal                   @db.Decimal
-  comparison_type         String?                   @default(">=") @db.VarChar(10)
-  created_at              DateTime?                 @default(now()) @db.Timestamp(6)
-  academic_year           Int?
-  gender                  String?                   @db.VarChar(20)
-  grade_level             String?                   @db.VarChar(100)
-  student_fitness_records student_fitness_records[]
+  id                Int       @id @default(autoincrement())
+  test_name         String    @db.VarChar(255)
+  unit              String    @db.VarChar(50)
+  passing_threshold Decimal   @db.Decimal
+  comparison_type   String?   @default(">=") @db.VarChar(10)
+  created_at        DateTime? @default(now()) @db.Timestamp(6)
+  academic_year     Int?
+  gender            String?   @db.VarChar(20)
+  grade_level       String?   @db.VarChar(100)
 }
 
 model genders {
@@ -344,15 +218,15 @@ model genders {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model grade_categories {
-  id                     Int                   @id @default(autoincrement())
-  teaching_assignment_id Int
-  weight_percent         Decimal               @db.Decimal(5, 2)
-  created_at             DateTime?             @default(now()) @db.Timestamp(6)
-  category_type_id       Int?
-  name                   String                @default("Category") @db.VarChar(100)
-  assessment_items       assessment_items[]
-  grade_category_types   grade_category_types? @relation(fields: [category_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  teaching_assignments   teaching_assignments  @relation(fields: [teaching_assignment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id                      Int                   @id @default(autoincrement())
+  classroom_assignment_id Int
+  weight_percent          Decimal               @db.Decimal(5, 2)
+  created_at              DateTime?             @default(now()) @db.Timestamp(6)
+  category_type_id        Int?
+  name                    String                @default("Category") @db.VarChar(100)
+  assessment_items        assessment_items[]
+  grade_category_types    grade_category_types? @relation(fields: [category_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  classroom_assignments   classroom_assignments @relation(fields: [classroom_assignment_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "grade_categories_teaching_assignment_id_fkey")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -362,21 +236,21 @@ model grade_scales {
   max_score            Decimal             @db.Decimal(5, 2)
   letter_grade         String              @db.VarChar(5)
   grade_point          Decimal             @db.Decimal(3, 2)
-  evaluation_type_id   Int?                @default(1)
   grade_scale_group_id Int?
   final_grades         final_grades[]
-  evaluation_types     evaluation_types?   @relation(fields: [evaluation_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   grade_scale_groups   grade_scale_groups? @relation(fields: [grade_scale_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model grade_scale_groups {
-  id                   Int                    @id @default(autoincrement())
-  name                 String                 @db.VarChar(100)
-  is_default           Boolean?               @default(false)
-  description          String?
-  created_at           DateTime?              @default(now()) @db.Timestamp(6)
-  grade_scales         grade_scales[]
-  teaching_assignments teaching_assignments[]
+  id                 Int               @id @default(autoincrement())
+  name               String            @db.VarChar(100)
+  is_default         Boolean?          @default(false)
+  description        String?
+  created_at         DateTime?         @default(now()) @db.Timestamp(6)
+  evaluation_type_id Int?
+  evaluation_types   evaluation_types? @relation(fields: [evaluation_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_grade_scale_group_evaluation")
+  grade_scales       grade_scales[]
+  subjects           subjects[]
 }
 
 model health_checkup_records {
@@ -395,29 +269,12 @@ model health_checkup_records {
   users         users     @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
-model indicators {
-  id                         Int                          @id @default(autoincrement())
-  subject_id                 Int
-  code                       String                       @db.VarChar(50)
-  description                String
-  created_at                 DateTime?                    @default(now()) @db.Timestamp(6)
-  assessment_item_indicators assessment_item_indicators[]
-  subjects                   subjects                     @relation(fields: [subject_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
 model learning_subject_groups {
   id         Int        @id @default(autoincrement())
   group_name String     @unique(map: "learning_subject_groups_name_key") @db.VarChar(100)
   created_at DateTime?  @default(now()) @db.Timestamp(6)
   subjects   subjects[]
   teachers   teachers[]
-}
-
-model levels {
-  id         Int          @id(map: "grade_levels_pkey") @default(autoincrement())
-  name       String       @unique(map: "grade_levels_name_key") @db.VarChar(50)
-  created_at DateTime?    @default(now()) @db.Timestamp(6)
-  classrooms classrooms[]
 }
 
 model name_prefixes {
@@ -438,32 +295,31 @@ model notifications {
 }
 
 model periods {
-  id              Int               @id
-  start_time      DateTime?         @db.Time(6)
-  end_time        DateTime?         @db.Time(6)
-  period_name     String?           @db.VarChar
-  class_schedules class_schedules[]
-}
-
-model programs {
-  id         Int          @id(map: "program_pkey") @default(autoincrement())
-  name       String       @unique(map: "program_name_key") @db.VarChar(100)
-  created_at DateTime?    @default(now()) @db.Timestamp(6)
-  classrooms classrooms[]
+  id             Int              @id
+  start_time     DateTime?        @db.Time(6)
+  end_time       DateTime?        @db.Time(6)
+  period_name    String?          @db.VarChar
+  class_schedule class_schedule[]
 }
 
 model project_expenses {
-  id                  Int                 @id @default(autoincrement())
+  id                  Int                  @id @default(autoincrement())
   project_id          Int
-  expense_date        DateTime            @db.Date
-  title               String              @db.VarChar(255)
-  amount              Decimal             @db.Decimal(12, 2)
-  receipt_number      String?             @db.VarChar(100)
+  expense_date        DateTime             @db.Date
+  title               String               @db.VarChar(255)
+  amount              Decimal              @db.Decimal(12, 2)
+  receipt_number      String?              @db.VarChar(100)
   recorded_by         Int?
-  created_at          DateTime?           @default(now()) @db.Timestamp(6)
+  created_at          DateTime?            @default(now()) @db.Timestamp(6)
   expense_category_id Int?
-  expense_categories  expense_categories? @relation(fields: [expense_category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  projects            projects            @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  semester_id         Int?
+  payment_method      enum_peyment_method?
+  receipt_file        String?              @db.VarChar(255)
+  updated_at          DateTime?            @db.Timestamp(6)
+  semesters           semesters?           @relation(fields: [semester_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_expenses_semester")
+  users               users?               @relation(fields: [recorded_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_expenses_user")
+  expense_categories  expense_categories?  @relation(fields: [expense_category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  projects            projects             @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model project_types {
@@ -480,7 +336,6 @@ model projects {
   project_name     String             @db.VarChar(255)
   description      String?
   teacher_id       Int?
-  status           String?            @default("Approved") @db.VarChar(50)
   start_date       DateTime?          @db.Date
   end_date         DateTime?          @db.Date
   created_at       DateTime?          @default(now()) @db.Timestamp(6)
@@ -489,8 +344,7 @@ model projects {
   allocated_budget Decimal            @default(0.00) @db.Decimal(12, 2)
   project_type_id  Int?
   academic_year_id Int?
-  budget_used_sem1 Decimal?           @default(0) @db.Decimal(12, 2)
-  budget_used_sem2 Decimal?           @default(0) @db.Decimal(12, 2)
+  status           enum_status?
   project_expenses project_expenses[]
   academic_years   academic_years?    @relation(fields: [academic_year_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   budget_types     budget_types?      @relation(fields: [budget_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "projects_budget_id_fkey")
@@ -509,168 +363,98 @@ model roles {
 }
 
 model rooms {
-  id                  Int                   @id
-  room_name           String?               @db.VarChar(50)
-  capacity            Int?
-  floor               Int?
-  building_id         Int?
-  class_schedules     class_schedules[]
-  exam_schedule_rooms exam_schedule_rooms[]
-  buildings           buildings?            @relation(fields: [building_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          Int        @id
+  room_name   String?    @db.VarChar(50)
+  capacity    Int?
+  floor       Int?
+  building_id Int?
+  buildings   buildings? @relation(fields: [building_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([room_name, building_id], map: "rooms_name_building_unique")
 }
 
 model semesters {
-  id                   Int                    @id @default(autoincrement())
-  academic_year_id     Int
-  semester_number      Int
-  start_date           DateTime?              @db.Date
-  end_date             DateTime?              @db.Date
-  is_active            Boolean?               @default(false)
-  created_at           DateTime?              @default(now()) @db.Timestamp(6)
-  behavior_records     behavior_records[]
-  evaluation_responses evaluation_responses[]
-  evaluation_schedules evaluation_schedules[]
-  events               events[]
-  exam_schedules       exam_schedules[]
-  academic_years       academic_years         @relation(fields: [academic_year_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  teaching_assignments teaching_assignments[]
+  id                           Int                            @id @default(autoincrement())
+  academic_year_id             Int
+  semester_number              Int
+  start_date                   DateTime?                      @db.Date
+  end_date                     DateTime?                      @db.Date
+  is_active                    Boolean?                       @default(false)
+  created_at                   DateTime?                      @default(now()) @db.Timestamp(6)
+  behavior_records             behavior_records[]
+  class_schedule               class_schedule[]
+  evaluation_responses         evaluation_responses[]
+  evaluation_schedules         evaluation_schedules[]
+  events                       events[]
+  final_grades                 final_grades[]
+  project_expenses             project_expenses[]
+  academic_years               academic_years                 @relation(fields: [academic_year_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  student_daily_health_records student_daily_health_records[]
 
   @@unique([academic_year_id, semester_number])
-}
-
-model student_allergies {
-  student_id  Int
-  allergen_id Int
-  symptom     String?
-  severity    String?   @db.VarChar(50)
-  allergens   allergens @relation(fields: [allergen_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  students    students  @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([student_id, allergen_id])
-}
-
-model student_diseases {
-  student_id Int
-  disease_id Int
-  remark     String?
-  diseases   diseases @relation(fields: [disease_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  students   students @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([student_id, disease_id])
-}
-
-model student_fitness_records {
-  id                    Int                    @id @default(autoincrement())
-  student_id            Int
-  test_date             DateTime?              @db.Date
-  test_result           Decimal                @db.Decimal
-  grade                 String?                @db.VarChar(50)
-  recorded_by           Int?
-  created_at            DateTime?              @default(now()) @db.Timestamp(6)
-  fitness_test_id       Int?
-  is_passed             Boolean?
-  semester_id           Int?
-  fitness_test_criteria fitness_test_criteria? @relation(fields: [fitness_test_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  students              students               @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([student_id, fitness_test_id, semester_id], map: "unique_student_test_per_semester")
-}
-
-model student_health_checkups {
-  id              Int       @id @default(autoincrement())
-  student_id      Int
-  checkup_date    DateTime  @db.Date
-  weight          Decimal?  @db.Decimal(5, 2)
-  height          Decimal?  @db.Decimal(5, 2)
-  blood_pressure  String?   @db.VarChar(20)
-  pulse_rate      Int?
-  vision_left     String?   @db.VarChar(50)
-  vision_right    String?   @db.VarChar(50)
-  color_blindness String?   @default("ปกติ") @db.VarChar(50)
-  needs_glasses   Boolean?  @default(false)
-  dental_status   String?
-  hearing_status  String?   @default("ปกติ") @db.VarChar(50)
-  recorded_by     Int?
-  created_at      DateTime? @default(now()) @db.Timestamp(6)
-  semester_id     Int?
-  teeth_brushing  String?   @db.VarChar(50)
-  milk_drinking   String?   @db.VarChar(50)
-  students        students  @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model student_health_profiles {
-  student_id              Int       @id
-  blood_type              String?   @db.VarChar(5)
-  emergency_contact_name  String?   @db.VarChar(150)
-  emergency_contact_phone String?   @db.VarChar(20)
-  updated_at              DateTime? @default(now()) @db.Timestamp(6)
-  users                   users     @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model student_scores {
   id                 Int              @id @default(autoincrement())
   assessment_item_id Int
-  enrollment_id      Int
   score              Decimal?         @default(0.00) @db.Decimal(5, 2)
   is_missing         Boolean?         @default(false)
   remark             String?
   created_at         DateTime?        @default(now()) @db.Timestamp(6)
   updated_at         DateTime?        @default(now()) @db.Timestamp(6)
   is_passed          Boolean?
+  student_id         Int?
+  students           students?        @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_student_scores_student")
   assessment_items   assessment_items @relation(fields: [assessment_item_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  enrollments        enrollments      @relation(fields: [enrollment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([assessment_item_id, enrollment_id])
+  @@unique([student_id, assessment_item_id])
 }
 
 model student_statuses {
-  id          Int        @id @default(autoincrement())
-  status_name String     @unique @db.VarChar(50)
+  id          Int                  @id @default(autoincrement())
+  status_name enum_student_status?
   students    students[]
 }
 
 model students {
-  id                      Int                       @id
-  user_id                 Int                       @unique
-  student_code            String                    @unique @db.VarChar(20)
-  first_name              String                    @db.VarChar(100)
-  last_name               String                    @db.VarChar(100)
-  date_of_birth           DateTime?                 @db.Date
-  phone                   String?                   @db.VarChar(20)
-  address                 String?
-  created_at              DateTime?                 @default(now()) @db.Timestamp(6)
-  updated_at              DateTime?                 @default(now()) @db.Timestamp(6)
-  prefix_id               Int?
-  status_id               Int?
-  gender_id               Int?
-  admission_year          Int?
-  enrollment_date         DateTime?                 @db.Date
-  admission_year_id       Int?
-  student_national_id     String?                   @unique(map: "students_national_id_unique") @db.VarChar(13)
-  parent_name             String?                   @db.VarChar(150)
-  parent_phone            String?                   @db.VarChar(20)
-  behavior_records        behavior_records[]
-  classroom_students      classroom_students[]
-  enrollments             enrollments[]
-  student_allergies       student_allergies[]
-  student_diseases        student_diseases[]
-  student_fitness_records student_fitness_records[]
-  student_health_checkups student_health_checkups[]
-  genders                 genders?                  @relation(fields: [gender_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  name_prefixes           name_prefixes?            @relation(fields: [prefix_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  student_statuses        student_statuses?         @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users                   users                     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  vaccination_records     vaccination_records[]
-  attendance_records      attendance_records[]
+  id                           Int                            @id
+  user_id                      Int                            @unique
+  student_code                 String                         @unique @db.VarChar(20)
+  first_name                   String                         @db.VarChar(100)
+  last_name                    String                         @db.VarChar(100)
+  date_of_birth                DateTime?                      @db.Date
+  phone                        String?                        @db.VarChar(20)
+  address                      String?
+  created_at                   DateTime?                      @default(now()) @db.Timestamp(6)
+  updated_at                   DateTime?                      @default(now()) @db.Timestamp(6)
+  prefix_id                    Int?
+  status_id                    Int?
+  gender_id                    Int?
+  enrollment_date              DateTime?                      @db.Date
+  admission_year_id            Int?
+  student_national_id          String?                        @unique(map: "students_national_id_unique") @db.VarChar(13)
+  parent_name                  String?                        @db.VarChar(150)
+  parent_phone                 String?                        @db.VarChar(20)
+  attendance_records           attendance_records[]
+  behavior_records             behavior_records[]
+  classroom_students           classroom_students[]
+  final_grades                 final_grades[]
+  student_daily_health_records student_daily_health_records[]
+  student_scores               student_scores[]
+  academic_years               academic_years?                @relation(fields: [admission_year_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_student_admission_year_id_year")
+  genders                      genders?                       @relation(fields: [gender_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  name_prefixes                name_prefixes?                 @relation(fields: [prefix_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  student_statuses             student_statuses?              @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                        users                          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model subject_categories {
-  id            Int        @id @default(autoincrement())
-  category_name String     @unique @db.VarChar(100)
-  description   String?
-  subjects      subjects[]
+  id                 Int               @id @default(autoincrement())
+  category_name      String            @unique @db.VarChar(100)
+  description        String?
+  evaluation_type_id Int?              @default(1)
+  evaluation_types   evaluation_types? @relation(fields: [evaluation_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_subject_category_evaluations")
+  subjects           subjects[]
 }
 
 model subjects {
@@ -681,14 +465,13 @@ model subjects {
   created_at                DateTime?                @default(now()) @db.Timestamp(6)
   learning_subject_group_id Int?
   subject_categories_id     Int?
-  evaluation_type_id        Int?
   level_id                  Int?
-  exam_schedules            exam_schedules[]
-  indicators                indicators[]
+  grade_scale_group_id      Int?
+  class_schedule            class_schedule[]
+  final_grades              final_grades[]
+  grade_scale_groups        grade_scale_groups?      @relation(fields: [grade_scale_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_subject_grade_scale_group")
   subject_categories        subject_categories?      @relation(fields: [subject_categories_id], references: [id], map: "fk_subjects_categories")
-  evaluation_types          evaluation_types?        @relation(fields: [evaluation_type_id], references: [id], map: "fk_subjects_evaluation_types")
   learning_subject_groups   learning_subject_groups? @relation(fields: [learning_subject_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  teaching_assignments      teaching_assignments[]
 }
 
 model teacher_positions {
@@ -718,87 +501,37 @@ model teachers {
   salary                    Decimal?                 @db.Decimal(10, 2)
   blood_type                String?                  @db.VarChar(5)
   teacher_national_id       String?                  @unique(map: "teachers_national_id_unique") @db.VarChar(13)
-  classroom_advisors        classroom_advisors[]
+  classroom_assignments     classroom_assignments[]
   events                    events[]
-  exam_proctors             exam_proctors[]
+  final_grades              final_grades[]
   projects                  projects[]
+  employment_types          employment_types?        @relation(fields: [employment_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_teacher_employment_types")
   departments               departments?             @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   learning_subject_groups   learning_subject_groups? @relation(fields: [learning_subject_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   teacher_positions         teacher_positions?       @relation(fields: [position_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   name_prefixes             name_prefixes?           @relation(fields: [prefix_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users                     users?                   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  teaching_assignments      teaching_assignments[]
-}
-
-model teaching_assignments {
-  id                   Int                   @id @default(autoincrement())
-  subject_id           Int
-  teacher_id           Int
-  semester_id          Int
-  classroom_id         Int?
-  capacity             Int?
-  status               String?               @default("open") @db.VarChar(20)
-  created_at           DateTime?             @default(now()) @db.Timestamp(6)
-  grade_scale_group_id Int?
-  attendance_sessions  attendance_sessions[]
-  class_schedules      class_schedules[]
-  enrollments          enrollments[]
-  grade_categories     grade_categories[]
-  classrooms           classrooms?           @relation(fields: [classroom_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  grade_scale_groups   grade_scale_groups?   @relation(fields: [grade_scale_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  semesters            semesters             @relation(fields: [semester_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  subjects             subjects              @relation(fields: [subject_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  teachers             teachers              @relation(fields: [teacher_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([subject_id, teacher_id, semester_id, classroom_id])
 }
 
 model users {
-  id                      Int                      @id @default(autoincrement())
-  username                String                   @unique(map: "users_username_unique") @db.VarChar(50)
-  email                   String                   @unique(map: "users_email_unique") @db.VarChar(100)
-  password_hash           String
-  role_id                 Int
-  is_active               Boolean?                 @default(true)
-  last_login              DateTime?                @db.Timestamp(6)
-  created_at              DateTime?                @default(now()) @db.Timestamp(6)
-  updated_at              DateTime?                @default(now()) @db.Timestamp(6)
-  attendance_sessions     attendance_sessions[]
-  audit_logs              audit_logs[]
-  evaluation_responses    evaluation_responses[]
-  event_participants      event_participants[]
-  events                  events[]
-  health_checkup_records  health_checkup_records[]
-  notifications           notifications[]
-  student_health_profiles student_health_profiles?
-  students                students?
-  teachers                teachers?
-  roles                   roles                    @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model vaccination_records {
-  id                Int       @id @default(autoincrement())
-  student_id        Int
-  vaccine_id        Int
-  dose_number       Int?
-  administered_date DateTime  @db.Date
-  administered_by   String?   @db.VarChar(150)
-  remark            String?
-  created_at        DateTime? @default(now()) @db.Timestamp(6)
-  students          students  @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  vaccines          vaccines  @relation(fields: [vaccine_id], references: [id], onUpdate: NoAction)
-
-  @@unique([student_id, vaccine_id, dose_number], map: "vaccination_student_records")
-}
-
-model vaccines {
-  id                  Int                   @id @default(autoincrement())
-  name                String                @unique @db.VarChar(150)
-  description         String?
-  is_required         Boolean?              @default(false)
-  vaccination_records vaccination_records[]
-
-  @@unique([id, name])
+  id                     Int                      @id @default(autoincrement())
+  username               String                   @unique(map: "users_username_unique") @db.VarChar(50)
+  email                  String?                  @unique(map: "users_email_unique") @db.VarChar(100)
+  password_hash          String?
+  role_id                Int
+  is_active              Boolean?                 @default(true)
+  last_login             DateTime?                @db.Timestamp(6)
+  created_at             DateTime?                @default(now()) @db.Timestamp(6)
+  updated_at             DateTime?                @default(now()) @db.Timestamp(6)
+  audit_logs             audit_logs[]
+  evaluation_responses   evaluation_responses[]
+  events                 events[]
+  health_checkup_records health_checkup_records[]
+  notifications          notifications[]
+  project_expenses       project_expenses[]
+  students               students?
+  teachers               teachers?
+  roles                  roles                    @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -867,7 +600,6 @@ model evaluation_forms {
   evaluation_responses  evaluation_responses[]
   evaluation_schedules  evaluation_schedules[]
   evaluation_sections   evaluation_sections[]
-  event_evaluations     event_evaluations[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -888,20 +620,18 @@ model evaluation_questions {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model evaluation_responses {
-  id                 Int               @id @default(autoincrement())
-  form_id            Int?
-  evaluator_user_id  Int?
-  target_student_id  Int?
-  target_teacher_id  Int?
-  target_subject_id  Int?
-  target_activity_id Int?
-  status             String?           @default("COMPLETED") @db.VarChar(20)
-  submitted_at       DateTime?         @default(now()) @db.Timestamp(6)
-  semester_id        Int?
-  users              users?            @relation(fields: [evaluator_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "evaluation_responses_evaluation_users_id_fkey")
-  evaluation_forms   evaluation_forms? @relation(fields: [form_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  semesters          semesters?        @relation(fields: [semester_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  events             events?           @relation(fields: [target_activity_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_target_activity_event")
+  id                Int               @id @default(autoincrement())
+  form_id           Int?
+  evaluator_user_id Int?
+  target_student_id Int?
+  target_teacher_id Int?
+  target_subject_id Int?
+  status            String?           @default("COMPLETED") @db.VarChar(20)
+  submitted_at      DateTime?         @default(now()) @db.Timestamp(6)
+  semester_id       Int?
+  users             users?            @relation(fields: [evaluator_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "evaluation_responses_evaluation_users_id_fkey")
+  evaluation_forms  evaluation_forms? @relation(fields: [form_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  semesters         semesters?        @relation(fields: [semester_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
   @@index([evaluator_user_id], map: "idx_eval_resp_evaluator")
   @@index([semester_id], map: "idx_eval_resp_semester")
@@ -972,20 +702,6 @@ model evaluation_question_types {
   evaluation_questions evaluation_questions[]
 }
 
-model event_evaluations {
-  id                  Int              @id @default(autoincrement())
-  event_id            Int
-  form_id             Int
-  start_eval_datetime DateTime?        @db.Timestamp(6)
-  end_eval_datetime   DateTime?        @db.Timestamp(6)
-  is_required         Boolean?         @default(false)
-  created_at          DateTime?        @default(now()) @db.Timestamp(6)
-  events              events           @relation(fields: [event_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  evaluation_forms    evaluation_forms @relation(fields: [form_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([event_id, form_id])
-}
-
 model target_types {
   code            String          @id @db.VarChar(30)
   display_name    String          @db.VarChar(100)
@@ -998,26 +714,94 @@ model target_types {
 
 model classroom_subjects {
   id           Int       @id @default(autoincrement())
-  semester_id  Int
   subject_id   Int
   classroom_id Int
   created_at   DateTime? @default(now()) @db.Timestamp(6)
-
-  @@unique([semester_id, subject_id, classroom_id])
 }
 
-model form_subject_mappings {
-  id                        Int       @id @default(autoincrement())
-  form_id                   Int
-  learning_subject_group_id Int
-  subject_id                Int?
-  assigned_at               DateTime? @default(now()) @db.Timestamp(6)
-
-  @@unique([form_id, learning_subject_group_id, subject_id])
+model attendance_status {
+  id                 Int                  @id
+  status_name        String               @db.VarChar(50)
+  attendance_records attendance_records[]
 }
 
-enum exam_type {
-  MIDTERM
-  FINAL
-  QUIZ
+model class_schedule {
+  schedule_id    Int          @id @default(autoincrement())
+  classroom_id   Int
+  subject_id     Int
+  semester_id    Int
+  day_of_week_id Int
+  period_id      Int
+  start_time     DateTime     @db.Time(6)
+  end_time       DateTime     @db.Time(6)
+  created_at     DateTime?    @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?    @default(now()) @db.Timestamp(6)
+  classrooms     classrooms   @relation(fields: [classroom_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_schedule_classroom")
+  day_of_weeks   day_of_weeks @relation(fields: [day_of_week_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_schedule_day")
+  periods        periods      @relation(fields: [period_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_schedule_period")
+  semesters      semesters    @relation(fields: [semester_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_schedule_semester")
+  subjects       subjects     @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_schedule_subject")
+
+  @@unique([classroom_id, semester_id, day_of_week_id, period_id], map: "uq_schedule")
+}
+
+model classroom_assignments {
+  id               Int                @id(map: "teaching_assignments_pkey") @default(autoincrement())
+  teacher_id       Int
+  capacity         Int?
+  status           String?            @default("open") @db.VarChar(20)
+  created_at       DateTime?          @default(now()) @db.Timestamp(6)
+  academic_year_id Int
+  classroom_id     Int
+  academic_years   academic_years     @relation(fields: [academic_year_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_academic_year_id")
+  classrooms       classrooms         @relation(fields: [classroom_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_classrooms_id")
+  teachers         teachers           @relation(fields: [teacher_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_teacher_id")
+  grade_categories grade_categories[]
+
+  @@unique([classroom_id, academic_year_id], map: "uq_classroom_year")
+  @@unique([teacher_id, academic_year_id], map: "uq_teacher_year")
+}
+
+model grade_level {
+  id               Int         @id @default(autoincrement())
+  grade_level_name String?     @db.VarChar(30)
+  classrooms       classrooms?
+}
+
+model student_daily_health_records {
+  id            Int       @id @default(autoincrement())
+  student_id    Int
+  semester_id   Int
+  record_date   DateTime  @db.Date
+  drinks_milk   Boolean?  @default(false)
+  brushes_teeth Boolean?  @default(false)
+  recorded_by   Int?
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  semesters     semesters @relation(fields: [semester_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_semester")
+  students      students  @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_student")
+
+  @@unique([student_id, record_date], map: "unique_student_daily_record")
+}
+
+enum enum_event_status {
+  DRAFT_PUBLISHED_CANCELLED_COMPLETED @map("DRAFT,PUBLISHED,CANCELLED,COMPLETED")
+}
+
+enum enum_peyment_method {
+  CASH     @map("เงินสด")
+  TRANSFER @map("โอน")
+  CHEQUE   @map("เช็ค")
+}
+
+
+enum enum_status {
+  Planning_Approved_In_Progress_Completed_Cancelled @map("Planning,Approved,In Progress,Completed,Cancelled")
+}
+
+enum enum_student_status {
+  active
+  suspended
+  graduated
+  withdrawn
+  dismissed
 }

@@ -9,7 +9,7 @@ export const StudentService = {
                 name_prefixes: true,
                 classroom_students: {
                     include: { classrooms: { include: { levels: true } } },
-                    orderBy: { academic_year: 'desc' },
+                    orderBy: { academic_year_id: 'desc' },
                     take: 1
                 },
                 genders: true,
@@ -38,7 +38,7 @@ export const StudentService = {
                 name_prefixes: true,
                 classroom_students: {
                     include: { classrooms: { include: { levels: true } } },
-                    orderBy: { academic_year: 'desc' },
+                    orderBy: { academic_year_id: 'desc' },
                     take: 1
                 },
                 genders: true,

@@ -80,14 +80,20 @@ export const TeacherBehaviorService = {
         const validClassroomIds = targetClassroomIds.filter(id => !isNaN(id));
         if (validClassroomIds.length === 0) return [];
 
-        console.log(`Searching students for room IDs: ${validClassroomIds}, year: ${year}`);
-        
+        let academicYearId: number | null = null;
+        if (year && !isNaN(year)) {
+            const ay = await prisma.academic_years.findUnique({
+                where: { year_name: String(year) }
+            });
+            academicYearId = ay?.id ?? null;
+        }
+
         let students = await (prisma.students as any).findMany({
             where: {
                 classroom_students: {
                     some: {
                         classroom_id: { in: validClassroomIds },
-                        ...(year && !isNaN(year) ? { academic_year: year } : {})
+                        ...(academicYearId ? { academic_year_id: academicYearId } : {})
                     }
                 }
             },
@@ -98,7 +104,7 @@ export const TeacherBehaviorService = {
                         classroom_id: { in: validClassroomIds }
                     },
                     include: { classrooms: { include: { levels: true } } },
-                    orderBy: { academic_year: 'desc' }
+                    orderBy: { academic_year_id: 'desc' }
                 },
                 genders: true,
                 student_statuses: true,
@@ -132,7 +138,7 @@ export const TeacherBehaviorService = {
                             classroom_id: { in: validClassroomIds }
                         },
                         include: { classrooms: { include: { levels: true } } },
-                        orderBy: { academic_year: 'desc' }
+                        orderBy: { academic_year_id: 'desc' }
                     },
                     genders: true,
                     student_statuses: true,
@@ -155,8 +161,8 @@ export const TeacherBehaviorService = {
             let cs = s.classroom_students[0];
             if (classroom_id) {
                 cs = s.classroom_students.find((rs: any) => rs.classroom_id === classroom_id) || cs;
-            } else if (year) {
-                cs = s.classroom_students.find((rs: any) => rs.academic_year === year) || cs;
+            } else if (academicYearId) {
+                cs = s.classroom_students.find((rs: any) => rs.academic_year_id === academicYearId) || cs;
             }
 
             const c = cs?.classrooms;
@@ -271,7 +277,7 @@ export const TeacherBehaviorService = {
                         name_prefixes: true,
                         classroom_students: {
                             include: { classrooms: { include: { levels: true } } },
-                            orderBy: { academic_year: 'desc' },
+                            orderBy: { academic_year_id: 'desc' },
                             take: 1
                         }
                     }

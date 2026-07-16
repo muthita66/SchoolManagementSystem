@@ -23,7 +23,7 @@ export const AuthService = {
                     name_prefixes: true,
                     classroom_students: {
                         include: { classrooms: { include: { levels: true } } },
-                        orderBy: { academic_year: 'desc' },
+                        orderBy: { academic_year_id: 'desc' },
                         take: 1,
                     },
                 },
@@ -108,7 +108,12 @@ async function verifyUser(user: UserWithRole, password: string, expectedRole: st
         throw new Error('บทบาทไม่ตรงกับผู้ใช้');
     }
 
-    const isValid = await bcrypt.compare(password, user.password_hash);
+    // รองรับทั้งรหัสผ่านแบบ Hash และ Plain Text (สำหรับบัญชีที่ยังไม่ได้เข้ารหัส)
+    const storedHash = (user.password_hash || '').trim();
+    const isHashed = storedHash.startsWith('$2a$') || storedHash.startsWith('$2b$');
+    const isValid = isHashed
+        ? await bcrypt.compare(password, storedHash)
+        : storedHash === password;
     if (!isValid) {
         throw new Error('รหัสผ่านไม่ถูกต้อง');
     }

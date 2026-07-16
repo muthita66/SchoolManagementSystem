@@ -12,6 +12,15 @@ async function resolveSemesterId(year?: number, semester?: number) {
     return result?.id ?? null;
 }
 
+async function resolveAcademicYearId(year?: number) {
+    if (!year) return null;
+    const result = await prisma.academic_years.findFirst({
+        where: { year_name: String(year) },
+        select: { id: true }
+    });
+    return result?.id ?? null;
+}
+
 export const LearningResultsService = {
     // Advisor evaluation (supports multiple advisors and form types)
     async getAdvisorEvaluation(student_id: number, year?: number, semester?: number) {
@@ -20,12 +29,14 @@ export const LearningResultsService = {
 
         // 1. Find classroom and advisors for this student in the selected year
         console.log(`[getAdvisorEvaluation] student_id=${student_id}, year=${year}, semester=${semester}`);
+        const academicYearId = year ? await resolveAcademicYearId(Number(year)) : null;
+
         let classroomStudent = await prisma.classroom_students.findFirst({
             where: { 
                 student_id: Number(student_id),
-                academic_year: year ? Number(year) : undefined
+                ...(academicYearId ? { academic_year_id: academicYearId } : {})
             },
-            select: { classroom_id: true, academic_year: true }
+            select: { classroom_id: true, academic_year_id: true }
         });
 
         // Fallback: if no record for this specific year, try to get the most recent one
@@ -33,8 +44,8 @@ export const LearningResultsService = {
             console.log(`[getAdvisorEvaluation] No classroom found for year ${year}, attempting fallback...`);
             classroomStudent = await prisma.classroom_students.findFirst({
                 where: { student_id: Number(student_id) },
-                orderBy: { academic_year: 'desc' },
-                select: { classroom_id: true, academic_year: true }
+                orderBy: { academic_year_id: 'desc' },
+                select: { classroom_id: true, academic_year_id: true }
             });
         }
         console.log(`[getAdvisorEvaluation] Final classroomStudent=${JSON.stringify(classroomStudent)}`);

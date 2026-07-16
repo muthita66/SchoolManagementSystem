@@ -147,7 +147,7 @@ export const DirectorDashboardService = {
                 include: {
                     classroom_students: {
                         include: { classrooms: true },
-                        orderBy: { academic_year: 'desc' },
+                        orderBy: { academic_year_id: 'desc' },
                         take: 1
                     }
                 }
@@ -637,7 +637,7 @@ async function getTopRooms(studentWhere: any) {
             id: true,
             classroom_students: {
                 include: { classrooms: { select: { room_name: true, levels: { select: { name: true } } } } },
-                orderBy: { academic_year: 'desc' },
+                orderBy: { academic_year_id: 'desc' },
                 take: 1
             },
             enrollments: {
@@ -700,7 +700,7 @@ async function getAtRiskStudents(studentWhere: any, subjectId?: number) {
             name_prefixes: { select: { prefix_name: true } },
             classroom_students: {
                 include: { classrooms: { select: { room_name: true, levels: { select: { name: true } } } } },
-                orderBy: { academic_year: 'desc' },
+                orderBy: { academic_year_id: 'desc' },
                 take: 1
             },
             genders: { select: { name: true } },
@@ -1290,7 +1290,7 @@ async function getHealthSummary(studentWhere: any, year?: string, semester?: num
     const studentRooms = await (prisma as any).classroom_students.findMany({
         where: { student_id: { in: studentIds } },
         include: { classrooms: { include: { levels: true } } },
-        orderBy: { academic_year: 'desc' }
+        orderBy: { academic_year_id: 'desc' }
     });
     
     const studentToLevel = new Map<number, string>();
@@ -1434,7 +1434,7 @@ async function getHealthSummary(studentWhere: any, year?: string, semester?: num
             name_prefixes: true,
             classroom_students: {
                 include: { classrooms: { include: { levels: true } } },
-                orderBy: { academic_year: 'desc' },
+                orderBy: { academic_year_id: 'desc' },
                 take: 1
             },
             student_allergies: { include: { allergens: true } },
@@ -1507,7 +1507,7 @@ async function getRoomRankingsBySubject(studentWhere: any, learningGroupId?: num
                             select: {
                                 classroom_students: {
                                     take: 1,
-                                    orderBy: { academic_year: 'desc' },
+                                    orderBy: { academic_year_id: 'desc' },
                                     select: {
                                         classrooms: {
                                             select: {

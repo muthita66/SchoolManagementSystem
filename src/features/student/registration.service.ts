@@ -364,7 +364,7 @@ export const RegistrationService = {
 
         const latestAssignment = await prisma.classroom_students.findFirst({
             where: { student_id },
-            orderBy: { academic_year: 'desc' },
+            orderBy: { academic_year_id: 'desc' },
             select: { classroom_id: true }
         });
 

@@ -58,7 +58,7 @@ export const StudentDashboardService = {
                         include: {
                             classrooms: { include: { levels: true } },
                         },
-                        orderBy: { academic_year: 'desc' },
+                        orderBy: { academic_year_id: 'desc' },
                         take: 1
                     },
                 },

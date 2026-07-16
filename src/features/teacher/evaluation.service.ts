@@ -26,6 +26,17 @@ async function resolveEvaluationPeriodId(year?: number, semester?: number) {
     } catch (_) { return null; }
 }
 
+async function resolveAcademicYearId(year?: number) {
+    if (!year) return null;
+    try {
+        const result = await prisma.academic_years.findFirst({
+            where: { year_name: String(year) },
+            select: { id: true }
+        });
+        return result?.id ?? null;
+    } catch (_) { return null; }
+}
+
 function toNum(value: unknown, fallback = 0) {
     const n = Number(value);
     return Number.isFinite(n) ? n : fallback;
@@ -219,7 +230,7 @@ export const TeacherEvaluationService = {
                 students: {
                     include: {
                         name_prefixes: true,
-                        classroom_students: { take: 1, orderBy: { academic_year: 'desc' } },
+                        classroom_students: { take: 1, orderBy: { academic_year_id: 'desc' } },
                     }
                 }
             }
@@ -775,6 +786,8 @@ export const TeacherEvaluationService = {
     },
 
     async getTeachingStudentEvaluationResults(teacher_id: number, section_id: number, year: number, semester: number) {
+        const academicYearId = year ? await resolveAcademicYearId(Number(year)) : null;
+
         // 1. Get all students enrolled in this section
         const enrolledStudents = await prisma.enrollments.findMany({
             where: {
@@ -785,7 +798,7 @@ export const TeacherEvaluationService = {
                     include: {
                         name_prefixes: true,
                         classroom_students: { 
-                            where: { academic_year: year },
+                            where: { ...(academicYearId ? { academic_year_id: academicYearId } : {}) },
                             take: 1 
                         },
                     }

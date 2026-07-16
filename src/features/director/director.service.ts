@@ -69,6 +69,28 @@ function parseTimeRange(value: unknown) {
     return { start: m[1], end: m[2] };
 }
 
+async function resolveAcademicYearIdFromPayload(data: any) {
+    const year = data?.academic_year || data?.year || (new Date().getFullYear() + 543);
+    const found = await prisma.academic_years.findFirst({
+        where: { year_name: String(year) },
+        select: { id: true },
+    });
+    if (!found) {
+        // Fallback: try to find any active one, or first one
+        const active = await prisma.academic_years.findFirst({
+            where: { is_active: true },
+            select: { id: true }
+        });
+        if (active) return active.id;
+        const first = await prisma.academic_years.findFirst({
+            select: { id: true }
+        });
+        if (first) return first.id;
+        throw new Error(`ไม่พบปีการศึกษา ${year}`);
+    }
+    return found.id;
+}
+
 async function resolveSemesterIdFromPayload(data: any) {
     if (data?.semester_id) {
         const semesterId = Number(data.semester_id);
@@ -432,11 +454,12 @@ export const DirectorService = {
 
         const classroomId = await resolveClassroomIdFromPayload(data);
         if (classroomId) {
+            const academicYearId = await resolveAcademicYearIdFromPayload(data);
             await prisma.classroom_students.create({
                 data: {
                     student_id: student.id,
                     classroom_id: classroomId,
-                    academic_year: data.academic_year || (new Date().getFullYear() + 543)
+                    academic_year_id: academicYearId
                 }
             });
         }
@@ -451,16 +474,16 @@ export const DirectorService = {
         if (data.phone !== undefined) updateData.phone = data.phone;
         if (data.address !== undefined) updateData.address = data.address;
         if (data.classroom_id !== undefined || data.class_level !== undefined) {
-            const academicYear = data.academic_year || (new Date().getFullYear() + 543);
+            const academicYearId = await resolveAcademicYearIdFromPayload(data);
             if (data.classroom_id === null) {
                 await prisma.classroom_students.deleteMany({
-                    where: { student_id: id, academic_year: academicYear }
+                    where: { student_id: id, academic_year_id: academicYearId }
                 });
             } else {
                 const classroomId = await resolveClassroomIdFromPayload(data);
                 if (!classroomId) throw new Error('Classroom not found');
                 const existingMapping = await prisma.classroom_students.findFirst({
-                    where: { student_id: id, academic_year: academicYear }
+                    where: { student_id: id, academic_year_id: academicYearId }
                 });
                 if (existingMapping) {
                     await prisma.classroom_students.update({
@@ -472,7 +495,7 @@ export const DirectorService = {
                         data: {
                             student_id: id,
                             classroom_id: classroomId,
-                            academic_year: academicYear
+                            academic_year_id: academicYearId
                         }
                     });
                 }
@@ -514,7 +537,7 @@ export const DirectorService = {
             include: {
                 classroom_students: {
                     include: { classrooms: { include: { levels: true } } },
-                    orderBy: { academic_year: 'desc' },
+                    orderBy: { academic_year_id: 'desc' },
                     take: 1
                 }
             }

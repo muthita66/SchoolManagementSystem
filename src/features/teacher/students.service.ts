@@ -460,7 +460,7 @@ export const TeacherStudentsService = {
             include: {
                 name_prefixes: true,
                 classroom_students: {
-                    orderBy: { academic_year: 'desc' },
+                    orderBy: { academic_year_id: 'desc' },
                     include: { classrooms: { include: { levels: true, programs: true } } },
                     take: 1
                 },
