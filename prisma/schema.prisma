@@ -15,6 +15,7 @@ model academic_years {
   is_active             Boolean?                @default(false)
   created_at            DateTime?               @default(now()) @db.Timestamp(6)
   classroom_assignments classroom_assignments[]
+  classroom_students    classroom_students[]
   projects              projects[]
   semesters             semesters[]
   students              students[]
@@ -73,13 +74,14 @@ model buildings {
 }
 
 model classroom_students {
-  id               Int        @id @default(autoincrement())
+  id               Int            @id @default(autoincrement())
   classroom_id     Int
   student_id       Int
   academic_year_id Int
   roll_number      Int?
-  classrooms       classrooms @relation(fields: [classroom_id], references: [id], onDelete: Cascade)
-  students         students   @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  classrooms       classrooms     @relation(fields: [classroom_id], references: [id], onDelete: Cascade)
+  students         students       @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  academic_years   academic_years @relation(fields: [academic_year_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_classroom_student_academic_year")
 
   @@unique([classroom_id, student_id, academic_year_id], map: "classroom_students_classroom_id_student_id_academic_year_key")
 }
@@ -324,9 +326,12 @@ model project_expenses {
   approved_at         DateTime?            @db.Timestamp(6)
   rejection_reason    String?
   semesters           semesters?           @relation(fields: [semester_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_expenses_semester")
-  users               users?               @relation(fields: [recorded_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_expenses_user")
+  users               users?               @relation("project_expenses_recorded_by", fields: [recorded_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_expenses_user")
+  approved_by_user    users?               @relation("project_expenses_approved_by", fields: [approved_by], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "project_expenses_approved_by_fkey")
   expense_categories  expense_categories?  @relation(fields: [expense_category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   projects            projects             @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([project_id, semester_id], map: "idx_project_expenses_project_semester")
 }
 
 model project_types {
@@ -338,19 +343,19 @@ model project_types {
 }
 
 model projects {
-  id               Int                @id @default(autoincrement())
-  project_code     String?            @unique @db.VarChar(50)
-  project_name     String             @db.VarChar(255)
-  description      String?
-  teacher_id       Int?
-  start_date       DateTime?          @db.Date
-  end_date         DateTime?          @db.Date
-  created_at       DateTime?          @default(now()) @db.Timestamp(6)
-  department_id    Int?
-  budget_type_id   Int?
-  allocated_budget Decimal            @default(0.00) @db.Decimal(12, 2)
-  project_type_id  Int?
-  academic_year_id Int?
+  id                  Int                  @id @default(autoincrement())
+  project_code        String?              @unique @db.VarChar(50)
+  project_name        String               @db.VarChar(255)
+  description         String?
+  teacher_id          Int?
+  start_date          DateTime?            @db.Date
+  end_date            DateTime?            @db.Date
+  created_at          DateTime?            @default(now()) @db.Timestamp(6)
+  department_id       Int?
+  budget_type_id      Int?
+  allocated_budget    Decimal              @default(0.00) @db.Decimal(12, 2)
+  project_type_id     Int?
+  academic_year_id    Int?
   status              String               @default("PLANNING") @db.VarChar(30)
   rationale           String?
   expected_outcomes   String?
@@ -362,18 +367,21 @@ model projects {
   approved_at         DateTime?            @db.Timestamp(6)
   rejection_reason    String?
   updated_at          DateTime?            @default(now()) @db.Timestamp(6)
-  project_expenses project_expenses[]
-  project_objectives project_objectives[]
-  project_indicators project_indicators[]
-  project_activities project_activities[]
-  project_budgets    project_budgets[]
-  project_approvals  project_approvals[]
-  project_documents  project_documents[]
-  academic_years   academic_years?    @relation(fields: [academic_year_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  budget_types     budget_types?      @relation(fields: [budget_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "projects_budget_id_fkey")
-  departments      departments?       @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  project_types    project_types?     @relation(fields: [project_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  teachers         teachers?          @relation(fields: [teacher_id], references: [id], onUpdate: NoAction)
+  project_expenses    project_expenses[]
+  project_objectives  project_objectives[]
+  project_indicators  project_indicators[]
+  project_activities  project_activities[]
+  project_budgets     project_budgets[]
+  project_approvals   project_approvals[]
+  project_documents   project_documents[]
+  academic_years      academic_years?      @relation(fields: [academic_year_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  budget_types        budget_types?        @relation(fields: [budget_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "projects_budget_id_fkey")
+  departments         departments?         @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  project_types       project_types?       @relation(fields: [project_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  teachers            teachers?            @relation(fields: [teacher_id], references: [id], onUpdate: NoAction)
+  created_by_user     users?               @relation("projects_created_by", fields: [created_by], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "projects_created_by_fkey")
+  submitted_by_user   users?               @relation("projects_submitted_by", fields: [submitted_by], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "projects_submitted_by_fkey")
+  approved_by_user    users?               @relation("projects_approved_by", fields: [approved_by], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "projects_approved_by_fkey")
 }
 
 model project_objectives {
@@ -382,7 +390,7 @@ model project_objectives {
   objective_text String
   order_number   Int       @default(1)
   created_at     DateTime? @default(now()) @db.Timestamp(6)
-  projects       projects  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  projects       projects  @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model project_indicators {
@@ -396,7 +404,9 @@ model project_indicators {
   order_number   Int       @default(1)
   created_at     DateTime? @default(now()) @db.Timestamp(6)
   updated_at     DateTime? @default(now()) @db.Timestamp(6)
-  projects       projects  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  projects       projects  @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([project_id], map: "idx_project_indicators_project")
 }
 
 model project_activities {
@@ -412,8 +422,10 @@ model project_activities {
   order_number           Int       @default(1)
   created_at             DateTime? @default(now()) @db.Timestamp(6)
   updated_at             DateTime? @default(now()) @db.Timestamp(6)
-  projects               projects  @relation(fields: [project_id], references: [id], onDelete: Cascade)
-  teachers               teachers? @relation(fields: [responsible_teacher_id], references: [id], onDelete: SetNull)
+  projects               projects  @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  teachers               teachers? @relation(fields: [responsible_teacher_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([project_id], map: "idx_project_activities_project")
 }
 
 model project_budgets {
@@ -425,11 +437,12 @@ model project_budgets {
   note                String?
   created_at          DateTime?           @default(now()) @db.Timestamp(6)
   updated_at          DateTime?           @default(now()) @db.Timestamp(6)
-  projects            projects            @relation(fields: [project_id], references: [id], onDelete: Cascade)
-  semesters           semesters           @relation(fields: [semester_id], references: [id], onDelete: Restrict)
-  expense_categories  expense_categories? @relation(fields: [expense_category_id], references: [id], onDelete: SetNull)
+  projects            projects            @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  semesters           semesters           @relation(fields: [semester_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  expense_categories  expense_categories? @relation(fields: [expense_category_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
   @@unique([project_id, semester_id, expense_category_id], map: "project_budgets_unique_plan")
+  @@index([project_id], map: "idx_project_budgets_project")
 }
 
 model project_approvals {
@@ -439,7 +452,8 @@ model project_approvals {
   action_by  Int?
   note       String?
   created_at DateTime? @default(now()) @db.Timestamp(6)
-  projects   projects  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  projects   projects  @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users?    @relation("project_approvals_action_by", fields: [action_by], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "project_approvals_action_by_fkey")
 }
 
 model project_documents {
@@ -452,7 +466,10 @@ model project_documents {
   file_size     Int?
   uploaded_by   Int?
   created_at    DateTime? @default(now()) @db.Timestamp(6)
-  projects      projects  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  projects      projects  @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users         users?    @relation("project_documents_uploaded_by", fields: [uploaded_by], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "project_documents_uploaded_by_fkey")
+
+  @@index([project_id], map: "idx_project_documents_project")
 }
 
 model roles {
@@ -585,35 +602,35 @@ model teacher_positions {
 }
 
 model teachers {
-  id                        Int                      @id
-  user_id                   Int?                     @unique
-  teacher_code              String                   @unique(map: "teachers_teacher_code_unique") @db.VarChar(20)
-  first_name                String                   @db.VarChar(100)
-  last_name                 String                   @db.VarChar(100)
-  phone                     String?                  @db.VarChar(20)
-  hire_date                 DateTime?                @db.Date
-  status                    String?                  @default("active") @db.VarChar(20)
-  created_at                DateTime?                @default(now()) @db.Timestamp(6)
-  updated_at                DateTime?                @default(now()) @db.Timestamp(6)
-  position_id               Int?
+  id           Int       @id
+  user_id      Int?      @unique
+  teacher_code String    @unique(map: "teachers_teacher_code_unique") @db.VarChar(20)
+  first_name   String    @db.VarChar(100)
+  last_name    String    @db.VarChar(100)
+  phone        String?   @db.VarChar(20)
+  hire_date    DateTime? @db.Date
+  status       String?   @default("active") @db.VarChar(20)
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
+  updated_at   DateTime? @default(now()) @db.Timestamp(6)
+  position_id  Int?
 
-  prefix_id                 Int?
-  department_id             Int?
-  employment_type_id        Int?
-  birth_date                DateTime?                @db.Date
-  salary                    Decimal?                 @db.Decimal(10, 2)
-  blood_type                String?                  @db.VarChar(5)
-  teacher_national_id       String?                  @unique(map: "teachers_national_id_unique") @db.VarChar(13)
-  classroom_assignments     classroom_assignments[]
-  events                    events[]
-  final_grades              final_grades[]
-  projects                  projects[]
-  project_activities        project_activities[]
-  employment_types          employment_types?        @relation(fields: [employment_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_teacher_employment_types")
-  departments               departments?             @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  teacher_positions         teacher_positions?       @relation(fields: [position_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  name_prefixes             name_prefixes?           @relation(fields: [prefix_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users                     users?                   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  prefix_id             Int?
+  department_id         Int?
+  employment_type_id    Int?
+  birth_date            DateTime?               @db.Date
+  salary                Decimal?                @db.Decimal(10, 2)
+  blood_type            String?                 @db.VarChar(5)
+  teacher_national_id   String?                 @unique(map: "teachers_national_id_unique") @db.VarChar(13)
+  classroom_assignments classroom_assignments[]
+  events                events[]
+  final_grades          final_grades[]
+  projects              projects[]
+  project_activities    project_activities[]
+  employment_types      employment_types?       @relation(fields: [employment_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_teacher_employment_types")
+  departments           departments?            @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  teacher_positions     teacher_positions?      @relation(fields: [position_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  name_prefixes         name_prefixes?          @relation(fields: [prefix_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                 users?                  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model users {
@@ -631,7 +648,13 @@ model users {
   events                 events[]
   health_checkup_records health_checkup_records[]
   notifications          notifications[]
-  project_expenses       project_expenses[]
+  project_expenses       project_expenses[]       @relation("project_expenses_recorded_by")
+  approved_expenses      project_expenses[]       @relation("project_expenses_approved_by")
+  projects_created       projects[]               @relation("projects_created_by")
+  projects_submitted     projects[]               @relation("projects_submitted_by")
+  projects_approved      projects[]               @relation("projects_approved_by")
+  project_approvals      project_approvals[]      @relation("project_approvals_action_by")
+  project_documents      project_documents[]      @relation("project_documents_uploaded_by")
   students               students?
   teachers               teachers?
   roles                  roles                    @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -895,7 +918,6 @@ enum enum_peyment_method {
   TRANSFER @map("โอน")
   CHEQUE   @map("เช็ค")
 }
-
 
 enum enum_student_status {
   active
