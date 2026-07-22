@@ -141,13 +141,13 @@ async function ensureStudentCanEvaluateAdvisor(student_id: number, teacher_id: n
     const latestAssignment: any[] = await prisma.$queryRawUnsafe(`
         SELECT classroom_id FROM classroom_students 
         WHERE student_id = $1 
-        ORDER BY academic_year DESC LIMIT 1
+        ORDER BY academic_year_id DESC LIMIT 1
     `, student_id);
     
     if (!latestAssignment[0]) return false;
 
     const advisor: any[] = await prisma.$queryRawUnsafe(`
-        SELECT id FROM classroom_advisors 
+        SELECT id FROM classroom_assignments
         WHERE classroom_id = $1 AND teacher_id = $2
         LIMIT 1
     `, latestAssignment[0].classroom_id, teacher_id);

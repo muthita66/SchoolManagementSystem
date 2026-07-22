@@ -16,9 +16,36 @@ function assertEditableAttendanceDate(date: string) {
     }
 }
 
+function normalizeAttendanceStatus(status: string) {
+    const value = String(status || '').trim().toLowerCase();
+    if (value === 'absent' || value === 'ขาด') return 'absent';
+    if (value === 'late' || value === 'สาย') return 'late';
+    if (value === 'leave' || value === 'ลา') return 'leave';
+    return 'present';
+}
+
+async function resolveAttendanceStatusId(status: string) {
+    const normalized = normalizeAttendanceStatus(status);
+    const existing = await prisma.attendance_status.findFirst({
+        where: { status_name: normalized },
+        select: { id: true },
+    });
+    if (existing) return existing.id;
+
+    const latest = await prisma.attendance_status.findFirst({
+        orderBy: { id: 'desc' },
+        select: { id: true },
+    });
+    const created = await prisma.attendance_status.create({
+        data: { id: (latest?.id || 0) + 1, status_name: normalized },
+        select: { id: true },
+    });
+    return created.id;
+}
+
 export const TeacherAttendanceService = {
     async getAdvisorClassrooms(teacher_id: number) {
-        const advisors = await prisma.classroom_advisors.findMany({
+        const advisors = await prisma.classroom_assignments.findMany({
             where: { teacher_id },
             include: {
                 classrooms: {
@@ -34,17 +61,29 @@ export const TeacherAttendanceService = {
             if (!room) return null;
             return {
                 classroom_id: room.id,
-                class_level: room.levels?.name || '',
+                class_level: room.levels?.grade_level_name || '',
                 room: room.room_name,
-                label: room.levels?.name || '',
+                label: room.levels?.grade_level_name || '',
             };
         }).filter(Boolean);
     },
 
     async getAttendanceList(teacher_id: number, classroom_id: number, date: string) {
+        const teacher = await prisma.teachers.findFirst({
+            where: { OR: [{ id: teacher_id }, { user_id: teacher_id }] },
+            select: { id: true },
+        });
+        if (!teacher) throw new Error('Teacher not found');
+
+        const authorized = await prisma.classroom_assignments.findFirst({
+            where: { teacher_id: teacher.id, classroom_id },
+            select: { id: true, academic_year_id: true },
+        });
+        if (!authorized) throw new Error('Classroom is not assigned to this teacher');
+
         // Get students in this classroom
         const classroomStudents = await prisma.classroom_students.findMany({
-            where: { classroom_id },
+            where: { classroom_id, academic_year_id: authorized.academic_year_id },
             include: {
                 students: {
                     include: { name_prefixes: true }
@@ -52,21 +91,13 @@ export const TeacherAttendanceService = {
             }
         });
 
-        // Find or create attendance session for this date
-        let session = await prisma.attendance_sessions.findFirst({
-            where: {
-                classroom_id,
-                session_date: new Date(date),
-            }
-        });
-
-        // Get existing records if session exists
-        let existingRecords: any[] = [];
-        if (session) {
-            existingRecords = await prisma.attendance_records.findMany({
-                where: { attendance_session_id: session.id }
-            });
-        }
+        const studentIds = classroomStudents.map((row) => row.student_id);
+        const existingRecords = studentIds.length > 0
+            ? await prisma.attendance_records.findMany({
+                where: { student_id: { in: studentIds }, check_date: new Date(date) },
+                include: { attendance_status: true },
+            })
+            : [];
 
         return classroomStudents.map(cs => {
             const student = cs.students;
@@ -78,7 +109,7 @@ export const TeacherAttendanceService = {
                 prefix: student.name_prefixes?.prefix_name || '',
                 first_name: student.first_name,
                 last_name: student.last_name,
-                status: record?.status || null,
+                status: record?.attendance_status?.status_name || null,
                 remark: record?.remark || '',
                 record_id: record?.id || null,
             };
@@ -135,48 +166,35 @@ export const TeacherAttendanceService = {
         date: string,
         records: AttendanceRecordInput[]
     ) {
-        // Find or create session
-        let session = await prisma.attendance_sessions.findFirst({
-            where: {
-                classroom_id,
-                session_date: new Date(date),
-            }
-        });
+        const classroomStudentIds = new Set(
+            (await prisma.classroom_students.findMany({
+                where: { classroom_id },
+                select: { student_id: true },
+            })).map((row) => row.student_id)
+        );
 
-        if (!session) {
-            session = await prisma.attendance_sessions.create({
-                data: {
-                    classroom_id,
-                    session_date: new Date(date),
-                }
-            });
-        }
-
-        // Upsert records
         for (const rec of records) {
             if (!rec.student_id) continue;
-            const existing = await prisma.attendance_records.findFirst({
-                where: {
-                    attendance_session_id: session.id,
-                    student_id: rec.student_id,
-                }
-            });
-
-            if (existing) {
-                await prisma.attendance_records.update({
-                    where: { id: existing.id },
-                    data: { status: rec.status, remark: rec.remark || null }
-                });
-            } else {
-                await prisma.attendance_records.create({
-                    data: {
-                        attendance_session_id: session.id,
-                        student_id: rec.student_id,
-                        status: rec.status,
-                        remark: rec.remark || null,
-                    }
-                });
+            if (!classroomStudentIds.has(rec.student_id)) {
+                throw new Error(`Student ${rec.student_id} is not in classroom ${classroom_id}`);
             }
+
+            const status_id = await resolveAttendanceStatusId(rec.status);
+            await prisma.attendance_records.upsert({
+                where: {
+                    student_id_check_date: {
+                        student_id: rec.student_id,
+                        check_date: new Date(date),
+                    },
+                },
+                update: { status_id, remark: rec.remark || null },
+                create: {
+                    student_id: rec.student_id,
+                    check_date: new Date(date),
+                    status_id,
+                    remark: rec.remark || null,
+                },
+            });
         }
 
         return { success: true };

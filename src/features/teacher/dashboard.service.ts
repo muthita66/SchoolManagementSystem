@@ -17,7 +17,7 @@ export const TeacherDashboardService = {
         }
 
         // Count advisory students
-        const advisorLinks = await prisma.classroom_advisors.findMany({
+        const advisorLinks = await prisma.classroom_assignments.findMany({
             where: { teacher_id },
             select: { classroom_id: true }
         });

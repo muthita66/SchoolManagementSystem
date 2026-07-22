@@ -436,7 +436,7 @@ function CrudFeature({
                     <div className="flex flex-1 w-full gap-3">
                         <input
                             className="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none"
-                            placeholder={searchLabel || "ค้นหา..."}
+                            placeholder={searchLabel || "ค้นหาชื่อ..."}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && load()}
@@ -587,17 +587,14 @@ function CrudFeature({
 }
 export function TeachersFeature() {
     const [positionOptions, setPositionOptions] = useState<{ id: number; title: string }[]>([]);
-    const [subjectGroupOptions, setSubjectGroupOptions] = useState<{ id: number; group_name: string }[]>([]);
     const [gradeLevelOptions, setGradeLevelOptions] = useState<string[]>([]);
 
     useEffect(() => {
         DirectorApiService.getTeacherPositions().then(setPositionOptions).catch(() => { });
-        DirectorApiService.getLearningSubjectGroups().then(setSubjectGroupOptions).catch(() => { });
         DirectorApiService.getGradeLevels().then(setGradeLevelOptions).catch(() => { });
     }, []);
 
     const posSelectOptions = ["", ...positionOptions.map(p => p.title)];
-    const groupSelectOptions = ["", ...subjectGroupOptions.map(g => g.group_name)];
 
     return (
         <CrudFeature
@@ -608,20 +605,16 @@ export function TeachersFeature() {
             fetchFn={(s) => DirectorApiService.getTeachers(s)}
             createFn={(data) => {
                 const pos = positionOptions.find(p => p.title === data.position);
-                const group = subjectGroupOptions.find(g => g.group_name === data.department);
                 return DirectorApiService.createTeacher({
                     ...data,
-                    position_id: pos?.id,
-                    learning_subject_group_id: group?.id
+                    position_id: pos?.id
                 });
             }}
             editFn={(id, data) => {
                 const pos = positionOptions.find(p => p.title === data.position);
-                const group = subjectGroupOptions.find(g => g.group_name === data.department);
                 return DirectorApiService.updateTeacher(id, {
                     ...data,
-                    position_id: pos?.id,
-                    learning_subject_group_id: group?.id
+                    position_id: pos?.id
                 });
             }}
             deleteFn={(id) => DirectorApiService.deleteTeacher(id)}
@@ -649,7 +642,6 @@ export function TeachersFeature() {
                     { key: "prefix", label: "คำนำหน้า", type: "select", options: ["เลือกคำนำหน้า", "นาย", "นาง", "นางสาว"] },
                     { key: "first_name", label: "ชื่อ" },
                     { key: "last_name", label: "นามสกุล" },
-                    { key: "department", label: "กลุ่มสาระการเรียนรู้", type: "select", options: groupSelectOptions },
                     { key: "position", label: "ตำแหน่ง", type: "select", options: posSelectOptions },
                     { key: "phone", label: "เบอร์โทรศัพท์" },
                     { key: "status", label: "สถานะ", type: "select", options: ["เลือกสถานะ", "ปกติ", "เกษียน"] },
@@ -662,7 +654,6 @@ export function TeachersFeature() {
                     { key: "prefix", label: "คำนำหน้า", type: "select", options: ["", "นาย", "นาง", "นางสาว"] },
                     { key: "first_name", label: "ชื่อ" },
                     { key: "last_name", label: "นามสกุล" },
-                    { key: "department", label: "กลุ่มสาระการเรียนรู้", type: "select", options: groupSelectOptions },
                     { key: "position", label: "ตำแหน่ง", type: "select", options: posSelectOptions },
                     { key: "phone", label: "เบอร์โทรศัพท์" },
                     { key: "status", label: "สถานะ", type: "select", options: ["เลือกสถานะ", "ปกติ", "เกษียน"] },
@@ -671,7 +662,6 @@ export function TeachersFeature() {
             columns={[
                 { key: "teacher_code", label: "รหัสครู" },
                 { key: "first_name", label: "ชื่อ", render: (_, r) => `${r.prefix || ""}${r.first_name || ""} ${r.last_name || ""}` },
-                { key: "department", label: "กลุ่มสาระการเรียนรู้" },
                 { key: "position", label: "ตำแหน่ง" },
                 { key: "advisor_class", label: "ครูที่ปรึกษา" },
                 { key: "phone", label: "เบอร์โทรศัพท์" },
@@ -984,6 +974,13 @@ export function ProjectsFeature() {
     const ptOptions = projectTypes.map(p => ({ id: p.id, label: p.name }));
     const btOptions = budgetTypes.map(b => ({ id: b.id, label: b.name }));
 
+    const runProjectAction = async (id: number, action: string) => {
+        const note = action === "REJECT" ? (window.prompt("เหตุผลที่ไม่อนุมัติ") || "") : undefined;
+        if (action === "REJECT" && !note) return;
+        await DirectorApiService.changeProjectStatus(id, action, note);
+        window.location.reload();
+    };
+
     return (
         <CrudFeature
             title="โครงการและงบประมาณนักเรียน"
@@ -1016,6 +1013,7 @@ export function ProjectsFeature() {
             deleteFn={(id) => DirectorApiService.deleteProject(id)}
             createFields={() => [
                 { key: "name", label: "ชื่อโครงการ", required: true },
+                { key: "project_code", label: "รหัสโครงการ" },
                 { key: "project_type", label: "ประเภท", type: "select", options: ["", ...ptOptions.map(o => o.label)] },
                 {
                     key: "department_id",
@@ -1047,13 +1045,21 @@ export function ProjectsFeature() {
                 { key: "start_date", label: "วันที่เริ่ม", type: "date" },
                 { key: "end_date", label: "วันที่สิ้นสุด", type: "date" },
                 { key: "description", label: "วัตถุประสงค์", multiline: true },
+                { key: "rationale", label: "หลักการและเหตุผล", multiline: true },
+                { key: "objectives_text", label: "วัตถุประสงค์ (หนึ่งข้อต่อหนึ่งบรรทัด)", multiline: true },
+                { key: "indicators_text", label: "ตัวชี้วัด: ชื่อ | ค่าเป้าหมาย | หน่วย", multiline: true },
+                { key: "activities_text", label: "กิจกรรม: ชื่อ | วันเริ่ม | วันสิ้นสุด | งบ", multiline: true },
+                { key: "documents_text", label: "เอกสาร: ชื่อไฟล์ | ที่อยู่ไฟล์ | ประเภท", multiline: true },
+                { key: "expected_outcomes", label: "ผลที่คาดว่าจะได้รับ", multiline: true },
+                { key: "target_participants", label: "จำนวนกลุ่มเป้าหมาย", type: "number" },
                 { key: "budget_type", label: "ประเภทงบ", type: "select", options: ["", ...btOptions.map(o => o.label)] },
                 { key: "budget_total", label: "งบประมาณรวมทั้งหมด", type: "number" },
-                { key: "budget_used_sem1", label: "งบประมาณภาคเรียนที่ 1", type: "number" },
-                { key: "budget_used_sem2", label: "งบประมาณภาคเรียนที่ 2", type: "number" },
+                { key: "budget_plan_sem1", label: "แผนงบประมาณภาคเรียนที่ 1", type: "number" },
+                { key: "budget_plan_sem2", label: "แผนงบประมาณภาคเรียนที่ 2", type: "number" },
             ]}
             editFields={() => [
                 { key: "name", label: "ชื่อโครงการ", required: true },
+                { key: "project_code", label: "รหัสโครงการ" },
                 { key: "project_type", label: "ประเภท", type: "select", options: ["", ...ptOptions.map(o => o.label)] },
                 {
                     key: "department_id",
@@ -1085,10 +1091,17 @@ export function ProjectsFeature() {
                 { key: "start_date", label: "วันที่เริ่ม", type: "date" },
                 { key: "end_date", label: "วันที่สิ้นสุด", type: "date" },
                 { key: "description", label: "วัตถุประสงค์", multiline: true },
+                { key: "rationale", label: "หลักการและเหตุผล", multiline: true },
+                { key: "objectives_text", label: "วัตถุประสงค์ (หนึ่งข้อต่อหนึ่งบรรทัด)", multiline: true },
+                { key: "indicators_text", label: "ตัวชี้วัด: ชื่อ | ค่าเป้าหมาย | หน่วย", multiline: true },
+                { key: "activities_text", label: "กิจกรรม: ชื่อ | วันเริ่ม | วันสิ้นสุด | งบ", multiline: true },
+                { key: "documents_text", label: "เอกสาร: ชื่อไฟล์ | ที่อยู่ไฟล์ | ประเภท", multiline: true },
+                { key: "expected_outcomes", label: "ผลที่คาดว่าจะได้รับ", multiline: true },
+                { key: "target_participants", label: "จำนวนกลุ่มเป้าหมาย", type: "number" },
                 { key: "budget_type", label: "ประเภทงบ", type: "select", options: ["", ...btOptions.map(o => o.label)] },
                 { key: "budget_total", label: "งบประมาณรวม", type: "number" },
-                { key: "budget_used_sem1", label: "ใช้ไป เทอม 1", type: "number" },
-                { key: "budget_used_sem2", label: "ใช้ไป เทอม 2", type: "number" },
+                { key: "budget_plan_sem1", label: "แผนงบประมาณภาคเรียนที่ 1", type: "number" },
+                { key: "budget_plan_sem2", label: "แผนงบประมาณภาคเรียนที่ 2", type: "number" },
             ]}
             columns={[
                 {
@@ -1117,10 +1130,22 @@ export function ProjectsFeature() {
                     key: "year_label",
                     label: "ปีการศึกษา",
                 },
+                { key: "status", label: "สถานะ" },
             ]}
             renderDetail={(item) => (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-white p-7 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-pink-50 opacity-20 -mr-10 -mt-10 rounded-full"></div>
+
+                    <div className="md:col-span-2 lg:col-span-3 flex flex-wrap gap-2 relative z-10">
+                        {item.status === "PLANNING" && <button onClick={() => runProjectAction(item.id, "SUBMIT")} className="px-3 py-2 rounded-lg bg-pink-600 text-white text-sm">ส่งอนุมัติ</button>}
+                        {item.status === "PENDING_APPROVAL" && <>
+                            <button onClick={() => runProjectAction(item.id, "APPROVE")} className="px-3 py-2 rounded-lg bg-green-600 text-white text-sm">อนุมัติ</button>
+                            <button onClick={() => runProjectAction(item.id, "REJECT")} className="px-3 py-2 rounded-lg bg-red-600 text-white text-sm">ไม่อนุมัติ</button>
+                        </>}
+                        {item.status === "APPROVED" && <button onClick={() => runProjectAction(item.id, "START")} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm">เริ่มดำเนินการ</button>}
+                        {item.status === "IN_PROGRESS" && <button onClick={() => runProjectAction(item.id, "COMPLETE")} className="px-3 py-2 rounded-lg bg-green-700 text-white text-sm">เสร็จสิ้นโครงการ</button>}
+                        {!['COMPLETED', 'CANCELLED'].includes(item.status) && <button onClick={() => runProjectAction(item.id, "CANCEL")} className="px-3 py-2 rounded-lg bg-slate-600 text-white text-sm">ยกเลิกโครงการ</button>}
+                    </div>
 
                     <div className="space-y-1.5">
                         <p className="text-xs font-semibold text-slate-500">ฝ่ายที่รับผิดชอบ</p>
@@ -1140,11 +1165,19 @@ export function ProjectsFeature() {
                     </div>
 
                     <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1.5">
-                        <p className="text-xs font-semibold text-slate-500">งบประมาณภาคเรียนที่ 1</p>
+                        <p className="text-xs font-semibold text-slate-500">แผนงบ ภาคเรียนที่ 1</p>
+                        <p className="text-lg font-bold text-slate-800">{Number(item.budget_plan_sem1 || 0).toLocaleString("th-TH")} <span className="text-sm font-normal text-slate-500">บาท</span></p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1.5">
+                        <p className="text-xs font-semibold text-slate-500">แผนงบ ภาคเรียนที่ 2</p>
+                        <p className="text-lg font-bold text-slate-800">{Number(item.budget_plan_sem2 || 0).toLocaleString("th-TH")} <span className="text-sm font-normal text-slate-500">บาท</span></p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1.5">
+                        <p className="text-xs font-semibold text-slate-500">ใช้จ่ายจริง ภาคเรียนที่ 1</p>
                         <p className="text-lg font-bold text-pink-600">{(item.budget_used_sem1 || 0).toLocaleString("th-TH")} <span className="text-sm font-normal text-slate-500">บาท</span></p>
                     </div>
                     <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1.5">
-                        <p className="text-xs font-semibold text-slate-500">งบประมาณภาคเรียนที่ 2</p>
+                        <p className="text-xs font-semibold text-slate-500">ใช้จ่ายจริง ภาคเรียนที่ 2</p>
                         <p className="text-lg font-bold text-pink-600">{(item.budget_used_sem2 || 0).toLocaleString("th-TH")} <span className="text-sm font-normal text-slate-500">บาท</span></p>
                     </div>
                     <div className="p-4 rounded-xl bg-pink-600 text-white flex flex-col gap-1.5 shadow-md shadow-pink-200">
@@ -1160,6 +1193,10 @@ export function ProjectsFeature() {
                         <p className="text-[15px] text-slate-700 leading-relaxed whitespace-pre-wrap pl-4 border-l-2 border-pink-100 font-medium">
                             {item.description || "— ไม่ระบุวัตถุประสงค์โครงการ —"}
                         </p>
+                        {item.rationale && <p className="text-sm text-slate-700 whitespace-pre-wrap"><strong>หลักการและเหตุผล:</strong> {item.rationale}</p>}
+                        {item.objectives_text && <p className="text-sm text-slate-700 whitespace-pre-wrap"><strong>วัตถุประสงค์:</strong>{"\n"}{item.objectives_text}</p>}
+                        {item.expected_outcomes && <p className="text-sm text-slate-700 whitespace-pre-wrap"><strong>ผลที่คาดว่าจะได้รับ:</strong> {item.expected_outcomes}</p>}
+                        {item.target_participants != null && <p className="text-sm text-slate-700"><strong>กลุ่มเป้าหมาย:</strong> {Number(item.target_participants).toLocaleString("th-TH")} คน</p>}
                     </div>
                 </div>
             )}
@@ -1210,7 +1247,12 @@ export function FinanceFeature() {
                 { key: "category_id", label: "หมวดหมู่", type: "select", options: ["", ...categoryOptions.map(o => o.label)] },
                 { key: "amount", label: "จำนวนเงิน", type: "number", required: true },
                 { key: "date", label: "วันที่เบิกจ่าย", type: "date" },
+                { key: "vendor_name", label: "ผู้รับเงิน / ร้านค้า" },
+                { key: "disbursement_number", label: "เลขที่เอกสารเบิกจ่าย" },
+                { key: "payment_method", label: "วิธีชำระเงิน", type: "select", options: ["", "เงินสด", "โอน", "เช็ค"] },
                 { key: "receipt_number", label: "เลขที่ใบเสร็จ" },
+                { key: "receipt_file", label: "ที่อยู่ไฟล์ใบเสร็จ" },
+                { key: "note", label: "หมายเหตุ", multiline: true },
             ]}
             editFields={() => [
                 { key: "project_id", label: "โครงการ", type: "select", options: ["", ...projectOptions.map(o => o.label)], required: true },
@@ -1218,14 +1260,22 @@ export function FinanceFeature() {
                 { key: "category_id", label: "หมวดหมู่", type: "select", options: ["", ...categoryOptions.map(o => o.label)] },
                 { key: "amount", label: "จำนวนเงิน", type: "number", required: true },
                 { key: "date", label: "วันที่เบิกจ่าย", type: "date" },
+                { key: "vendor_name", label: "ผู้รับเงิน / ร้านค้า" },
+                { key: "disbursement_number", label: "เลขที่เอกสารเบิกจ่าย" },
+                { key: "payment_method", label: "วิธีชำระเงิน", type: "select", options: ["", "เงินสด", "โอน", "เช็ค"] },
                 { key: "receipt_number", label: "เลขที่ใบเสร็จ" },
+                { key: "receipt_file", label: "ที่อยู่ไฟล์ใบเสร็จ" },
+                { key: "note", label: "หมายเหตุ", multiline: true },
             ]}
             columns={[
                 { key: "date", label: "วันที่", render: (v) => v ? new Date(v).toLocaleDateString('th-TH') : '-' },
                 { key: "project_name", label: "โครงการ" },
                 { key: "title", label: "รายการ" },
                 { key: "category_name", label: "หมวดหมู่" },
+                { key: "semester", label: "ภาคเรียน" },
                 { key: "amount", label: "จำนวนเงิน", render: (v) => (v ? `${Number(v).toLocaleString('th-TH')} ฿` : '0 ฿') },
+                { key: "vendor_name", label: "ผู้รับเงิน / ร้านค้า" },
+                { key: "status", label: "สถานะ" },
                 { key: "receipt_number", label: "เลขที่ใบเสร็จ" },
             ]}
         />

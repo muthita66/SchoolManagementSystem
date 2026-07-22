@@ -69,7 +69,7 @@ const ACTOR_DEFINITIONS: {
         { name: 'subject_categories', label: 'หมวดวิชา', group: 'master', groupLabel: 'ข้อมูลพื้นฐาน' },
         { name: 'teacher_positions', label: 'ตำแหน่งครู', group: 'master', groupLabel: 'ข้อมูลพื้นฐาน' },
         { name: 'learning_subject_groups', label: 'กลุ่มสาระ', group: 'master', groupLabel: 'ข้อมูลพื้นฐาน' },
-        { name: 'classroom_advisors', label: 'ครูที่ปรึกษา', group: 'master', groupLabel: 'ข้อมูลพื้นฐาน' },
+        { name: 'classroom_assignments', label: 'ครูประจำชั้น', group: 'master', groupLabel: 'ข้อมูลพื้นฐาน' },
 
         // System
         { name: 'audit_logs', label: 'ล็อกระบบ', group: 'system', groupLabel: 'ระบบ' },

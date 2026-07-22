@@ -13,9 +13,16 @@ function roomOnlyLabel(classLevel: string, roomName: string) {
     const level = String(classLevel || '').trim();
     const room = String(roomName || '').trim();
     if (!room) return '';
+    // Elementary classrooms may use the grade name as the room name. Do not
+    // render the same value twice (for example "ประถมศึกษาปีที่ 1/ประถมศึกษาปีที่ 1").
+    if (level && room === level) return '';
     if (level && room.startsWith(`${level}/`)) return room.slice(level.length + 1).trim();
     const slash = room.lastIndexOf('/');
     return slash >= 0 ? room.slice(slash + 1).trim() : room;
+}
+
+function getGradeLevelName(levels: any) {
+    return String((levels as any)?.grade_level_name || '').trim();
 }
 
 async function resolveAdvisorTerm(year?: number, semester?: number) {
@@ -50,9 +57,9 @@ function mapAdvisorRecord(
         id: row.id,
         teacher_id: row.teacher_id,
         classroom_id: row.classroom_id,
-        class_level: String((row.classrooms as any)?.levels?.name || ''),
+        class_level: getGradeLevelName((row.classrooms as any)?.levels),
         room: roomOnlyLabel(
-            String((row.classrooms as any)?.levels?.name || ''),
+            getGradeLevelName((row.classrooms as any)?.levels),
             String(row.classrooms?.room_name || '')
         ),
         year: term.year,
@@ -128,13 +135,13 @@ async function resolveClassroomIdFromPayload(data: any) {
 
     const classrooms = await prisma.classrooms.findMany({
         include: {
-            levels: { select: { name: true } },
+            levels: { select: { grade_level_name: true } },
         },
         orderBy: [{ grade_level_id: 'asc' }, { room_name: 'asc' }],
     });
 
     if (classLevel && !classroomName) {
-        const classroomByLevel = classrooms.find((c) => String(c.levels?.name || '') === classLevel);
+        const classroomByLevel = classrooms.find((c) => getGradeLevelName(c.levels) === classLevel);
         if (!classroomByLevel) throw new Error(`ไม่พบระดับชั้น ${classLevel}`);
         return classroomByLevel.id;
     }
@@ -142,7 +149,7 @@ async function resolveClassroomIdFromPayload(data: any) {
     if (!classLevel || !classroomName) return null;
 
     const classroom = classrooms.find((c) => {
-        const levelName = String(c.levels?.name || '');
+        const levelName = getGradeLevelName(c.levels);
         const fullRoomName = String(c.room_name || '');
         const shortRoomName = roomOnlyLabel(levelName, fullRoomName);
         if (classLevel && levelName !== classLevel) return false;
@@ -154,6 +161,58 @@ async function resolveClassroomIdFromPayload(data: any) {
     }
 
     return classroom.id;
+}
+
+async function resolveProjectExpenseSemesterId(projectId: number, expenseDate: Date) {
+    const project = await prisma.projects.findUnique({
+        where: { id: projectId },
+        select: { academic_year_id: true },
+    });
+    if (!project) throw new Error('Project not found');
+    if (!project.academic_year_id) return null;
+
+    const byDate = await prisma.semesters.findFirst({
+        where: {
+            academic_year_id: project.academic_year_id,
+            start_date: { lte: expenseDate },
+            end_date: { gte: expenseDate },
+        },
+        select: { id: true },
+        orderBy: { semester_number: 'asc' },
+    });
+    if (byDate) return byDate.id;
+
+    const fallback = await prisma.semesters.findFirst({
+        where: { academic_year_id: project.academic_year_id },
+        select: { id: true },
+        orderBy: [{ is_active: 'desc' }, { semester_number: 'asc' }],
+    });
+    return fallback?.id ?? null;
+}
+
+function normalizeProjectTextLines(value: unknown) {
+    if (Array.isArray(value)) {
+        return value.map((item) => String(item || '').trim()).filter(Boolean);
+    }
+    return String(value || '').split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
+}
+
+function parseProjectRows(value: unknown) {
+    return normalizeProjectTextLines(value).map((line) => line.split('|').map((part) => part.trim()));
+}
+
+function normalizeProjectStatus(value: unknown) {
+    const status = String(value || 'PLANNING').trim().toUpperCase().replace(/\s+/g, '_');
+    const allowed = new Set(['PLANNING', 'PENDING_APPROVAL', 'APPROVED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'REJECTED']);
+    return allowed.has(status) ? status : 'PLANNING';
+}
+
+async function resolveProjectSemesterIds(academicYearId: number) {
+    const rows = await prisma.semesters.findMany({
+        where: { academic_year_id: academicYearId, semester_number: { in: [1, 2] } },
+        select: { id: true, semester_number: true },
+    });
+    return new Map(rows.map((row) => [row.semester_number, row.id]));
 }
 
 async function upsertSingleClassSchedule(teachingAssignmentId: number, data: any) {
@@ -256,8 +315,7 @@ export const DirectorService = {
                 name_prefixes: true,
                 teacher_positions: true,
                 departments: true,
-                learning_subject_groups: true,
-                classroom_advisors: {
+                classroom_assignments: {
                     include: {
                         classrooms: {
                             include: { levels: true }
@@ -269,8 +327,8 @@ export const DirectorService = {
         });
 
         return rows.map(r => {
-            const advisor = r.classroom_advisors?.[0];
-            const classLevel = advisor?.classrooms?.levels?.name || '';
+            const advisor = r.classroom_assignments?.[0];
+            const classLevel = getGradeLevelName(advisor?.classrooms?.levels);
             const room = roomOnlyLabel(classLevel, advisor?.classrooms?.room_name || '');
             const classRoom = classLevel && room ? `${classLevel}/${room}` : (classLevel || room || '');
 
@@ -278,8 +336,6 @@ export const DirectorService = {
                 ...r,
                 prefix: r.name_prefixes?.prefix_name || '',
                 department_id: r.department_id,
-                learning_subject_group_id: r.learning_subject_group_id,
-                department: r.learning_subject_groups?.group_name || '',
                 position: r.teacher_positions?.title || '',
                 advisor_class: classRoom,
                 advisor_level: classLevel,
@@ -316,7 +372,6 @@ export const DirectorService = {
                 prefix_id: data.prefix_id || null,
                 position_id: data.position_id || null,
                 department_id: data.department_id || null,
-                learning_subject_group_id: data.learning_subject_group_id || null,
             }
         });
     },
@@ -385,8 +440,9 @@ export const DirectorService = {
             where,
             include: {
                 name_prefixes: true,
-                classroom_students: { 
+                classroom_students: {
                     include: { classrooms: { include: { levels: true } } },
+                    orderBy: { academic_year_id: 'desc' },
                     take: 1
                 },
                 genders: true,
@@ -398,7 +454,7 @@ export const DirectorService = {
         const mapped = (rows as any[]).map(r => {
             const cs = r.classroom_students?.[0];
             const currentClassroom = cs?.classrooms;
-            const classLevel = currentClassroom?.levels?.name || '';
+            const classLevel = getGradeLevelName(currentClassroom?.levels);
             const roomName = currentClassroom?.room_name || '';
 
             return {
@@ -547,7 +603,7 @@ export const DirectorService = {
         const counts = new Map<string, { class_level: string; total: number; male: number; female: number }>();
         (students as any[]).forEach(s => {
             const currentClassroom = s.classroom_students?.[0]?.classrooms;
-            const level = (currentClassroom?.levels?.name || 'ไม่ระบุ').trim();
+            const level = (getGradeLevelName(currentClassroom?.levels) || 'ไม่ระบุ').trim();
 
             const isMale = maleGender && s.gender_id === maleGender.id;
             const isFemale = femaleGender && s.gender_id === femaleGender.id;
@@ -667,7 +723,7 @@ export const DirectorService = {
             name: r.subject_name,
             subject_type: r.subject_categories?.category_name || '',
             subject_group: r.learning_subject_groups?.group_name || '',
-            level: (r as any).level || (r.teaching_assignments?.[0]?.classrooms as any)?.levels?.name || deriveLevelFromCode(r.subject_code),
+            level: (r as any).level || getGradeLevelName((r.teaching_assignments?.[0]?.classrooms as any)?.levels) || deriveLevelFromCode(r.subject_code),
         }));
     },
 
@@ -750,7 +806,7 @@ export const DirectorService = {
                 ...row,
                 year: row.semesters?.academic_years?.year_name || '',
                 semester: row.semesters?.semester_number || null,
-                class_level: row.classrooms?.levels?.name || '',
+                class_level: getGradeLevelName(row.classrooms?.levels),
                 classroom: row.classrooms?.room_name || '',
                 day_of_week: dayName,
                 time_range: timeRange,
@@ -838,7 +894,7 @@ export const DirectorService = {
         return prisma.teaching_assignments.delete({ where: { id } });
     },
 
-    // --- Advisors (use classroom_advisors + classrooms/levels) ---
+    // --- Homeroom teachers (classroom_assignments is the source of truth) ---
     async getAdvisors(filters?: { year?: number; semester?: number; class_level?: string; room?: string }) {
         const term = await resolveAdvisorTerm(filters?.year, filters?.semester);
         const where: any = {};
@@ -846,7 +902,7 @@ export const DirectorService = {
         if (filters?.class_level || filters?.room) {
             where.classrooms = {};
             if (filters.class_level) {
-                where.classrooms.levels = { name: { contains: filters.class_level.trim(), mode: 'insensitive' } };
+                where.classrooms.levels = { grade_level_name: { contains: filters.class_level.trim(), mode: 'insensitive' } };
             }
             if (filters.room) {
                 const r = filters.room.trim();
@@ -858,7 +914,7 @@ export const DirectorService = {
             }
         }
 
-        const rows = await prisma.classroom_advisors.findMany({
+        const rows = await prisma.classroom_assignments.findMany({
             where,
             include: {
                 teachers: {
@@ -869,11 +925,18 @@ export const DirectorService = {
                         levels: true,
                     },
                 },
+                academic_years: true,
             },
-            orderBy: { id: 'asc' },
+            orderBy: [{ academic_year_id: 'desc' }, { id: 'desc' }],
         });
 
-        return rows
+        // A primary homeroom teacher belongs to one room permanently. Older yearly
+        // rows may still exist, so expose only the newest assignment per teacher.
+        const latestRows = rows.filter((row, index, all) =>
+            all.findIndex((candidate) => candidate.teacher_id === row.teacher_id) === index
+        );
+
+        return latestRows
             .map((row) => mapAdvisorRecord(row, term))
             .sort((a, b) =>
                 String(a.class_level || '').localeCompare(String(b.class_level || ''), 'th')
@@ -906,23 +969,27 @@ export const DirectorService = {
         });
         if (!classroom_id) throw new Error('Classroom not found');
 
-        const duplicate = await prisma.classroom_advisors.findFirst({
-            where: {
-                teacher_id,
-                classroom_id,
-            },
-            select: { id: true },
-        });
-        if (duplicate) throw new Error('Advisor assignment already exists');
+        const academic_year_id = await resolveAcademicYearIdFromPayload({ year: term.year });
 
-        const created = await prisma.classroom_advisors.create({
+        const duplicate = await prisma.classroom_assignments.findFirst({
+            where: {
+                OR: [{ teacher_id }, { classroom_id }],
+            },
+            select: { id: true, teacher_id: true, classroom_id: true },
+        });
+        if (duplicate?.teacher_id === teacher_id) throw new Error('Teacher already has a homeroom classroom');
+        if (duplicate) throw new Error('Classroom already has a homeroom teacher');
+
+        const created = await prisma.classroom_assignments.create({
             data: {
                 teacher_id,
                 classroom_id,
+                academic_year_id,
             },
             include: {
                 teachers: { include: { name_prefixes: true } },
                 classrooms: { include: { levels: true } },
+                academic_years: true,
             },
         });
 
@@ -942,7 +1009,7 @@ export const DirectorService = {
         if (!Number.isFinite(teacher_id) || teacher_id <= 0) throw new Error('teacher_id is required');
         if (!class_level) throw new Error('class_level is required');
 
-        const existing = await prisma.classroom_advisors.findUnique({
+        const existing = await prisma.classroom_assignments.findUnique({
             where: { id: nid },
             select: { id: true },
         });
@@ -954,17 +1021,17 @@ export const DirectorService = {
         });
         if (!classroom_id) throw new Error('Classroom not found');
 
-        const duplicate = await prisma.classroom_advisors.findFirst({
+        const duplicate = await prisma.classroom_assignments.findFirst({
             where: {
                 id: { not: nid },
-                teacher_id,
-                classroom_id,
+                OR: [{ teacher_id }, { classroom_id }],
             },
-            select: { id: true },
+            select: { id: true, teacher_id: true, classroom_id: true },
         });
-        if (duplicate) throw new Error('Advisor assignment already exists');
+        if (duplicate?.teacher_id === teacher_id) throw new Error('Teacher already has a homeroom classroom');
+        if (duplicate) throw new Error('Classroom already has a homeroom teacher');
 
-        const updated = await prisma.classroom_advisors.update({
+        const updated = await prisma.classroom_assignments.update({
             where: { id: nid },
             data: {
                 teacher_id,
@@ -973,6 +1040,7 @@ export const DirectorService = {
             include: {
                 teachers: { include: { name_prefixes: true } },
                 classrooms: { include: { levels: true } },
+                academic_years: true,
             },
         });
 
@@ -981,13 +1049,13 @@ export const DirectorService = {
 
     async deleteAdvisor(id: number) {
         if (!id || Number.isNaN(Number(id))) throw new Error('id is required');
-        const existing = await prisma.classroom_advisors.findUnique({
+        const existing = await prisma.classroom_assignments.findUnique({
             where: { id },
             select: { id: true },
         });
         if (!existing) throw new Error('Advisor record not found');
 
-        return prisma.classroom_advisors.delete({ where: { id } });
+        return prisma.classroom_assignments.delete({ where: { id } });
     },
 
     // --- Activities (Events) ---
@@ -1222,9 +1290,15 @@ export const DirectorService = {
 
     // --- Projects ---
     async getProjects(year?: number, semester?: number, search?: string) {
-        let query = `SELECT p.*, ay.year_name as year_label 
+        let query = `SELECT p.*, ay.year_name as year_label,
+                            COALESCE(SUM(CASE WHEN sem.semester_number = 1 THEN pe.amount ELSE 0 END), 0) AS budget_used_sem1,
+                            COALESCE(SUM(CASE WHEN sem.semester_number = 2 THEN pe.amount ELSE 0 END), 0) AS budget_used_sem2,
+                            COALESCE((SELECT SUM(pb.planned_amount) FROM project_budgets pb JOIN semesters ps ON ps.id = pb.semester_id WHERE pb.project_id = p.id AND ps.semester_number = 1), 0) AS budget_plan_sem1,
+                            COALESCE((SELECT SUM(pb.planned_amount) FROM project_budgets pb JOIN semesters ps ON ps.id = pb.semester_id WHERE pb.project_id = p.id AND ps.semester_number = 2), 0) AS budget_plan_sem2
                      FROM projects p 
-                     LEFT JOIN academic_years ay ON p.academic_year_id = ay.id 
+                     LEFT JOIN academic_years ay ON p.academic_year_id = ay.id
+                     LEFT JOIN project_expenses pe ON pe.project_id = p.id
+                     LEFT JOIN semesters sem ON sem.id = pe.semester_id
                      WHERE 1=1`;
         const params: any[] = [];
         let idx = 1;
@@ -1237,7 +1311,7 @@ export const DirectorService = {
             params.push(`%${search}%`);
             idx++;
         }
-        query += ` ORDER BY p.id DESC`;
+        query += ` GROUP BY p.id, ay.year_name ORDER BY p.id DESC`;
 
         const rows: any[] = await prisma.$queryRawUnsafe(query, ...params);
 
@@ -1254,9 +1328,21 @@ export const DirectorService = {
         const sgMap = new Map(((sGroups || []) as any[]).map((g: any) => [g.id, g.department_name]));
         const tMap = new Map((teachers || []).map((t: any) => [t.id, t]));
 
-        return rows.map(r => {
+        return Promise.all(rows.map(async (r) => {
+            const [objectives, indicators, activities, budgetPlans, approvals, documents] = await Promise.all([
+                prisma.project_objectives.findMany({ where: { project_id: r.id }, orderBy: { order_number: 'asc' } }),
+                prisma.project_indicators.findMany({ where: { project_id: r.id }, orderBy: { order_number: 'asc' } }),
+                prisma.project_activities.findMany({ where: { project_id: r.id }, orderBy: { order_number: 'asc' } }),
+                prisma.project_budgets.findMany({
+                    where: { project_id: r.id },
+                    include: { semesters: true, expense_categories: true },
+                    orderBy: [{ semester_id: 'asc' }, { id: 'asc' }],
+                }),
+                prisma.project_approvals.findMany({ where: { project_id: r.id }, orderBy: { created_at: 'desc' } }),
+                prisma.project_documents.findMany({ where: { project_id: r.id }, orderBy: { created_at: 'desc' } }),
+            ]);
             const name = r.project_name || r.name || '';
-            const budget_total = Number(r.allocated_budget || r.total_budget || 0);
+            const budget_total = Number(r.allocated_budget || 0);
             const budget_used_sem1 = Number(r.budget_used_sem1 || 0);
             const budget_used_sem2 = Number(r.budget_used_sem2 || 0);
             const budget_used = budget_used_sem1 + budget_used_sem2;
@@ -1276,8 +1362,10 @@ export const DirectorService = {
                 budget_total,
                 budget_used_sem1,
                 budget_used_sem2,
+                budget_plan_sem1: Number(r.budget_plan_sem1 || 0),
+                budget_plan_sem2: Number(r.budget_plan_sem2 || 0),
                 budget_remaining,
-                status: r.status || 'Approved',
+                status: r.status || 'PLANNING',
                 teacher_id,
                 teacher_name: tName,
                 project_type_id: r.project_type_id,
@@ -1288,49 +1376,110 @@ export const DirectorService = {
                 department: sgMap.get(r.department_id) || '',
                 start_date: r.start_date,
                 end_date: r.end_date,
+                rationale: r.rationale || '',
+                expected_outcomes: r.expected_outcomes || '',
+                target_participants: r.target_participants,
+                objectives_text: objectives.map((item) => item.objective_text).join('\n'),
+                objectives,
+                indicators,
+                activities,
+                indicators_text: indicators.map((item) => [item.indicator_name, item.target_value || '', item.unit || ''].join(' | ')).join('\n'),
+                activities_text: activities.map((item) => [item.activity_name, item.start_date ? item.start_date.toISOString().slice(0, 10) : '', item.end_date ? item.end_date.toISOString().slice(0, 10) : '', Number(item.planned_budget || 0)].join(' | ')).join('\n'),
+                budget_plans: budgetPlans.map((item) => ({
+                    ...item,
+                    planned_amount: Number(item.planned_amount || 0),
+                    semester: item.semesters?.semester_number,
+                    category_name: item.expense_categories?.name || '',
+                })),
+                approvals,
+                documents,
+                documents_text: documents.map((item) => [item.file_name, item.file_path, item.document_type].join(' | ')).join('\n'),
             };
-        });
+        }));
     },
 
     async createProject(row: any) {
-        const lastRow = await prisma.$queryRaw`SELECT id FROM projects ORDER BY id DESC LIMIT 1` as any[];
-        const newId = (lastRow[0]?.id || 0) + 1;
-
         const data = row;
-        const name = data.name || '';
+        const name = String(data.name || '').trim();
+        if (!name) throw new Error('Project name is required');
         const budget = Number(data.budget_total) || 0;
         const academic_year_id = Number(data.year) || null;
-        const desc = data.objective || data.description || '';
-        const pt_id = data.project_type_id ? Number(data.project_type_id) : null;
-        const bt_id = data.budget_type_id ? Number(data.budget_type_id) : null;
-        const dept_id = data.department_id || data.learning_subject_group_id ? Number(data.department_id || data.learning_subject_group_id) : null;
-        const t_id = data.teacher_id ? Number(data.teacher_id) : null;
-        const status = data.status || 'Approved';
-        const start = data.start_date ? new Date(data.start_date).toISOString() : null;
-        const end = data.end_date ? new Date(data.end_date).toISOString() : null;
-        const code = data.project_code || null;
+        if (!academic_year_id) throw new Error('Academic year is required');
+        if (budget < 0) throw new Error('Budget cannot be negative');
 
-        const cols = [
-            'id', 'project_name', 'description', 'academic_year_id', 'teacher_id', 
-            'status', 'project_type_id', 'budget_type_id', 'allocated_budget',
-            'department_id', 'start_date', 'end_date', 'budget_used_sem1', 'budget_used_sem2',
-            'project_code'
-        ];
-        const vals = [
-            newId, name, desc, academic_year_id, t_id, 
-            status, pt_id, bt_id, budget,
-            dept_id, start, end, Number(data.budget_used_sem1 || 0), Number(data.budget_used_sem2 || 0),
-            code
-        ];
+        const plan1 = Number(data.budget_plan_sem1 || 0);
+        const plan2 = Number(data.budget_plan_sem2 || 0);
+        if (plan1 < 0 || plan2 < 0) throw new Error('Semester budget cannot be negative');
+        if (plan1 + plan2 > budget) throw new Error('Semester budget plan exceeds allocated budget');
 
-        const placeholders = vals.map((_, i) => {
-            const pos = i + 1;
-            if (pos === 11 || pos === 12) return `$${pos}::date`;
-            return `$${pos}`;
-        }).join(', ');
-        const sql = `INSERT INTO projects (${cols.join(', ')}) VALUES (${placeholders})`;
-        console.log('CREATE SQL:', sql);
-        return await prisma.$executeRawUnsafe(sql, ...vals);
+        const semesterIds = await resolveProjectSemesterIds(academic_year_id);
+        const objectives = normalizeProjectTextLines(data.objectives_text || data.objectives);
+
+        return prisma.$transaction(async (tx) => {
+            const created = await tx.projects.create({
+                data: {
+                    project_name: name,
+                    project_code: data.project_code || null,
+                    description: data.description || '',
+                    rationale: data.rationale || null,
+                    expected_outcomes: data.expected_outcomes || null,
+                    target_participants: data.target_participants ? Number(data.target_participants) : null,
+                    academic_year_id,
+                    teacher_id: data.teacher_id ? Number(data.teacher_id) : null,
+                    project_type_id: data.project_type_id ? Number(data.project_type_id) : null,
+                    budget_type_id: data.budget_type_id ? Number(data.budget_type_id) : null,
+                    allocated_budget: budget,
+                    department_id: data.department_id || data.learning_subject_group_id ? Number(data.department_id || data.learning_subject_group_id) : null,
+                    start_date: data.start_date ? new Date(data.start_date) : null,
+                    end_date: data.end_date ? new Date(data.end_date) : null,
+                    status: normalizeProjectStatus(data.status),
+                    created_by: data.created_by ? Number(data.created_by) : null,
+                },
+            });
+
+            if (objectives.length > 0) {
+                await tx.project_objectives.createMany({
+                    data: objectives.map((objective_text, index) => ({ project_id: created.id, objective_text, order_number: index + 1 })),
+                });
+            }
+            const indicators = parseProjectRows(data.indicators_text);
+            if (indicators.length > 0) {
+                await tx.project_indicators.createMany({
+                    data: indicators.filter((parts) => parts[0]).map((parts, index) => ({
+                        project_id: created.id, indicator_name: parts[0], target_value: parts[1] || null,
+                        unit: parts[2] || null, order_number: index + 1,
+                    })),
+                });
+            }
+            const activities = parseProjectRows(data.activities_text);
+            if (activities.length > 0) {
+                await tx.project_activities.createMany({
+                    data: activities.filter((parts) => parts[0]).map((parts, index) => ({
+                        project_id: created.id, activity_name: parts[0],
+                        start_date: parts[1] ? new Date(parts[1]) : null,
+                        end_date: parts[2] ? new Date(parts[2]) : null,
+                        planned_budget: Number(parts[3] || 0), order_number: index + 1,
+                    })),
+                });
+            }
+            const documents = parseProjectRows(data.documents_text);
+            if (documents.length > 0) {
+                await tx.project_documents.createMany({
+                    data: documents.filter((parts) => parts[0] && parts[1]).map((parts) => ({
+                        project_id: created.id, file_name: parts[0], file_path: parts[1], document_type: parts[2] || 'OTHER',
+                        uploaded_by: data.created_by ? Number(data.created_by) : null,
+                    })),
+                });
+            }
+            const plans = [[1, plan1], [2, plan2]] as const;
+            for (const [semesterNumber, planned_amount] of plans) {
+                const semester_id = semesterIds.get(semesterNumber);
+                if (semester_id && planned_amount > 0) {
+                    await tx.project_budgets.create({ data: { project_id: created.id, semester_id, planned_amount } });
+                }
+            }
+            return created;
+        });
     },
 
     async updateProject(id: number, data: any) {
@@ -1347,20 +1496,71 @@ export const DirectorService = {
             p.push(data.department_id || data.learning_subject_group_id ? Number(data.department_id || data.learning_subject_group_id) : null); 
         }
         if (data.objective !== undefined || data.description !== undefined) { sets.push(`description = $${idx++}`); p.push(data.objective || data.description); }
+        if (data.rationale !== undefined) { sets.push(`rationale = $${idx++}`); p.push(data.rationale || null); }
+        if (data.expected_outcomes !== undefined) { sets.push(`expected_outcomes = $${idx++}`); p.push(data.expected_outcomes || null); }
+        if (data.target_participants !== undefined) { sets.push(`target_participants = $${idx++}`); p.push(data.target_participants ? Number(data.target_participants) : null); }
         if (data.year !== undefined) { sets.push(`academic_year_id = $${idx++}`); p.push(data.year ? Number(data.year) : null); }
         if (data.budget_total !== undefined) { sets.push(`allocated_budget = $${idx++}`); p.push(Number(data.budget_total)); }
-        if (data.budget_used_sem1 !== undefined) { sets.push(`budget_used_sem1 = $${idx++}`); p.push(Number(data.budget_used_sem1)); }
-        if (data.budget_used_sem2 !== undefined) { sets.push(`budget_used_sem2 = $${idx++}`); p.push(Number(data.budget_used_sem2)); }
-        if (data.status !== undefined) { sets.push(`status = $${idx++}`); p.push(data.status); }
+        if (data.status !== undefined) { sets.push(`status = $${idx++}`); p.push(normalizeProjectStatus(data.status)); }
         if (data.teacher_id !== undefined) { sets.push(`teacher_id = $${idx++}`); p.push(data.teacher_id ? Number(data.teacher_id) : null); }
         if (data.start_date !== undefined) { sets.push(`start_date = $${idx++}::date`); p.push(data.start_date ? new Date(data.start_date).toISOString() : null); }
         if (data.end_date !== undefined) { sets.push(`end_date = $${idx++}::date`); p.push(data.end_date ? new Date(data.end_date).toISOString() : null); }
 
-        if (sets.length === 0) return;
-        p.push(id);
-        const sql = `UPDATE projects SET ${sets.join(', ')} WHERE id = $${idx}`;
-        console.log('UPDATE SQL:', sql);
-        return await prisma.$executeRawUnsafe(sql, ...p);
+        sets.push(`updated_at = CURRENT_TIMESTAMP`);
+        if (sets.length > 0) {
+            p.push(id);
+            const sql = `UPDATE projects SET ${sets.join(', ')} WHERE id = $${idx}`;
+            await prisma.$executeRawUnsafe(sql, ...p);
+        }
+
+        if (data.objectives_text !== undefined || data.objectives !== undefined) {
+            const objectives = normalizeProjectTextLines(data.objectives_text || data.objectives);
+            await prisma.$transaction([
+                prisma.project_objectives.deleteMany({ where: { project_id: id } }),
+                prisma.project_objectives.createMany({
+                    data: objectives.map((objective_text, index) => ({ project_id: id, objective_text, order_number: index + 1 })),
+                }),
+            ]);
+        }
+
+        if (data.indicators_text !== undefined) {
+            const rows = parseProjectRows(data.indicators_text).filter((parts) => parts[0]);
+            await prisma.$transaction([
+                prisma.project_indicators.deleteMany({ where: { project_id: id } }),
+                prisma.project_indicators.createMany({ data: rows.map((parts, index) => ({ project_id: id, indicator_name: parts[0], target_value: parts[1] || null, unit: parts[2] || null, order_number: index + 1 })) }),
+            ]);
+        }
+        if (data.activities_text !== undefined) {
+            const rows = parseProjectRows(data.activities_text).filter((parts) => parts[0]);
+            await prisma.$transaction([
+                prisma.project_activities.deleteMany({ where: { project_id: id } }),
+                prisma.project_activities.createMany({ data: rows.map((parts, index) => ({ project_id: id, activity_name: parts[0], start_date: parts[1] ? new Date(parts[1]) : null, end_date: parts[2] ? new Date(parts[2]) : null, planned_budget: Number(parts[3] || 0), order_number: index + 1 })) }),
+            ]);
+        }
+        if (data.documents_text !== undefined) {
+            const rows = parseProjectRows(data.documents_text).filter((parts) => parts[0] && parts[1]);
+            await prisma.$transaction([
+                prisma.project_documents.deleteMany({ where: { project_id: id } }),
+                prisma.project_documents.createMany({ data: rows.map((parts) => ({ project_id: id, file_name: parts[0], file_path: parts[1], document_type: parts[2] || 'OTHER' })) }),
+            ]);
+        }
+
+        if (data.budget_plan_sem1 !== undefined || data.budget_plan_sem2 !== undefined) {
+            const project = await prisma.projects.findUnique({ where: { id }, select: { academic_year_id: true, allocated_budget: true } });
+            if (!project?.academic_year_id) throw new Error('Project academic year is required');
+            const plan1 = Number(data.budget_plan_sem1 || 0);
+            const plan2 = Number(data.budget_plan_sem2 || 0);
+            if (plan1 < 0 || plan2 < 0) throw new Error('Semester budget cannot be negative');
+            if (plan1 + plan2 > Number(data.budget_total ?? project.allocated_budget)) throw new Error('Semester budget plan exceeds allocated budget');
+            const semesterIds = await resolveProjectSemesterIds(project.academic_year_id);
+            await prisma.project_budgets.deleteMany({ where: { project_id: id, expense_category_id: null } });
+            for (const [semesterNumber, planned_amount] of [[1, plan1], [2, plan2]] as const) {
+                const semester_id = semesterIds.get(semesterNumber);
+                if (semester_id && planned_amount > 0) await prisma.project_budgets.create({ data: { project_id: id, semester_id, planned_amount } });
+            }
+        }
+
+        return prisma.projects.findUnique({ where: { id } });
     },
 
     async getProjectTypes() {
@@ -1375,14 +1575,51 @@ export const DirectorService = {
         return prisma.projects.delete({ where: { id } });
     },
 
+    async changeProjectStatus(id: number, action: string, userId?: number, note?: string) {
+        const normalizedAction = String(action || '').trim().toUpperCase();
+        const statusByAction: Record<string, string> = {
+            SUBMIT: 'PENDING_APPROVAL',
+            APPROVE: 'APPROVED',
+            REJECT: 'REJECTED',
+            START: 'IN_PROGRESS',
+            COMPLETE: 'COMPLETED',
+            CANCEL: 'CANCELLED',
+        };
+        const status = statusByAction[normalizedAction];
+        if (!status) throw new Error('Invalid project action');
+
+        const approvalAction = normalizedAction === 'SUBMIT' ? 'SUBMITTED'
+            : normalizedAction === 'APPROVE' ? 'APPROVED'
+                : normalizedAction === 'REJECT' ? 'REJECTED'
+                    : normalizedAction === 'CANCEL' ? 'CANCELLED' : null;
+        const now = new Date();
+        const updateData: any = { status, updated_at: now };
+        if (normalizedAction === 'SUBMIT') Object.assign(updateData, { submitted_by: userId || null, submitted_at: now, rejection_reason: null });
+        if (normalizedAction === 'APPROVE') Object.assign(updateData, { approved_by: userId || null, approved_at: now, rejection_reason: null });
+        if (normalizedAction === 'REJECT') Object.assign(updateData, { rejection_reason: note || 'ไม่ผ่านการอนุมัติ' });
+
+        return prisma.$transaction(async (tx) => {
+            const project = await tx.projects.update({ where: { id }, data: updateData });
+            if (approvalAction) {
+                await tx.project_approvals.create({
+                    data: { project_id: id, action: approvalAction, action_by: userId || null, note: note || null },
+                });
+            }
+            return project;
+        });
+    },
+
     // --- Finance ---
     async getFinanceRecords() {
         // Use raw query for finance records as well to be safe
         const rows: any[] = await prisma.$queryRaw`
-            SELECT e.*, p.project_name as p_name, p.name as alt_p_name, c.name as cat_name
+            SELECT e.*, p.project_name as p_name, c.name as cat_name,
+                   s.semester_number, ay.year_name
             FROM project_expenses e
             LEFT JOIN projects p ON e.project_id = p.id
             LEFT JOIN expense_categories c ON e.expense_category_id = c.id
+            LEFT JOIN semesters s ON e.semester_id = s.id
+            LEFT JOIN academic_years ay ON s.academic_year_id = ay.id
             ORDER BY e.expense_date DESC
         `;
         return rows.map(r => ({
@@ -1391,10 +1628,18 @@ export const DirectorService = {
             amount: Number(r.amount),
             date: r.expense_date,
             project_id: r.project_id,
-            project_name: r.p_name || r.alt_p_name || '',
+            project_name: r.p_name || '',
             category_id: r.expense_category_id,
             category_name: r.cat_name || '',
-            receipt_number: r.receipt_number || ''
+            receipt_number: r.receipt_number || '',
+            vendor_name: r.vendor_name || '',
+            disbursement_number: r.disbursement_number || '',
+            note: r.note || '',
+            payment_method: r.payment_method || '',
+            receipt_file: r.receipt_file || '',
+            status: r.status || 'PENDING',
+            semester: r.semester_number || null,
+            year: r.year_name || '',
         }));
     },
 
@@ -1403,16 +1648,28 @@ export const DirectorService = {
         const cat_id = data.category_id ? Number(data.category_id) : null;
         const title = data.title;
         const amount = Number(data.amount);
-        const date = data.date ? new Date(data.date).toISOString() : new Date().toISOString();
+        const expenseDate = data.date ? new Date(data.date) : new Date();
+        const date = expenseDate.toISOString();
         const receipt = data.receipt_number || null;
+        const semester_id = await resolveProjectExpenseSemesterId(p_id, expenseDate);
 
         return prisma.$executeRawUnsafe(`
-            INSERT INTO project_expenses (project_id, expense_category_id, title, amount, expense_date, receipt_number)
-            VALUES ($1, $2, $3, $4, $5, $6)
-        `, p_id, cat_id, title, amount, date, receipt);
+            INSERT INTO project_expenses
+              (project_id, expense_category_id, title, amount, expense_date, receipt_number, semester_id,
+               vendor_name, disbursement_number, note, payment_method, receipt_file, recorded_by, status)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'PENDING')
+        `, p_id, cat_id, title, amount, date, receipt, semester_id,
+            data.vendor_name || null, data.disbursement_number || null, data.note || null,
+            data.payment_method || null, data.receipt_file || null, data.recorded_by ? Number(data.recorded_by) : null);
     },
 
     async updateFinanceRecord(id: number, data: any) {
+        const current = await prisma.project_expenses.findUnique({
+            where: { id },
+            select: { project_id: true, expense_date: true },
+        });
+        if (!current) throw new Error('Expense record not found');
+
         let sets = "";
         let p: any[] = [];
         let idx = 1;
@@ -1422,6 +1679,19 @@ export const DirectorService = {
         if (data.amount !== undefined) { sets += `amount = $${idx++}, `; p.push(Number(data.amount)); }
         if (data.date !== undefined) { sets += `expense_date = $${idx++}, `; p.push(new Date(data.date).toISOString()); }
         if (data.receipt_number !== undefined) { sets += `receipt_number = $${idx++}, `; p.push(data.receipt_number); }
+        if (data.vendor_name !== undefined) { sets += `vendor_name = $${idx++}, `; p.push(data.vendor_name || null); }
+        if (data.disbursement_number !== undefined) { sets += `disbursement_number = $${idx++}, `; p.push(data.disbursement_number || null); }
+        if (data.note !== undefined) { sets += `note = $${idx++}, `; p.push(data.note || null); }
+        if (data.payment_method !== undefined) { sets += `payment_method = $${idx++}, `; p.push(data.payment_method || null); }
+        if (data.receipt_file !== undefined) { sets += `receipt_file = $${idx++}, `; p.push(data.receipt_file || null); }
+
+        if (data.project_id !== undefined || data.date !== undefined) {
+            const projectId = data.project_id !== undefined ? Number(data.project_id) : current.project_id;
+            const expenseDate = data.date !== undefined ? new Date(data.date) : current.expense_date;
+            const semesterId = await resolveProjectExpenseSemesterId(projectId, expenseDate);
+            sets += `semester_id = $${idx++}, `;
+            p.push(semesterId);
+        }
 
         if (!sets) return;
         sets = sets.slice(0, -2);
@@ -1700,10 +1970,10 @@ export const DirectorService = {
     },
 
     async getGradeLevels() {
-        return prisma.levels.findMany({
-            select: { name: true },
+        return prisma.grade_level.findMany({
+            select: { grade_level_name: true },
             orderBy: { id: 'asc' }
-        }).then(rows => rows.map(r => r.name));
+        }).then(rows => rows.map(r => r.grade_level_name || '').filter(Boolean));
     },
 
     async getClassrooms() {
@@ -1714,7 +1984,7 @@ export const DirectorService = {
         // Return unique room parts as the user wants "ห้อง" separate
         const rooms = new Set<string>();
         classrooms.forEach(c => {
-            const levelName = (c as any).levels?.name || '';
+            const levelName = getGradeLevelName((c as any).levels);
             const roomOnly = roomOnlyLabel(levelName, c.room_name || '');
             if (roomOnly) rooms.add(roomOnly);
         });

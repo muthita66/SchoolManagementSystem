@@ -12,7 +12,7 @@ function extractLevelNumber(value: string) {
 export const TeacherFitnessService = {
     async getStudentsForTest(teacher_id: number, classLevel?: string, room?: string, year?: number, semester?: number) {
         // Find authorized classrooms first
-        const advisorClassrooms = await prisma.classroom_advisors.findMany({
+        const advisorClassrooms = await prisma.classroom_assignments.findMany({
             where: { teacher_id },
             select: { classroom_id: true }
         });
@@ -244,7 +244,7 @@ export const TeacherFitnessService = {
         });
     },
     async getAdvisorClasses(teacher_id: number) {
-        const advisors = await prisma.classroom_advisors.findMany({
+        const advisors = await prisma.classroom_assignments.findMany({
             where: { teacher_id },
             include: {
                 classrooms: {
@@ -256,7 +256,7 @@ export const TeacherFitnessService = {
         });
 
         return advisors.map(a => ({
-            class_level: a.classrooms.levels.name,
+            class_level: a.classrooms.levels.grade_level_name || '',
             room: a.classrooms.room_name
         }));
     },

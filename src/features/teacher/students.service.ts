@@ -298,24 +298,24 @@ export const TeacherStudentsService = {
         const classroomIds = studentClassroomRecords.map(sc => sc.classroom_id);
         if (classroomIds.length === 0) return false;
 
-        const [advisorLink, taughtLink] = await Promise.all([
-            (prisma.classroom_advisors as any).findFirst({
-                where: { teacher_id, classroom_id: { in: classroomIds } },
-                select: { id: true },
-            }),
-            (prisma.teaching_assignments as any).findFirst({
-                where: { teacher_id, classroom_id: { in: classroomIds } },
-                select: { id: true },
-            }),
-        ]);
+        const assignment = await prisma.classroom_assignments.findFirst({
+            where: { teacher_id, classroom_id: { in: classroomIds } },
+            select: { id: true },
+        });
 
-        return Boolean(advisorLink || taughtLink);
+        return Boolean(assignment);
     },
 
-    // Get advisory students from classroom_advisors (homeroom/advisor assignments)
+    // Homeroom teachers stay with the same classroom; classroom_assignments is the source of truth.
     async getAdvisoryStudents(teacher_id: number, year?: number, semester?: number, sub_mode: string = 'attributes') {
-        const advisorLinks = await prisma.classroom_advisors.findMany({
-            where: { teacher_id },
+        const teacher = await prisma.teachers.findFirst({
+            where: { OR: [{ id: teacher_id }, { user_id: teacher_id }] },
+            select: { id: true, user_id: true },
+        });
+        if (!teacher) return [];
+
+        const advisorLinks = await prisma.classroom_assignments.findMany({
+            where: { teacher_id: teacher.id },
             select: { classroom_id: true },
             distinct: ['classroom_id'],
         });
@@ -326,20 +326,39 @@ export const TeacherStudentsService = {
 
         if (classroomIds.length === 0) return [];
 
+        const targetAcademicYear = year
+            ? await prisma.academic_years.findFirst({
+                where: { year_name: String(year) },
+                select: { id: true },
+            })
+            : await prisma.academic_years.findFirst({
+                where: { is_active: true },
+                select: { id: true },
+                orderBy: { id: 'desc' },
+            }) || await prisma.academic_years.findFirst({
+                select: { id: true },
+                orderBy: { id: 'desc' },
+            });
+        const classroomStudentWhere = {
+            classroom_id: { in: classroomIds },
+            ...(targetAcademicYear ? { academic_year_id: targetAcademicYear.id } : {}),
+        };
+
         // 1. Resolve period and form to check evaluation status
         const [periodId, form] = await Promise.all([
             resolveEvaluationPeriodId(year, semester),
-            ensureAdvisorEvaluationForm(sub_mode)
+            ensureAdvisorEvaluationForm(sub_mode).catch(() => null),
         ]);
         const formId = form?.id;
 
         // 2. Fetch students
         const students = await (prisma.students as any).findMany({
-            where: { classroom_students: { some: { classroom_id: { in: classroomIds } } } },
+            where: { classroom_students: { some: classroomStudentWhere } },
             include: {
                 name_prefixes: true,
                 classroom_students: {
-                    where: { classroom_id: { in: classroomIds } },
+                    where: classroomStudentWhere,
+                    orderBy: { academic_year_id: 'desc' },
                     include: { classrooms: { include: { levels: true } } },
                     take: 1
                 },
@@ -392,7 +411,7 @@ export const TeacherStudentsService = {
                 if (userIds.length > 0) {
                     const evalRows: any[] = await prisma.$queryRawUnsafe(`
                         SELECT evaluator_user_id FROM evaluation_responses
-                        WHERE target_teacher_id = ${Number(teacher_id)}
+                        WHERE target_teacher_id = ${Number(teacher.id)}
                         ${advisorFormId ? `AND form_id = ${advisorFormId}` : ''}
                         ${targetSemesterId ? `AND semester_id = ${targetSemesterId}` : ''}
                         AND evaluator_user_id IN (${userIds.join(',')})
@@ -409,7 +428,7 @@ export const TeacherStudentsService = {
             // Default: teacher evaluating students (teacher as evaluator, student as target)
             const responses = await prisma.evaluation_responses.findMany({
                 where: {
-                    evaluator_user_id: teacher_id,
+                    evaluator_user_id: teacher.user_id,
                     form_id: formId,
                     semester_id: periodId,
                     target_student_id: { not: null }
@@ -436,7 +455,7 @@ export const TeacherStudentsService = {
                 last_name: s.last_name,
                 name: fullName,
                 gender: s.genders?.name || '',
-                class_level: currentClassroom?.levels?.name || '',
+                class_level: currentClassroom?.levels?.grade_level_name || '',
                 room: currentClassroom?.room_name || '',
                 status: s.student_statuses?.status_name || 'active',
                 roll_number: currentClassroomStudent?.roll_number,
@@ -461,7 +480,7 @@ export const TeacherStudentsService = {
                 name_prefixes: true,
                 classroom_students: {
                     orderBy: { academic_year_id: 'desc' },
-                    include: { classrooms: { include: { levels: true, programs: true } } },
+                    include: { classrooms: { include: { levels: true } } },
                     take: 1
                 },
                 genders: true,
@@ -479,9 +498,9 @@ export const TeacherStudentsService = {
             first_name: s.first_name,
             last_name: s.last_name,
             gender: s.genders?.name || '',
-            class_level: currentClassroom?.levels?.name || '',
+            class_level: currentClassroom?.levels?.grade_level_name || '',
             room: currentClassroom?.room_name || '',
-            program: currentClassroom?.programs?.name || '',
+            program: '',
             status: s.student_statuses?.status_name || '',
             date_of_birth: s.date_of_birth,
             birthday: s.date_of_birth,
@@ -503,64 +522,49 @@ export const TeacherStudentsService = {
         if (!profile) return null;
 
         // 2. Enrollment summary — get all subjects enrolled
-        const enrollments = await prisma.enrollments.findMany({
-            where: { student_id },
-            include: {
-                teaching_assignments: {
-                    include: {
-                        subjects: true,
-                        teachers: { include: { name_prefixes: true } },
-                        semesters: { include: { academic_years: true } },
-                    }
-                },
-                final_grades: true,
-                student_scores: {
-                    include: { assessment_items: true }
-                }
-            }
-        });
+        const gradeRows: any[] = await prisma.$queryRawUnsafe(`
+            SELECT fg.total_score, fg.letter_grade, fg.grade_point,
+                   sub.subject_code, sub.subject_name, sub.credit,
+                   sem.semester_number, ay.year_name
+            FROM final_grades fg
+            LEFT JOIN subjects sub ON sub.id = fg.subject_id
+            LEFT JOIN semesters sem ON sem.id = fg.semester_id
+            LEFT JOIN academic_years ay ON ay.id = sem.academic_year_id
+            WHERE fg.student_id = $1
+            ORDER BY ay.year_name DESC NULLS LAST,
+                     sem.semester_number DESC NULLS LAST,
+                     sub.subject_code ASC
+        `, student_id);
 
         // 3. Grades summary
-        const grades = enrollments.map(e => {
-            const ta = e.teaching_assignments;
-            let totalScore = 0;
-            let maxPossible = 0;
-            e.student_scores.forEach(sc => {
-                totalScore += Number(sc.score || 0);
-                maxPossible += Number(sc.assessment_items?.max_score || 0);
-            });
-
-            return {
-                subject_code: ta.subjects?.subject_code || '',
-                subject_name: ta.subjects?.subject_name || '',
-                credit: ta.subjects?.credit ? Number(ta.subjects.credit) : 0,
-                total_score: totalScore,
-                max_possible: maxPossible,
-                percentage: maxPossible > 0 ? Math.round((totalScore / maxPossible) * 100) / 100 : 0,
-                grade: e.final_grades?.letter_grade || null,
-                year: ta.semesters?.academic_years?.year_name || '',
-                semester: ta.semesters?.semester_number || 0,
-            };
-        });
+        const grades = gradeRows.map((row) => ({
+            subject_code: row.subject_code || '',
+            subject_name: row.subject_name || '',
+            credit: row.credit != null ? Number(row.credit) : 0,
+            total_score: Number(row.total_score || 0),
+            max_possible: 100,
+            percentage: Number(row.total_score || 0),
+            grade: row.letter_grade || (row.grade_point != null ? String(row.grade_point) : null),
+            year: row.year_name || '',
+            semester: Number(row.semester_number || 0),
+        }));
 
         // 4. Attendance summary
-        const enrollmentIds = enrollments.map(e => e.id);
         const attendanceSummary = { present: 0, absent: 0, late: 0, leave: 0, total: 0 };
 
-        if (enrollmentIds.length > 0) {
-            const records = await prisma.attendance_records.findMany({
-                where: { enrollment_id: { in: enrollmentIds } }
-            });
+        const records = await prisma.attendance_records.findMany({
+            where: { student_id },
+            include: { attendance_status: true },
+        });
 
             records.forEach(r => {
                 attendanceSummary.total++;
-                const status = r.status?.toLowerCase() || '';
+                const status = String(r.attendance_status?.status_name || '').trim().toLowerCase();
                 if (status === 'present' || status === 'มา') attendanceSummary.present++;
                 else if (status === 'absent' || status === 'ขาด') attendanceSummary.absent++;
                 else if (status === 'late' || status === 'สาย') attendanceSummary.late++;
                 else if (status === 'leave' || status === 'ลา') attendanceSummary.leave++;
             });
-        }
 
         // 5. Conduct / behavior summary via Raw SQL
         const behaviorRecords: any[] = [];

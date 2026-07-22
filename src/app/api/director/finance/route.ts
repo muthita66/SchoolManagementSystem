@@ -1,11 +1,15 @@
 import { DirectorService } from '@/features/director/director.service';
 import { successResponse, errorResponse } from '@/lib/api-response';
+import { getSession } from '@/lib/auth';
 export async function GET() {
     try { return successResponse(await DirectorService.getFinanceRecords()); }
     catch (e: any) { return errorResponse('Failed', 500, e.message); }
 }
 export async function POST(req: Request) {
-    try { return successResponse(await DirectorService.createFinanceRecord(await req.json())); }
+    try {
+        const [body, session] = await Promise.all([req.json(), getSession()]);
+        return successResponse(await DirectorService.createFinanceRecord({ ...body, recorded_by: Number((session as any)?.userId || (session as any)?.id) || null }));
+    }
     catch (e: any) { return errorResponse('Failed', 500, e.message); }
 }
 export async function PUT(req: Request) {

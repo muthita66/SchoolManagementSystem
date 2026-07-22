@@ -88,3 +88,71 @@
 [2026-06-17T07:07:50.374Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
 [2026-06-17T07:07:50.377Z] [resolveEvaluationPeriodId] Resolved semester_id: 4
 [2026-06-17T07:07:50.384Z] [ensureForm] Found 8 questions directly from section_id=1
+[2026-07-22T07:15:44.436Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:15:44.466Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:15:45.349Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:15:45.452Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:15:45.913Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:15:45.942Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:15:45.950Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:15:45.971Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:27:32.636Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:27:32.731Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:27:32.871Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:27:32.907Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:33:41.587Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:33:41.612Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:33:41.738Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:33:41.768Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:33:42.019Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:33:42.040Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:33:42.046Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:33:42.085Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:33:51.549Z] [Template] Start: teacher=6, student=13, sub_mode=attributes
+[2026-07-22T07:33:51.623Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:33:51.637Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:33:51.652Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:33:51.669Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:33:51.673Z] [Template] Form: undefined, Period: 13
+[2026-07-22T07:33:51.676Z] [Template] Selected scaleTypeID: 2
+[2026-07-22T07:33:51.705Z] [Template] Scale options count: 4
+[2026-07-22T07:33:51.780Z] [Template] Start: teacher=6, student=13, sub_mode=attributes
+[2026-07-22T07:33:51.813Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:33:51.823Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:33:51.833Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:33:51.845Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:33:51.847Z] [Template] Form: undefined, Period: 13
+[2026-07-22T07:33:51.858Z] [Template] Selected scaleTypeID: 2
+[2026-07-22T07:33:51.875Z] [Template] Scale options count: 4
+[2026-07-22T07:39:30.692Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:39:30.737Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:39:30.878Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:39:30.913Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:39:31.187Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:39:31.202Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:39:31.209Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:39:31.230Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:39:39.669Z] [Template] Start: teacher=6, student=13, sub_mode=attributes
+[2026-07-22T07:39:39.728Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:39:39.964Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:39:39.987Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:39:40.002Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:39:40.006Z] [Template] Form: undefined, Period: 13
+[2026-07-22T07:39:40.010Z] [Template] Selected scaleTypeID: 2
+[2026-07-22T07:39:40.083Z] [Template] Scale options count: 4
+[2026-07-22T07:39:40.162Z] [Template] Start: teacher=6, student=13, sub_mode=attributes
+[2026-07-22T07:39:40.185Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:39:40.199Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:39:40.213Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:39:40.225Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:39:40.228Z] [Template] Form: undefined, Period: 13
+[2026-07-22T07:39:40.230Z] [Template] Selected scaleTypeID: 2
+[2026-07-22T07:39:40.251Z] [Template] Scale options count: 4
+[2026-07-22T07:40:03.473Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:40:03.487Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:40:03.511Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:40:03.523Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:40:03.821Z] [ensureForm] Searching via Raw SQL for: แบบประเมินคุณลักษณะอันพึงประสงค์
+[2026-07-22T07:40:03.830Z] [resolveEvaluationPeriodId] Resolved semester_id: 13
+[2026-07-22T07:40:03.834Z] [ensureForm] No questions found with section_id=1, falling back to form name lookup
+[2026-07-22T07:40:03.892Z] [ensureForm] No form found by name: แบบประเมินคุณลักษณะอันพึงประสงค์

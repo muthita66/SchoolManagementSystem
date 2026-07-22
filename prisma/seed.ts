@@ -22,12 +22,21 @@ async function main() {
         }
     }
 
-    const budgetTypes = [
+    const legacyBudgetTypes = [
         { name: 'เงินงบประมาณ (งบอุดหนุน)' },
         { name: 'เงินนอกงบประมาณ' },
         { name: 'เงินรายได้สถานศึกษา' },
         { name: 'เงินบริจาค' }
     ];
+
+    const budgetTypes = [
+        { name: 'งบอุดหนุนรัฐบาล' },
+        { name: 'งบรายได้สถานศึกษา' },
+        { name: 'สมาคมผู้ปกครอง' },
+        { name: 'เงินนอกงบประมาณ' },
+        { name: 'เงินบริจาค' },
+    ];
+    void legacyBudgetTypes;
 
     for (const bt of budgetTypes) {
         const existing = await prisma.budget_types.findFirst({

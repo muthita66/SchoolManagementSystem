@@ -25,7 +25,7 @@ export function StudentsFeature({ session }: { session: any }) {
         setLoading(true);
         setNotice("");
         try {
-            let rows = (await TeacherApiService.getAdvisoryStudents(session.id, year, semester).catch(() => [])) || [];
+            let rows = (await TeacherApiService.getAdvisoryStudents(session.id, year, semester)) || [];
 
             if (rows.length === 0 && year < 2400) {
                 const beYear = year + 543;
@@ -50,6 +50,9 @@ export function StudentsFeature({ session }: { session: any }) {
             }
 
             setStudents(rows);
+        } catch (error: any) {
+            setStudents([]);
+            setNotice(error?.message || "โหลดรายชื่อนักเรียนไม่สำเร็จ");
         } finally {
             setLoading(false);
         }

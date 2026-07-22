@@ -158,6 +158,9 @@ export const DirectorApiService = {
     async deleteProject(id: number) {
         return fetchApi<any>(`/api/director/projects?id=${id}`, { method: 'DELETE' });
     },
+    async changeProjectStatus(id: number, action: string, note?: string) {
+        return fetchApi<any>('/api/director/projects', { method: 'PATCH', body: JSON.stringify({ id, action, note }) });
+    },
 
     // --- Lookups ---
     async getProjectTypes() {

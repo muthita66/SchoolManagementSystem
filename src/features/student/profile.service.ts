@@ -8,7 +8,7 @@ export const ProfileService = {
             include: {
                 name_prefixes: true,
                 classroom_students: {
-                    include: { classrooms: { include: { levels: true, programs: true } } },
+                    include: { classrooms: { include: { levels: true } } },
                     orderBy: { academic_year_id: 'desc' },
                     take: 1
                 },
@@ -27,7 +27,7 @@ export const ProfileService = {
             gender: s.genders?.name || '',
             class_level: currentRoom?.levels?.name || '',
             room: currentRoom?.room_name || '',
-            program: currentRoom?.programs?.name || '',
+            program: '',
             status: s.student_statuses?.status_name || '',
             birthday: s.date_of_birth,
             date_of_birth: s.date_of_birth,

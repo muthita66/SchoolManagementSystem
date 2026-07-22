@@ -392,7 +392,7 @@ export const RegistrationService = {
             }
         }
 
-        const advisorRows = await prisma.classroom_advisors.findMany({
+        const advisorRows = await prisma.classroom_assignments.findMany({
             where: { classroom_id: latestAssignment.classroom_id },
             select: {
                 id: true,

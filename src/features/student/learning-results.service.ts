@@ -52,7 +52,7 @@ export const LearningResultsService = {
 
         const advisors: any[] = [];
         if (classroomStudent?.classroom_id) {
-            const advisorLinks = await prisma.classroom_advisors.findMany({
+            const advisorLinks = await prisma.classroom_assignments.findMany({
                 where: { classroom_id: classroomStudent.classroom_id },
                 include: {
                     teachers: {

@@ -66,7 +66,7 @@ export const TeacherBehaviorService = {
             targetClassroomIds = rooms.map(r => r.id);
         } else if (teacher_id) {
             // Default: All rooms where this teacher is an advisor
-            const advisors = await prisma.classroom_advisors.findMany({
+            const advisors = await prisma.classroom_assignments.findMany({
                 where: { teacher_id },
                 select: { classroom_id: true }
             });
